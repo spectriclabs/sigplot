@@ -26,8 +26,7 @@
 /* global module */
 /* global require */
 
-(function() {
-
+(function () {
     var m = require("./m");
     var mx = require("./mx");
 
@@ -36,8 +35,8 @@
      * @param options
      * @returns {BoxesPlugin}
      */
-    var BoxesPlugin = function(options) {
-        this.options = (options === undefined) ? {} : options;
+    var BoxesPlugin = function (options) {
+        this.options = options === undefined ? {} : options;
 
         if (this.options.display === undefined) {
             this.options.display = true;
@@ -47,55 +46,58 @@
     };
 
     BoxesPlugin.prototype = {
-        init: function(plot) {
+        init: function (plot) {
             this.plot = plot;
         },
 
-        menu: function() {
-            var _display_handler = (function(self) {
-                return function() {
+        menu: function () {
+            var _display_handler = (function (self) {
+                return function () {
                     self.options.display = !self.options.display;
                     self.plot.redraw();
                 };
-            }(this));
+            })(this);
 
-            var _clearall_handler = (function(self) {
-                return function() {
+            var _clearall_handler = (function (self) {
+                return function () {
                     self.boxes = [];
                     self.plot.redraw();
                 };
-            }(this));
+            })(this);
 
             return {
                 text: "Boxes...",
                 menu: {
                     title: "BOXES",
-                    items: [{
-                        text: "Display",
-                        checked: this.options.display,
-                        style: "checkbox",
-                        handler: _display_handler
-                    }, {
-                        text: "Clear All",
-                        handler: _clearall_handler
-                    }]
-                }
+                    items: [
+                        {
+                            text: "Display",
+                            checked: this.options.display,
+                            style: "checkbox",
+                            handler: _display_handler,
+                        },
+                        {
+                            text: "Clear All",
+                            handler: _clearall_handler,
+                        },
+                    ],
+                },
             };
         },
 
-        add_box: function(box) {
+        add_box: function (box) {
             this.boxes.push(box);
 
             this.plot.redraw();
             return this.boxes.length;
         },
 
-        clear_boxes: function() {
+        clear_boxes: function () {
             this.boxes = [];
             this.plot.redraw();
         },
 
-        refresh: function(canvas) {
+        refresh: function (canvas) {
             if (!this.options.display) {
                 return;
             }
@@ -106,7 +108,6 @@
             var box, pxl;
             var x, y, w, h;
             var ul, lr;
-
 
             ctx.save();
             ctx.beginPath();
@@ -122,7 +123,11 @@
                     h = box.h;
                 } else {
                     ul = mx.real_to_pixel(Mx, box.x, box.y);
-                    lr = pxl = mx.real_to_pixel(Mx, box.x + box.w, box.y + box.h);
+                    lr = pxl = mx.real_to_pixel(
+                        Mx,
+                        box.x + box.w,
+                        box.y + box.h
+                    );
                     x = ul.x;
                     y = ul.y;
                     w = lr.x - ul.x;
@@ -143,14 +148,12 @@
                     ctx.fillRect(x, y, w, h);
                     ctx.globalAlpha = 1;
                 }
-                ctx.strokeRect(x,
-                    y,
-                    w,
-                    h);
+                ctx.strokeRect(x, y, w, h);
 
                 if (box.text) {
                     ctx.save();
-                    ctx.font = box.font || Mx.text_H + "px Courier New, monospace";
+                    ctx.font =
+                        box.font || Mx.text_H + "px Courier New, monospace";
                     ctx.globalAlpha = 1;
                     ctx.textAlign = "end";
                     ctx.fillStyle = ctx.strokeStyle;
@@ -159,12 +162,12 @@
                     }
 
                     x = x - Mx.text_w;
-                    y = y - (Mx.text_h / 3);
+                    y = y - Mx.text_h / 3;
 
                     var text_w = ctx.measureText(box.text).width;
 
-                    if ((x - text_w) < Mx.l) {
-                        x = (x + w);
+                    if (x - text_w < Mx.l) {
+                        x = x + w;
                     }
 
                     ctx.fillText(box.text, x, y);
@@ -175,12 +178,11 @@
             ctx.restore();
         },
 
-        dispose: function() {
+        dispose: function () {
             this.plot = undefined;
             this.boxes = [];
-        }
+        },
     };
 
     module.exports = BoxesPlugin;
-
-}());
+})();

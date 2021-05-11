@@ -26,8 +26,7 @@
 /* global module */
 /* global require */
 
-(function() {
-
+(function () {
     var m = require("./m");
     var mx = require("./mx");
     var common = require("./common");
@@ -37,12 +36,12 @@
      * @param options
      * @returns {PlaybackControlsPlugin}
      */
-    var PlaybackControlsPlugin = function(options) {
+    var PlaybackControlsPlugin = function (options) {
         this.options = {
             display: true,
             size: 25,
             lineWidth: 2,
-            fillStyle: false
+            fillStyle: false,
         };
         common.update(this.options, options);
         this.state = "paused";
@@ -50,13 +49,13 @@
     };
 
     PlaybackControlsPlugin.prototype = {
-        init: function(plot) {
+        init: function (plot) {
             this.plot = plot;
 
             // Register for mouse events
             var self = this;
             var Mx = this.plot._Mx;
-            this.onmousemove = function(evt) {
+            this.onmousemove = function (evt) {
                 if (Mx.warpbox) {
                     return;
                 } // Don't highlight if a warpbox is being drawn
@@ -70,7 +69,7 @@
             };
             this.plot.addListener("mmove", this.onmousemove);
 
-            this.onmousedown = function(evt) {
+            this.onmousedown = function (evt) {
                 if (Mx.warpbox) {
                     return;
                 } // Don't handle if a warpbox is being drawn
@@ -83,7 +82,7 @@
             // Prevents zooms and stuff from occuring
             this.plot.addListener("mdown", this.onmousedown);
 
-            this.onmouseclick = function(evt) {
+            this.onmouseclick = function (evt) {
                 if (Mx.warpbox) {
                     return;
                 } // Don't handle if a warpbox is being drawn
@@ -97,14 +96,14 @@
             this.plot.addListener("mclick", this.onmouseclick);
         },
 
-        set_highlight: function(ishighlight) {
+        set_highlight: function (ishighlight) {
             if (ishighlight !== this.highlight) {
                 this.highlight = ishighlight;
                 this.plot.redraw();
             }
         },
 
-        toggle: function(new_state) {
+        toggle: function (new_state) {
             if (!new_state) {
                 if (this.state === "paused") {
                     new_state = "playing";
@@ -116,8 +115,8 @@
             if (new_state !== this.state) {
                 if (this.plot) {
                     var Mx = this.plot._Mx;
-                    var evt = document.createEvent('Event');
-                    evt.initEvent('playbackevt', true, true);
+                    var evt = document.createEvent("Event");
+                    evt.initEvent("playbackevt", true, true);
                     evt.state = new_state;
                     var executeDefault = mx.dispatchEvent(Mx, evt);
                     if (executeDefault) {
@@ -128,25 +127,26 @@
             }
         },
 
-        addListener: function(what, callback) {
+        addListener: function (what, callback) {
             var Mx = this.plot._Mx;
             mx.addEventListener(Mx, what, callback, false);
         },
 
-        removeListener: function(what, callback) {
+        removeListener: function (what, callback) {
             var Mx = this.plot._Mx;
             mx.removeEventListener(Mx, what, callback, false);
         },
 
-        ismouseover: function(xpos, ypos) {
+        ismouseover: function (xpos, ypos) {
             var position = this.position();
-            var distance_from_ctr = Math.pow(xpos - position.x, 2) + Math.pow(ypos - position.y, 2);
+            var distance_from_ctr =
+                Math.pow(xpos - position.x, 2) + Math.pow(ypos - position.y, 2);
             var R = this.options.size / 2;
 
-            return (distance_from_ctr < Math.pow(R, 2));
+            return distance_from_ctr < Math.pow(R, 2);
         },
 
-        position: function() {
+        position: function () {
             if (this.options.position) {
                 return this.options.position;
             } else if (this.plot) {
@@ -154,17 +154,17 @@
                 var R = this.options.size / 2;
                 return {
                     x: Mx.l + R + this.options.lineWidth + 1,
-                    y: Mx.t + R + this.options.lineWidth + 1
+                    y: Mx.t + R + this.options.lineWidth + 1,
                 };
             } else {
                 return {
                     x: null,
-                    y: null
+                    y: null,
                 };
             }
         },
 
-        refresh: function(canvas) {
+        refresh: function (canvas) {
             if (!this.options.display) {
                 return;
             }
@@ -183,9 +183,15 @@
 
             var position = this.position();
 
-
             ctx.beginPath();
-            ctx.arc(position.x, position.y, R - ctx.lineWidth, 0, Math.PI * 2, true);
+            ctx.arc(
+                position.x,
+                position.y,
+                R - ctx.lineWidth,
+                0,
+                Math.PI * 2,
+                true
+            );
             ctx.closePath();
 
             ctx.strokeStyle = this.options.strokeStyle || Mx.fg;
@@ -199,23 +205,23 @@
             if (this.state === "paused") {
                 var p1 = {
                     x: R * 0.8,
-                    y: R * 0.56
+                    y: R * 0.56,
                 };
                 var p2 = {
                     x: R * 1.45,
-                    y: R
+                    y: R,
                 };
                 var p3 = {
                     x: R * 0.8,
-                    y: R * 1.45
+                    y: R * 1.45,
                 };
 
-                p1.x += (position.x - R);
-                p2.x += (position.x - R);
-                p3.x += (position.x - R);
-                p1.y += (position.y - R);
-                p2.y += (position.y - R);
-                p3.y += (position.y - R);
+                p1.x += position.x - R;
+                p2.x += position.x - R;
+                p3.x += position.x - R;
+                p1.y += position.y - R;
+                p2.y += position.y - R;
+                p3.y += position.y - R;
 
                 ctx.beginPath();
                 ctx.moveTo(p1.x, p1.y);
@@ -226,21 +232,21 @@
                 ctx.fillStyle = this.options.strokeStyle || Mx.fg;
                 ctx.fill();
             } else {
-                ctx.lineCap = 'round';
+                ctx.lineCap = "round";
                 ctx.lineWidth = Math.floor(Math.min(1, this.options.size / 8));
 
                 var p1 = {
                     x: R * 0.8,
-                    y: R / 2
+                    y: R / 2,
                 };
                 var p2 = {
                     x: R * 0.8,
-                    y: R * 1.5
+                    y: R * 1.5,
                 };
-                p1.x += (position.x - R);
-                p2.x += (position.x - R);
-                p1.y += (position.y - R);
-                p2.y += (position.y - R);
+                p1.x += position.x - R;
+                p2.x += position.x - R;
+                p1.y += position.y - R;
+                p2.y += position.y - R;
 
                 ctx.beginPath();
                 ctx.moveTo(p1.x, p1.y);
@@ -249,17 +255,17 @@
                 ctx.stroke();
 
                 var p1 = {
-                    x: R + (R / 5),
-                    y: R / 2
+                    x: R + R / 5,
+                    y: R / 2,
                 };
                 var p2 = {
-                    x: R + (R / 5),
-                    y: R * 1.5
+                    x: R + R / 5,
+                    y: R * 1.5,
                 };
-                p1.x += (position.x - R);
-                p2.x += (position.x - R);
-                p1.y += (position.y - R);
-                p2.y += (position.y - R);
+                p1.x += position.x - R;
+                p2.x += position.x - R;
+                p1.y += position.y - R;
+                p2.y += position.y - R;
 
                 ctx.beginPath();
                 ctx.moveTo(p1.x, p1.y);
@@ -271,12 +277,11 @@
             ctx.restore();
         },
 
-        dispose: function() {
+        dispose: function () {
             this.plot = undefined;
             this.boxes = undefined;
-        }
+        },
     };
 
     module.exports = PlaybackControlsPlugin;
-
-}());
+})();

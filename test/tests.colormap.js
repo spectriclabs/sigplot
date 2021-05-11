@@ -28,47 +28,55 @@
 //////////////////////////////////////////////////////////////////////////////
 // QUnit 'ColorMap' module
 //////////////////////////////////////////////////////////////////////////////
-QUnit.module('ColorMap', {
-    setup: function() {},
-    teardown: function() {}
+QUnit.module("ColorMap", {
+    setup: function () {},
+    teardown: function () {},
 });
-QUnit.test('colormap', function(assert) {
-    var map = new ColorMap([{
-        pos: 0,
-        red: 0,
-        green: 0,
-        blue: 15
-    }, {
-        pos: 10,
-        red: 0,
-        green: 0,
-        blue: 50
-    }, {
-        pos: 31,
-        red: 0,
-        green: 65,
-        blue: 75
-    }, {
-        pos: 50,
-        red: 0,
-        green: 85,
-        blue: 0
-    }, {
-        pos: 70,
-        red: 75,
-        green: 80,
-        blue: 0
-    }, {
-        pos: 83,
-        red: 100,
-        green: 60,
-        blue: 0
-    }, {
-        pos: 100,
-        red: 100,
-        green: 0,
-        blue: 0
-    }]);
+QUnit.test("colormap", function (assert) {
+    var map = new ColorMap([
+        {
+            pos: 0,
+            red: 0,
+            green: 0,
+            blue: 15,
+        },
+        {
+            pos: 10,
+            red: 0,
+            green: 0,
+            blue: 50,
+        },
+        {
+            pos: 31,
+            red: 0,
+            green: 65,
+            blue: 75,
+        },
+        {
+            pos: 50,
+            red: 0,
+            green: 85,
+            blue: 0,
+        },
+        {
+            pos: 70,
+            red: 75,
+            green: 80,
+            blue: 0,
+        },
+        {
+            pos: 83,
+            red: 100,
+            green: 60,
+            blue: 0,
+        },
+        {
+            pos: 100,
+            red: 100,
+            green: 0,
+            blue: 0,
+        },
+    ]);
     var color = map.getColor(0);
     assert.equal(color.red, 0);
     assert.equal(color.green, 0);
@@ -162,5 +170,4 @@ QUnit.test('colormap', function(assert) {
     assert.equal(color.red, 255);
     assert.equal(color.green, 255);
     assert.equal(color.blue, 255);
-
 });

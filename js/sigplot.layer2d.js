@@ -26,8 +26,7 @@
 /* global module */
 /* global require */
 
-(function() {
-
+(function () {
     var m = require("./m");
     var mx = require("./mx");
 
@@ -35,7 +34,7 @@
      * @constructor
      * @param plot
      */
-    var Layer2D = function(plot) {
+    var Layer2D = function (plot) {
         this.plot = plot;
 
         this.offset = 0.0;
@@ -80,7 +79,6 @@
     };
 
     Layer2D.prototype = {
-
         /**
          * Initializes the layer to display the provided data.
          *
@@ -92,7 +90,7 @@
          * @memberOf Layer2D
          * @private
          */
-        init: function(hcb) {
+        init: function (hcb) {
             var Gx = this.plot._Gx;
             var Mx = this.plot._Mx;
 
@@ -104,9 +102,8 @@
                 this.position = 0;
                 this.frame = 0;
 
-
-                this.lps = this.hcb.lps || Math.ceil(Math.max(1, (Mx.b - Mx.t)));
-                m.addPipeWriteListener(this.hcb, function() {
+                this.lps = this.hcb.lps || Math.ceil(Math.max(1, Mx.b - Mx.t));
+                m.addPipeWriteListener(this.hcb, function () {
                     self._onpipewrite();
                 });
             } else {
@@ -118,11 +115,10 @@
             this.ybufn = 0;
             this.drawmode = "scrolling"; // "falling", "rising"
 
-
             if (hcb["class"] <= 2) {
                 this.xsub = -1;
                 this.ysub = 1;
-                this.cx = (hcb.format[0] === 'C');
+                this.cx = hcb.format[0] === "C";
             } else {
                 // TODO
             }
@@ -144,12 +140,12 @@
             } else {
                 this.xstart = hcb.xstart;
                 this.xdelta = hcb.xdelta;
-                var d = hcb.xstart + (hcb.xdelta * hcb.subsize);
+                var d = hcb.xstart + hcb.xdelta * hcb.subsize;
                 this.xmin = this.hcb.xmin || Math.min(hcb.xstart, d);
                 this.xmax = this.hcb.xmax || Math.max(hcb.xstart, d);
                 this.ystart = hcb.ystart;
                 this.ydelta = hcb.ydelta;
-                var d = hcb.ystart + (hcb.ydelta * this.lps);
+                var d = hcb.ystart + hcb.ydelta * this.lps;
                 this.ymin = this.hcb.ymin || Math.min(hcb.ystart, d);
                 this.ymax = this.hcb.ymax || Math.max(hcb.ystart, d);
             }
@@ -161,22 +157,20 @@
             if (this.lpb === 0) {
                 this.lpb = this.yframe;
             }
-            if (!this.lpb || (this.lpb <= 0)) {
+            if (!this.lpb || this.lpb <= 0) {
                 this.lpb = 16;
             }
             this.lpb = Math.max(1, this.lpb / this.yc) * this.yc;
 
             this.xlab = hcb.xunits;
             this.ylab = hcb.yunits; // might be undefined
-
         },
 
-        _onpipewrite: function() {
+        _onpipewrite: function () {
             var Gx = this.plot._Gx;
             var Mx = this.plot._Mx;
 
-            while (m.pavail(this.hcb) >= (this.hcb.subsize * this.hcb.spa)) {
-
+            while (m.pavail(this.hcb) >= this.hcb.subsize * this.hcb.spa) {
                 // if we aren't scrolling, than update the values
                 // so that the axis scrolls with the data.  The below
                 // code might seem counter intuitive, but given the
@@ -187,7 +181,7 @@
                 if (this.drawmode !== "scrolling") {
                     this.hcb.ystart += this.hcb.ydelta;
                     this.ystart = this.hcb.ystart;
-                    this.ymin = this.hcb.ystart - (this.hcb.ydelta * (this.lps));
+                    this.ymin = this.hcb.ystart - this.hcb.ydelta * this.lps;
                     this.ymax = this.hcb.ystart;
                 }
 
@@ -206,7 +200,8 @@
                     this.ystart = 0;
                     this.ymin = 0;
                     this.ymax = ylength;
-                    if (this.position >= this.lps) { // if lps got resized make sure we don't go out of bounds
+                    if (this.position >= this.lps) {
+                        // if lps got resized make sure we don't go out of bounds
                         this.position = 0;
                     }
                 } else {
@@ -219,8 +214,13 @@
                 }
 
                 // grab one row worth of data
-                var ngot = m.grabx(this.hcb, this.buf, this.hcb.subsize * this.hcb.spa);
-                if (ngot === 0) { // shouldn't happen because of the pavail check
+                var ngot = m.grabx(
+                    this.hcb,
+                    this.buf,
+                    this.hcb.subsize * this.hcb.spa
+                );
+                if (ngot === 0) {
+                    // shouldn't happen because of the pavail check
                     m.log.error("Internal error");
                     return;
                 }
@@ -232,7 +232,12 @@
                     } else if (Gx.cmode === 2) {
                         if (Gx.plab === 25) {
                             m.cvpha(this.buf, zpoint, zpoint.length);
-                            m.vsmul(zpoint, 1.0 / (2 * Math.PI), zpoint, zpoint.length);
+                            m.vsmul(
+                                zpoint,
+                                1.0 / (2 * Math.PI),
+                                zpoint,
+                                zpoint.length
+                            );
                         } else if (Gx.plab !== 24) {
                             m.cvpha(this.buf, zpoint, zpoint.length);
                         } else {
@@ -241,28 +246,44 @@
                     } else if (Gx.cmode === 3) {
                         m.vmov(this.buf, this.skip, zpoint, 1, zpoint.length);
                     } else if (Gx.cmode === 4) {
-                        m.vmov(this.buf.subarray(1), this.skip, zpoint, 1, zpoint.length);
-                    } else if (Gx.cmode === 5) { // IR
+                        m.vmov(
+                            this.buf.subarray(1),
+                            this.skip,
+                            zpoint,
+                            1,
+                            zpoint.length
+                        );
+                    } else if (Gx.cmode === 5) {
+                        // IR
                         m.vfill(zpoint, 0, zpoint.length);
-                    } else if (Gx.cmode === 6) { // 10log
+                    } else if (Gx.cmode === 6) {
+                        // 10log
                         m.cvmag2logscale(this.buf, Gx.dbmin, 10.0, zpoint);
-                    } else if (Gx.cmode === 7) { // 20log
+                    } else if (Gx.cmode === 7) {
+                        // 20log
                         m.cvmag2logscale(this.buf, Gx.dbmin, 20.0, zpoint);
                     }
                 } else {
-                    if (Gx.cmode === 1) { // mag
+                    if (Gx.cmode === 1) {
+                        // mag
                         m.vabs(this.buf, zpoint);
-                    } else if (Gx.cmode === 2) { // phase
+                    } else if (Gx.cmode === 2) {
+                        // phase
                         m.vfill(zpoint, 0, zpoint.length);
-                    } else if (Gx.cmode === 3) { // real
+                    } else if (Gx.cmode === 3) {
+                        // real
                         m.vmov(this.buf, this.skip, zpoint, 1, zpoint.length);
-                    } else if (Gx.cmode === 4) { // imag
+                    } else if (Gx.cmode === 4) {
+                        // imag
                         m.vfill(zpoint, 0, zpoint.length);
-                    } else if (Gx.cmode === 5) { // IR
+                    } else if (Gx.cmode === 5) {
+                        // IR
                         m.vfill(zpoint, 0, zpoint.length);
-                    } else if (Gx.cmode === 6) { // 10log
+                    } else if (Gx.cmode === 6) {
+                        // 10log
                         m.vlogscale(this.buf, Gx.dbmin, 10.0, zpoint);
-                    } else if (Gx.cmode === 7) { // 20log
+                    } else if (Gx.cmode === 7) {
+                        // 20log
                         m.vlogscale(this.buf, Gx.dbmin, 20.0, zpoint);
                     }
                 }
@@ -283,7 +304,7 @@
                     zmin = min;
                     zmax = max;
                 } else if (Gx.autol > 1) {
-                    var fac = 1.0 / (Math.max(Gx.autol, 1));
+                    var fac = 1.0 / Math.max(Gx.autol, 1);
                     zmin = Gx.zmin * fac + min * (1.0 - fac);
                     zmax = Gx.zmax * fac + max * (1.0 - fac);
                 } else if (Gx.autol < 0) {
@@ -291,15 +312,15 @@
                     // 5 like the original XRTRASTER; however,
                     // don't actually override Gx.autol since
                     // other layers may behave differently
-                    var fac = 1.0 / (Math.max(5, 1));
+                    var fac = 1.0 / Math.max(5, 1);
                     zmin = Gx.zmin * fac + min * (1.0 - fac);
                     zmax = Gx.zmax * fac + max * (1.0 - fac);
                 }
 
-                if (((Gx.autoz & 1) !== 0)) {
+                if ((Gx.autoz & 1) !== 0) {
                     Gx.zmin = zmin;
                 }
-                if (((Gx.autoz & 2) !== 0)) {
+                if ((Gx.autoz & 2) !== 0) {
                     Gx.zmax = zmax;
                 }
                 if (Gx.p_cuts) {
@@ -312,7 +333,6 @@
                             this.zbuf[i] = zpoint[b];
                             b++;
                         }
-
                     }
                     if (this.drawmode === "falling") {
                         //shift and fill in the next row of data.
@@ -339,7 +359,15 @@
                 }
 
                 if (this.img) {
-                    mx.update_image_row(Mx, this.img, zpoint, this.position, Gx.zmin, Gx.zmax, this.xcompression);
+                    mx.update_image_row(
+                        Mx,
+                        this.img,
+                        zpoint,
+                        this.position,
+                        Gx.zmin,
+                        Gx.zmax,
+                        this.xcompression
+                    );
                 }
                 this.frame += 1;
                 if (this.drawmode === "scrolling") {
@@ -355,18 +383,26 @@
             }
         },
 
-        get_data: function() {
+        get_data: function () {
             var HCB = this.hcb;
 
             if (!this.buf) {
                 if (this.hcb.pipe) {
                     // For pipes, we allocate buf and zbuf to only hold one line of
                     // data
-                    this.buf = this.hcb.createArray(null, 0, this.hcb.subsize * this.hcb.spa);
+                    this.buf = this.hcb.createArray(
+                        null,
+                        0,
+                        this.hcb.subsize * this.hcb.spa
+                    );
                     this.zbuf = new m.PointArray(this.hcb.subsize);
                 } else {
                     // Otherwise, we allocate for the entire image
-                    this.buf = this.hcb.createArray(null, 0, this.lps * this.hcb.subsize * this.hcb.spa);
+                    this.buf = this.hcb.createArray(
+                        null,
+                        0,
+                        this.lps * this.hcb.subsize * this.hcb.spa
+                    );
                     this.zbuf = new m.PointArray(this.lps * this.hcb.subsize);
                 }
             }
@@ -383,41 +419,48 @@
          * @param x
          * @param y
          */
-        get_z: function(x, y) {
+        get_z: function (x, y) {
             var ix = Math.floor(x / this.hcb.xdelta);
             var iy = Math.floor(y / this.hcb.ydelta);
-            var zidx = (iy * this.hcb.subsize) + ix;
+            var zidx = iy * this.hcb.subsize + ix;
             return this.zbuf[zidx];
         },
 
-        change_settings: function(settings) {
+        change_settings: function (settings) {
             var Gx = this.plot._Gx;
             if (settings.subsize) {
                 this.hcb.subsize = settings.subsize;
                 this.hcb.ape = settings.subsize;
-                this.hcb.size = this.hcb.dview.length / (this.hcb.spa * this.hcb.ape);
+                this.hcb.size =
+                    this.hcb.dview.length / (this.hcb.spa * this.hcb.ape);
                 this.lps = Math.ceil(this.hcb.size);
-                var d = this.hcb.ystart + (this.hcb.ydelta * this.lps);
+                var d = this.hcb.ystart + this.hcb.ydelta * this.lps;
                 this.ymin = this.hcb.ymin || Math.min(this.hcb.ystart, d);
                 this.ymax = this.hcb.ymax || Math.max(this.hcb.ystart, d);
             }
             if (settings.cmode !== undefined) {
                 this.img = undefined;
-                if (((Gx.autoz & 1) !== 0)) {
+                if ((Gx.autoz & 1) !== 0) {
                     Gx.zmin = undefined;
                 }
-                if (((Gx.autoz & 2) !== 0)) {
+                if ((Gx.autoz & 2) !== 0) {
                     Gx.zmax = undefined;
                 }
             }
-            if ((settings.zmin !== undefined) ||
-                (settings.zmax !== undefined) ||
-                (settings.autoz !== undefined)) {
+            if (
+                settings.zmin !== undefined ||
+                settings.zmax !== undefined ||
+                settings.autoz !== undefined
+            ) {
                 this.img = undefined;
             }
-            if ((settings.drawmode !== undefined) || (settings.xmin !== undefined) ||
-                (settings.xmax !== undefined) || (settings.xdelta !== undefined) ||
-                (settings.xstart !== undefined)) {
+            if (
+                settings.drawmode !== undefined ||
+                settings.xmin !== undefined ||
+                settings.xmax !== undefined ||
+                settings.xdelta !== undefined ||
+                settings.xstart !== undefined
+            ) {
                 if (settings.drawmode === undefined) {
                     settings.drawmode = this.drawmode;
                 }
@@ -426,10 +469,18 @@
                 this.position = 0;
                 this.frame = 0;
                 if (this.hcb.pipe) {
-                    this.buf = this.hcb.createArray(null, 0, this.hcb.subsize * this.hcb.spa);
+                    this.buf = this.hcb.createArray(
+                        null,
+                        0,
+                        this.hcb.subsize * this.hcb.spa
+                    );
                     this.zbuf = new m.PointArray(this.hcb.subsize);
                 } else {
-                    this.buf = this.hcb.createArray(null, 0, this.lps * this.hcb.subsize * this.hcb.spa);
+                    this.buf = this.hcb.createArray(
+                        null,
+                        0,
+                        this.lps * this.hcb.subsize * this.hcb.spa
+                    );
                     this.zbuf = new m.PointArray(this.lps * this.hcb.subsize);
                 }
                 this.img = undefined;
@@ -456,10 +507,20 @@
                 // If p_cuts are enabled from streams, we need to keep the entire zbuf in memory
                 if (this.hcb.pipe) {
                     if (!p_cuts) {
-                        this.buf = this.hcb.createArray(null, 0, this.lps * this.hcb.subsize * this.hcb.spa);
-                        this.zbuf = new m.PointArray(this.lps * this.hcb.subsize);
+                        this.buf = this.hcb.createArray(
+                            null,
+                            0,
+                            this.lps * this.hcb.subsize * this.hcb.spa
+                        );
+                        this.zbuf = new m.PointArray(
+                            this.lps * this.hcb.subsize
+                        );
                     } else {
-                        this.buf = this.hcb.createArray(null, 0, this.hcb.subsize * this.hcb.spa);
+                        this.buf = this.hcb.createArray(
+                            null,
+                            0,
+                            this.hcb.subsize * this.hcb.spa
+                        );
                         this.zbuf = new m.PointArray(this.hcb.subsize);
                     }
                 }
@@ -492,15 +553,20 @@
             }
         },
 
-        reload: function(data, hdrmod) {
+        reload: function (data, hdrmod) {
             if (this.hcb.pipe) {
                 throw "reload cannot be used with pipe, use push instead";
             }
-            var axis_change = (this.hcb.dview.length !== data.length) || hdrmod;
+            var axis_change = this.hcb.dview.length !== data.length || hdrmod;
             if (hdrmod) {
                 for (var k in hdrmod) {
                     this.hcb[k] = hdrmod[k];
-                    if (k === "xstart" || k === "xdelta" | k === "ystart" || k === "ydelta" || k === "subsize") {
+                    if (
+                        k === "xstart" ||
+                        (k === "xdelta") | (k === "ystart") ||
+                        k === "ydelta" ||
+                        k === "subsize"
+                    ) {
                         axis_change = true;
                     }
                 }
@@ -523,7 +589,7 @@
             var xmax = this.xmax;
 
             if (axis_change) {
-                var d = this.hcb.xstart + (this.hcb.xdelta * this.hcb.subsize);
+                var d = this.hcb.xstart + this.hcb.xdelta * this.hcb.subsize;
                 this.xmin = Math.min(this.hcb.xstart, d);
                 this.xmax = Math.max(this.hcb.xstart, d);
                 this.xdelta = this.hcb.xdelta;
@@ -534,11 +600,11 @@
 
             return {
                 xmin: xmin,
-                xmax: xmax
+                xmax: xmax,
             };
         },
 
-        push: function(data, hdrmod, sync) {
+        push: function (data, hdrmod, sync) {
             var Gx = this.plot._Gx;
             var rescale = false;
             var timestamp = null;
@@ -550,15 +616,25 @@
                 }
 
                 // If the subsize changes, we need to invalidate the buffer and image
-                if ((hdrmod.subsize) && (hdrmod.subsize !== this.hcb.subsize)) {
+                if (hdrmod.subsize && hdrmod.subsize !== this.hcb.subsize) {
                     this.hcb.subsize = hdrmod.subsize;
                     if (this.hcb.pipe && !Gx.p_cuts) {
-                        this.buf = this.hcb.createArray(null, 0, this.hcb.subsize * this.hcb.spa);
+                        this.buf = this.hcb.createArray(
+                            null,
+                            0,
+                            this.hcb.subsize * this.hcb.spa
+                        );
                         this.zbuf = new m.PointArray(this.hcb.subsize);
                         this.img = undefined;
                     } else {
-                        this.buf = this.hcb.createArray(null, 0, this.lps * this.hcb.subsize * this.hcb.spa);
-                        this.zbuf = new m.PointArray(this.lps * this.hcb.subsize);
+                        this.buf = this.hcb.createArray(
+                            null,
+                            0,
+                            this.lps * this.hcb.subsize * this.hcb.spa
+                        );
+                        this.zbuf = new m.PointArray(
+                            this.lps * this.hcb.subsize
+                        );
                         this.img = undefined;
                     }
                     rescale = true;
@@ -579,7 +655,8 @@
                 }
 
                 if (rescale) {
-                    var d = this.hcb.xstart + (this.hcb.xdelta * this.hcb.subsize);
+                    var d =
+                        this.hcb.xstart + this.hcb.xdelta * this.hcb.subsize;
                     this.xmin = Math.min(this.hcb.xstart, d);
                     this.xmax = Math.max(this.hcb.xstart, d);
                     this.xdelta = this.hcb.xdelta;
@@ -587,15 +664,14 @@
 
                     this.ystart = this.hcb.ystart;
                     this.ydelta = this.hcb.ydelta;
-                    var d = this.hcb.ystart + (this.hcb.ydelta * this.lps);
+                    var d = this.hcb.ystart + this.hcb.ydelta * this.lps;
                     this.ymin = Math.min(this.hcb.ystart, d);
                     this.ymax = Math.max(this.hcb.ystart, d);
                 }
-
             }
 
-            if ((this.hcb.yunits === 1) || (this.hcb.yunits === 4)) {
-                if ((!this.hcb["timecode"]) && (timestamp)) {
+            if (this.hcb.yunits === 1 || this.hcb.yunits === 4) {
+                if (!this.hcb["timecode"] && timestamp) {
                     // if we don't have a timecode set, we can use
                     // the timestamp and reset ystart
                     this.hcb.timecode = m.j1970toj1950(timestamp);
@@ -614,10 +690,9 @@
             }
 
             return rescale;
-
         },
 
-        get_pan_bounds: function(view) {
+        get_pan_bounds: function (view) {
             let prep = this.prep();
 
             if (prep) {
@@ -626,16 +701,16 @@
                     xmin: this.xmin,
                     xmax: this.xmax,
                     ymin: this.ymin,
-                    ymax: this.ymax
+                    ymax: this.ymax,
                 };
             } else {
                 return {
-                    num: 0
+                    num: 0,
                 };
             }
         },
 
-        prep: function(xmin, xmax) {
+        prep: function (xmin, xmax) {
             var Gx = this.plot._Gx;
             var Mx = this.plot._Mx;
 
@@ -657,7 +732,7 @@
             if (!this.hcb.pipe) {
                 // if we aren't a pipe we do a full prep
 
-                if ((Gx.cmode === 5) || (this.xsub > 0)) {
+                if (Gx.cmode === 5 || this.xsub > 0) {
                     // TODO - is this mode supported in rasters?
                 } else if (npts > 0) {
                     var xstart = this.xstart;
@@ -667,11 +742,39 @@
                         n1 = 0;
                         n2 = npts - 1;
                     } else if (xdelta >= 0.0) {
-                        n1 = Math.max(1.0, Math.min(d, Math.round((xmin - xstart) / xdelta))) - 1.0;
-                        n2 = Math.max(1.0, Math.min(d, Math.round((xmax - xstart) / xdelta) + 2.0)) - 1.0;
+                        n1 =
+                            Math.max(
+                                1.0,
+                                Math.min(
+                                    d,
+                                    Math.round((xmin - xstart) / xdelta)
+                                )
+                            ) - 1.0;
+                        n2 =
+                            Math.max(
+                                1.0,
+                                Math.min(
+                                    d,
+                                    Math.round((xmax - xstart) / xdelta) + 2.0
+                                )
+                            ) - 1.0;
                     } else {
-                        n1 = Math.max(1.0, Math.min(d, Math.round((xmax - xstart) / xdelta) - 1.0)) - 1.0;
-                        n2 = Math.max(1.0, Math.min(d, Math.round((xmin - xstart) / xdelta) + 2.0)) - 1.0;
+                        n1 =
+                            Math.max(
+                                1.0,
+                                Math.min(
+                                    d,
+                                    Math.round((xmax - xstart) / xdelta) - 1.0
+                                )
+                            ) - 1.0;
+                        n2 =
+                            Math.max(
+                                1.0,
+                                Math.min(
+                                    d,
+                                    Math.round((xmin - xstart) / xdelta) + 2.0
+                                )
+                            ) - 1.0;
                     }
 
                     npts = n2 - n1 + 1;
@@ -686,7 +789,7 @@
                     return;
                 }
 
-                if ((Gx.cmode === 5) || (this.ysub > 0)) {
+                if (Gx.cmode === 5 || this.ysub > 0) {
                     // TODO - is this mode supported in rasters?
                 } else if (npts > 0) {
                     var ystart = this.ystart;
@@ -696,11 +799,39 @@
                         n1 = 0;
                         n2 = npts - 1;
                     } else if (ydelta >= 0.0) {
-                        n1 = Math.max(1.0, Math.min(d, Math.round((xmin - ystart) / ydelta))) - 1.0;
-                        n2 = Math.max(1.0, Math.min(d, Math.round((xmax - ystart) / ydelta) + 2.0)) - 1.0;
+                        n1 =
+                            Math.max(
+                                1.0,
+                                Math.min(
+                                    d,
+                                    Math.round((xmin - ystart) / ydelta)
+                                )
+                            ) - 1.0;
+                        n2 =
+                            Math.max(
+                                1.0,
+                                Math.min(
+                                    d,
+                                    Math.round((xmax - ystart) / ydelta) + 2.0
+                                )
+                            ) - 1.0;
                     } else {
-                        n1 = Math.max(1.0, Math.min(d, Math.round((xmax - ystart) / ydelta) - 1.0)) - 1.0;
-                        n2 = Math.max(1.0, Math.min(d, Math.round((xmin - ystart) / ydelta) + 2.0)) - 1.0;
+                        n1 =
+                            Math.max(
+                                1.0,
+                                Math.min(
+                                    d,
+                                    Math.round((xmax - ystart) / ydelta) - 1.0
+                                )
+                            ) - 1.0;
+                        n2 =
+                            Math.max(
+                                1.0,
+                                Math.min(
+                                    d,
+                                    Math.round((xmin - ystart) / ydelta) + 2.0
+                                )
+                            ) - 1.0;
                     }
 
                     npts = n2 - n1 + 1;
@@ -711,42 +842,79 @@
                 }
 
                 if (this.cx) {
-                    if (Gx.cmode === 1) { // mag
+                    if (Gx.cmode === 1) {
+                        // mag
                         m.cvmag(this.buf, this.zbuf, this.zbuf.length);
-                    } else if (Gx.cmode === 2) { // phase
+                    } else if (Gx.cmode === 2) {
+                        // phase
                         if (Gx.plab === 25) {
                             m.cvpha(this.buf, this.zbuf, this.zbuf.length);
-                            m.vsmul(this.zbuf, 1.0 / (2 * Math.PI), this.zbuf, this.zbuf.length);
+                            m.vsmul(
+                                this.zbuf,
+                                1.0 / (2 * Math.PI),
+                                this.zbuf,
+                                this.zbuf.length
+                            );
                         } else if (Gx.plab !== 24) {
                             m.cvpha(this.buf, this.zbuf, this.zbuf.length);
                         } else {
                             m.cvphad(this.buf, this.zbuf, this.zbuf.length);
                         }
-                    } else if (Gx.cmode === 3) { // real
-                        m.vmov(this.buf, this.skip, this.zbuf, 1, this.zbuf.length);
-                    } else if (Gx.cmode === 4) { // imag
-                        m.vmov(this.buf.subarray(1), this.skip, this.zbuf, 1, this.zbuf.length);
-                    } else if (Gx.cmode === 5) { // IR - what does this mean for a raster?
+                    } else if (Gx.cmode === 3) {
+                        // real
+                        m.vmov(
+                            this.buf,
+                            this.skip,
+                            this.zbuf,
+                            1,
+                            this.zbuf.length
+                        );
+                    } else if (Gx.cmode === 4) {
+                        // imag
+                        m.vmov(
+                            this.buf.subarray(1),
+                            this.skip,
+                            this.zbuf,
+                            1,
+                            this.zbuf.length
+                        );
+                    } else if (Gx.cmode === 5) {
+                        // IR - what does this mean for a raster?
                         m.vfill(this.zbuf, 0, this.zbuf.length);
-                    } else if (Gx.cmode === 6) { // 10log
+                    } else if (Gx.cmode === 6) {
+                        // 10log
                         m.cvmag2logscale(this.buf, Gx.dbmin, 10.0, this.zbuf);
-                    } else if (Gx.cmode === 7) { // 20log
+                    } else if (Gx.cmode === 7) {
+                        // 20log
                         m.cvmag2logscale(this.buf, Gx.dbmin, 20.0, this.zbuf);
                     }
                 } else {
-                    if (Gx.cmode === 1) { // mag
+                    if (Gx.cmode === 1) {
+                        // mag
                         m.vabs(this.buf, this.zbuf);
-                    } else if (Gx.cmode === 2) { // phase
+                    } else if (Gx.cmode === 2) {
+                        // phase
                         m.vfill(this.zbuf, 0, this.zbuf.length);
-                    } else if (Gx.cmode === 3) { // real
-                        m.vmov(this.buf, this.skip, this.zbuf, 1, this.zbuf.length);
-                    } else if (Gx.cmode === 4) { // imag
+                    } else if (Gx.cmode === 3) {
+                        // real
+                        m.vmov(
+                            this.buf,
+                            this.skip,
+                            this.zbuf,
+                            1,
+                            this.zbuf.length
+                        );
+                    } else if (Gx.cmode === 4) {
+                        // imag
                         m.vfill(this.zbuf, 0, this.zbuf.length);
-                    } else if (Gx.cmode === 5) { // IR
+                    } else if (Gx.cmode === 5) {
+                        // IR
                         m.vfill(this.zbuf, 0, this.zbuf.length);
-                    } else if (Gx.cmode === 6) { // 10log
+                    } else if (Gx.cmode === 6) {
+                        // 10log
                         m.vlogscale(this.buf, Gx.dbmin, 10.0, this.zbuf);
-                    } else if (Gx.cmode === 7) { // 20log
+                    } else if (Gx.cmode === 7) {
+                        // 20log
                         m.vlogscale(this.buf, Gx.dbmin, 20.0, this.zbuf);
                     }
                 }
@@ -758,14 +926,14 @@
                 var min = 0;
                 var max = 0;
 
-                if ((Gx.autol <= 0) || this.hcb.pipe) {
+                if (Gx.autol <= 0 || this.hcb.pipe) {
                     // If autol is not used or the layer is rendering
                     // a pipe, then use the basic z-scaling method
                     if (zpoint.length > 0) {
                         min = zpoint[0];
                         max = zpoint[0];
                         for (var i = 0; i < zpoint.length; i++) {
-                            if ((i / this.xframe) >= this.lpb) {
+                            if (i / this.xframe >= this.lpb) {
                                 break;
                             }
                             if (zpoint[i] < min) {
@@ -777,14 +945,14 @@
                         }
                     }
 
-                    if (((Gx.autoz & 1) !== 0)) {
+                    if ((Gx.autoz & 1) !== 0) {
                         if (Gx.zmin !== undefined) {
                             Gx.zmin = Math.min(Gx.zmin, min);
                         } else {
                             Gx.zmin = min;
                         }
                     }
-                    if (((Gx.autoz & 2) !== 0)) {
+                    if ((Gx.autoz & 2) !== 0) {
                         if (Gx.zmax !== undefined) {
                             Gx.zmax = Math.min(Gx.zmax, max);
                         } else {
@@ -792,28 +960,32 @@
                         }
                     }
 
-                    this.img = mx.create_image(Mx,
+                    this.img = mx.create_image(
+                        Mx,
                         this.zbuf,
                         this.hcb.subsize,
                         xsize,
                         this.lps,
                         Gx.zmin + Gx.zoff,
                         Gx.zmax + Gx.zoff,
-                        this.xcompression);
+                        this.xcompression
+                    );
                 } else {
                     // otherwise autol > 1
                     var nny = this.hcb.size;
-                    var fac = 1.0 / (Math.max(Gx.autol, 1));
+                    var fac = 1.0 / Math.max(Gx.autol, 1);
 
                     // If the image isn't yet created, make one now
                     if (!this.img) {
-                        this.img = mx.create_image(Mx,
+                        this.img = mx.create_image(
+                            Mx,
                             this.zbuf,
                             this.hcb.subsize,
                             xsize,
                             this.lps,
                             Gx.zmin + Gx.zoff,
-                            Gx.zmax + Gx.zoff);
+                            Gx.zmax + Gx.zoff
+                        );
                     }
 
                     Gx.zmin = 0;
@@ -829,21 +1001,22 @@
                             }
 
                             // Auto-scale this raster line
-                            if ((Gx.autoz !== 2) && (min !== undefined)) {
-                                Gx.zmin = (min * fac) + (Gx.zmin * (1.0 - fac));
+                            if (Gx.autoz !== 2 && min !== undefined) {
+                                Gx.zmin = min * fac + Gx.zmin * (1.0 - fac);
                             }
-                            if ((Gx.autoz !== 1) && (max !== undefined)) {
-                                Gx.zmax = (max * fac) + (Gx.zmax * (1.0 - fac));
+                            if (Gx.autoz !== 1 && max !== undefined) {
+                                Gx.zmax = max * fac + Gx.zmax * (1.0 - fac);
                             }
 
                             // Render the row
-                            mx.update_image_row(Mx,
+                            mx.update_image_row(
+                                Mx,
                                 this.img,
                                 zpoint.subarray(noff, noff + this.xframe),
                                 yy,
                                 Gx.zmin,
-                                Gx.zmax);
-
+                                Gx.zmax
+                            );
                         }
                     }
                 }
@@ -857,14 +1030,16 @@
                     if (Gx.zmax === undefined) {
                         Gx.zmax = 0;
                     }
-                    this.img = mx.create_image(Mx,
+                    this.img = mx.create_image(
+                        Mx,
                         null,
                         this.hcb.subsize,
                         xsize,
                         this.lps,
                         Gx.zmin + Gx.zoff,
                         Gx.zmax + Gx.zoff,
-                        this.xcompression);
+                        this.xcompression
+                    );
                 }
             }
 
@@ -873,10 +1048,10 @@
             this.img.origin = Mx.origin;
 
             // Make the parts without data transparent
-            if (this.hcb.pipe && (this.frame < this.lps)) {
+            if (this.hcb.pipe && this.frame < this.lps) {
                 var imgd = new Uint32Array(this.img);
                 if (this.drawmode === "rising") {
-                    for (var i = 0; i < imgd.length - (this.frame * xsize); i++) {
+                    for (var i = 0; i < imgd.length - this.frame * xsize; i++) {
                         imgd[i] = 0;
                     }
                 } else {
@@ -891,7 +1066,7 @@
                 panxmin: this.xmin,
                 panxmax: this.xmax,
                 panymin: this.ymin,
-                panymax: this.ymax
+                panymax: this.ymax,
             };
         },
 
@@ -902,13 +1077,12 @@
          *     the y-position to extract the x-cut, leave undefined to
          *     leave xCut
          */
-        xCut: function(ypos) {
+        xCut: function (ypos) {
             var Mx = this.plot._Mx;
             var Gx = this.plot._Gx;
 
             //display the x-cut of the raster
             if (ypos !== undefined) {
-
                 // Stash important values
                 this.cut_stash = {};
                 this.cut_stash.ylabel = Gx.ylabel;
@@ -925,7 +1099,7 @@
                     this.x_cut_data = [];
                     var width = this.xframe;
                     var row = Math.round((ypos - this.ystart) / this.ydelta);
-                    if ((row < 0) || (row > this.lps)) {
+                    if (row < 0 || row > this.lps) {
                         return;
                     }
                     var start = row * width;
@@ -938,15 +1112,15 @@
                 this.old_autol = Gx.autol;
                 this.plot.change_settings({
                     drawmode: "undefined",
-                    autol: -1
+                    autol: -1,
                 });
 
-                var cx = ((Gx.lyr.length > 0) && this.cx);
+                var cx = Gx.lyr.length > 0 && this.cx;
                 if (Gx.cmode === 1) {
                     Gx.ylabel = m.UNITS[28][0];
                 } else if (Gx.cmode === 2) {
                     Gx.ylabel = Gx.plab;
-                } else if ((Gx.cmode === 3) && (cx)) {
+                } else if (Gx.cmode === 3 && cx) {
                     Gx.ylabel = m.UNITS[21][0];
                 } else if (Gx.cmode === 4) {
                     Gx.ylabel = m.UNITS[22][0];
@@ -960,7 +1134,10 @@
                     Gx.ylabel = "Intensity";
                 }
 
-                if ((m.UNITS[Gx.xlab][0] !== "None") && (m.UNITS[Gx.xlab][0] !== "Unknown")) {
+                if (
+                    m.UNITS[Gx.xlab][0] !== "None" &&
+                    m.UNITS[Gx.xlab][0] !== "Unknown"
+                ) {
                     Gx.xlabel = m.UNITS[Gx.xlab][0];
                 } else {
                     Gx.xlabel = "Frequency";
@@ -968,13 +1145,17 @@
                 Gx.xlabel += "    CURRENTLY IN X_CUT MODE";
                 Mx.origin = 1;
 
-                this.xcut_layer = this.plot.overlay_array(this.x_cut_data, {
-                    xstart: this.xstart,
-                    xdelta: this.xdelta
-                }, {
-                    name: "x_cut_data",
-                    line: 3
-                });
+                this.xcut_layer = this.plot.overlay_array(
+                    this.x_cut_data,
+                    {
+                        xstart: this.xstart,
+                        xdelta: this.xdelta,
+                    },
+                    {
+                        name: "x_cut_data",
+                        line: 3,
+                    }
+                );
 
                 //do not display any other layers
                 var xcut_lyrn = this.plot.get_lyrn(this.xcut_layer);
@@ -1008,10 +1189,10 @@
                 for (var h = 1; h < Mx.level + 1; h++) {
                     Mx.stk[h].ymin = ymin;
                     Mx.stk[h].ymax = ymax;
-                    Mx.stk[h].yscl = (Mx.stk[h].ymax - Mx.stk[h].ymin) / (Mx.b - Mx.t);
+                    Mx.stk[h].yscl =
+                        (Mx.stk[h].ymax - Mx.stk[h].ymin) / (Mx.b - Mx.t);
                 }
                 this.plot.rescale();
-
             } else if (Gx.x_cut_press_on) {
                 // ypos wasn't provided so turn x-cut off
                 Gx.x_cut_press_on = false;
@@ -1032,13 +1213,12 @@
                     Gx.panxmax = this.cut_stash.panxmax;
                     this.cut_stash = undefined;
 
-
                     this.plot.rescale();
                     this.plot.refresh();
                     this.xcut_layer = undefined;
                     this.plot.change_settings({
                         drawmode: this.old_drawmode,
-                        autol: this.old_autol
+                        autol: this.old_autol,
                     });
                 }
             }
@@ -1051,7 +1231,7 @@
          *     the x-position to extract the y-cut, leave undefined to
          *     leave yCut
          */
-        yCut: function(xpos) {
+        yCut: function (xpos) {
             var Mx = this.plot._Mx;
             var Gx = this.plot._Gx;
 
@@ -1076,7 +1256,7 @@
 
                     this.y_cut_data = [];
                     var col = Math.round((xpos - this.xstart) / this.xdelta);
-                    for (i = col; i < (width * height); i += width) {
+                    for (i = col; i < width * height; i += width) {
                         this.y_cut_data.push(this.buf[i]);
                     }
                 }
@@ -1087,16 +1267,15 @@
 
                 this.plot.change_settings({
                     drawmode: "undefined",
-                    autol: -1
+                    autol: -1,
                 });
 
-
-                var cx = ((Gx.lyr.length > 0) && this.cx);
+                var cx = Gx.lyr.length > 0 && this.cx;
                 if (Gx.cmode === 1) {
                     Gx.ylabel = m.UNITS[28][0];
                 } else if (Gx.cmode === 2) {
                     Gx.ylabel = Gx.plab;
-                } else if ((Gx.cmode === 3) && (cx)) {
+                } else if (Gx.cmode === 3 && cx) {
                     Gx.ylabel = m.UNITS[21][0];
                 } else if (Gx.cmode === 4) {
                     Gx.ylabel = m.UNITS[22][0];
@@ -1110,21 +1289,27 @@
                     Gx.ylabel = "Intensity";
                 }
 
-                if ((m.UNITS[Gx.ylab][0] !== "None") && (m.UNITS[Gx.ylab][0] !== "Unknown")) {
+                if (
+                    m.UNITS[Gx.ylab][0] !== "None" &&
+                    m.UNITS[Gx.ylab][0] !== "Unknown"
+                ) {
                     Gx.xlabel = m.UNITS[Gx.ylab][0];
                 } else {
                     Gx.xlabel = "Time";
                 }
                 Gx.xlabel += "    CURRENTLY IN Y_CUT MODE";
                 Mx.origin = 1;
-                this.ycut_layer = this.plot.overlay_array(this.y_cut_data, {
-                    xstart: this.ystart,
-                    xdelta: this.ydelta
-                }, {
-                    name: "y_cut_data",
-                    line: 3
-                });
-
+                this.ycut_layer = this.plot.overlay_array(
+                    this.y_cut_data,
+                    {
+                        xstart: this.ystart,
+                        xdelta: this.ydelta,
+                    },
+                    {
+                        name: "y_cut_data",
+                        line: 3,
+                    }
+                );
 
                 //do not display any other layers
                 var ycut_lyrn = this.plot.get_lyrn(this.ycut_layer);
@@ -1160,12 +1345,14 @@
                     // the x-axis is now the yvalues
                     Mx.stk[h].xmin = Mx.stk[h].ymin;
                     Mx.stk[h].xmax = Mx.stk[h].ymax;
-                    Mx.stk[h].xscl = (Mx.stk[h].xmax - Mx.stk[h].xmin) / (Mx.r - Mx.t);
+                    Mx.stk[h].xscl =
+                        (Mx.stk[h].xmax - Mx.stk[h].xmin) / (Mx.r - Mx.t);
 
                     // the y-axis is now the zvalues
                     Mx.stk[h].ymin = ymin;
                     Mx.stk[h].ymax = ymax;
-                    Mx.stk[h].yscl = (Mx.stk[h].ymax - Mx.stk[h].ymin) / (Mx.b - Mx.t);
+                    Mx.stk[h].yscl =
+                        (Mx.stk[h].ymax - Mx.stk[h].ymin) / (Mx.b - Mx.t);
                 }
 
                 this.plot.rescale();
@@ -1193,47 +1380,63 @@
                     this.ycut_layer = undefined;
                     this.plot.change_settings({
                         drawmode: this.old_drawmode,
-                        autol: this.old_autol
+                        autol: this.old_autol,
                     });
                 }
             }
         },
 
-        draw: function() {
+        draw: function () {
             var Mx = this.plot._Mx;
             var Gx = this.plot._Gx;
             var HCB = this.hcb;
 
             if (this.hcb.pipe) {
-                var lps = this.hcb.lps || Math.ceil(Math.max(1, (Mx.b - Mx.t)));
-                if ((lps !== this.lps) && this.buf) {
-                    var lps_delta = (lps - this.lps);
+                var lps = this.hcb.lps || Math.ceil(Math.max(1, Mx.b - Mx.t));
+                if (lps !== this.lps && this.buf) {
+                    var lps_delta = lps - this.lps;
                     this.lps = lps;
-                    if (this.position >= this.lps) { // if lps got resized make sure we don't go out of bounds
+                    if (this.position >= this.lps) {
+                        // if lps got resized make sure we don't go out of bounds
                         this.position = 0;
                     }
 
                     if (this.drawmode === "scrolling") {
                         // in scrolling mode, ymin should never change
-                        var d = HCB.ystart + (HCB.ydelta * this.lps);
+                        var d = HCB.ystart + HCB.ydelta * this.lps;
                         this.ymin = Math.min(HCB.ystart, d);
                         this.ymax = Math.max(HCB.ystart, d);
-                        this.img = mx.resize_image_height(Mx, this.img, this.lps);
+                        this.img = mx.resize_image_height(
+                            Mx,
+                            this.img,
+                            this.lps
+                        );
                     } else if (this.drawmode === "falling") {
-                        this.ymax = this.ymin + (HCB.ydelta * this.lps);
-                        this.img = mx.resize_image_height(Mx, this.img, this.lps);
+                        this.ymax = this.ymin + HCB.ydelta * this.lps;
+                        this.img = mx.resize_image_height(
+                            Mx,
+                            this.img,
+                            this.lps
+                        );
                     } else if (this.drawmode === "rising") {
-                        this.ymin = this.ymax - (HCB.ydelta * this.lps);
+                        this.ymin = this.ymax - HCB.ydelta * this.lps;
                         // the img needs to be shifted
                         if (lps_delta > 0) {
-                            this.img = mx.resize_image_height(Mx, this.img, this.lps);
+                            this.img = mx.resize_image_height(
+                                Mx,
+                                this.img,
+                                this.lps
+                            );
                             mx.shift_image_rows(Mx, this.img, lps_delta, true);
                         } else {
                             mx.shift_image_rows(Mx, this.img, lps_delta, true);
-                            this.img = mx.resize_image_height(Mx, this.img, this.lps);
+                            this.img = mx.resize_image_height(
+                                Mx,
+                                this.img,
+                                this.lps
+                            );
                         }
                     }
-
 
                     // reset the image since we now have more lines to render
                     // TODO - can we preserve the image data rather than resetting?
@@ -1243,7 +1446,8 @@
 
             var xmin = Math.max(this.xmin, Mx.stk[Mx.level].xmin);
             var xmax = Math.min(this.xmax, Mx.stk[Mx.level].xmax);
-            if (xmin >= xmax) { // no data but do scaling
+            if (xmin >= xmax) {
+                // no data but do scaling
                 Gx.panxmin = Math.min(Gx.panxmin, this.xmin);
                 Gx.panxmax = Math.max(Gx.panxmax, this.xmax);
                 return;
@@ -1273,23 +1477,38 @@
             Gx.ye = Math.max(1, Math.round(ry));
 
             // we might need to prep in certian situations
-            if ((!this.img) || (!this.buf) || (Gx.cmode !== this.img.cmode) || (Mx.origin !== this.img.origin)) {
+            if (
+                !this.img ||
+                !this.buf ||
+                Gx.cmode !== this.img.cmode ||
+                Mx.origin !== this.img.origin
+            ) {
                 this.prep(xmin, xmax);
             }
 
             // if there is an image, render it
             if (this.img) {
-                mx.draw_image(Mx, this.img, this.xmin, this.ymin, this.xmax, this.ymax, this.opacity, Gx.rasterSmoothing, this.downscale);
+                mx.draw_image(
+                    Mx,
+                    this.img,
+                    this.xmin,
+                    this.ymin,
+                    this.xmax,
+                    this.ymax,
+                    this.opacity,
+                    Gx.rasterSmoothing,
+                    this.downscale
+                );
             }
 
             // render the scrolling pipe line
             if (this.position !== null && this.drawmode === "scrolling") {
                 var pnt = mx.real_to_pixel(Mx, 0, this.position * this.ydelta);
-                if ((pnt.y > Mx.t) && (pnt.y < Mx.b)) {
+                if (pnt.y > Mx.t && pnt.y < Mx.b) {
                     mx.draw_line(Mx, "white", Mx.l, pnt.y, Mx.r, pnt.y);
                 }
             }
-        }
+        },
     };
 
     /**
@@ -1297,7 +1516,7 @@
      *
      * @private
      */
-    Layer2D.overlay = function(plot, hcb, layerOptions) {
+    Layer2D.overlay = function (plot, hcb, layerOptions) {
         var Gx = plot._Gx;
         var Mx = plot._Mx;
 
@@ -1329,5 +1548,4 @@
     };
 
     module.exports = Layer2D;
-
-}());
+})();

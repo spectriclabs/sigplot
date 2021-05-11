@@ -28,8 +28,7 @@
 /* global module */
 /* global require */
 
-(function() {
-
+(function () {
     var mx = require("./mx");
     var common = require("./common");
 
@@ -43,7 +42,7 @@
         /**
          * pluginInit is called afer the plugin has been added to
          * a plot.
-         * 
+         *
          * @param {object} plot
          *     The plot the plugin was added to.
          */
@@ -57,7 +56,7 @@
 
         /**
          * pluginRefresh is called whenever the plugin need to redraw.
-         * 
+         *
          * Plugins should render their current state to this.canvas.  The canvas
          * is entirely under the control of the plugin can can be cleared or
          * completely filled
@@ -67,14 +66,14 @@
         /**
          * pluginGetMenu is called to obtain the menu structure for the
          * plugin.
-         * 
+         *
          * If a plugin does not have a menu, it does not need to implement this.
          */
         pluginGetMenu() {}
 
         /**
          * Construct the plugin.
-         * 
+         *
          * @param {object} properties
          *     The properties for this plugin.
          */
@@ -89,7 +88,7 @@
             this.defineProperty("display", {
                 defaultValue: true,
                 refreshOnChange: true,
-                help: "changes if the plugin is rendered on the plot or not"
+                help: "changes if the plugin is rendered on the plot or not",
             });
 
             this.pluginSetup();
@@ -100,7 +99,7 @@
         /**
          * Called when the plugin is added to the plot.
          *  @param plot
-         *      The plot the plugin is attahced to 
+         *      The plot the plugin is attahced to
          *  @param canvas
          *      The canvas the plugin should render to
          */
@@ -130,11 +129,11 @@
         }
 
         get Mx() {
-            return (this._plot) ? this._plot._Mx : null;
+            return this._plot ? this._plot._Mx : null;
         }
 
         get Gx() {
-            return (this._plot) ? this._plot._Gx : null;
+            return this._plot ? this._plot._Gx : null;
         }
 
         get canvas() {
@@ -142,7 +141,7 @@
         }
 
         get Context() {
-            return (this._canvas) ? this._canvas.getContext("2d") : null;
+            return this._canvas ? this._canvas.getContext("2d") : null;
         }
 
         /**
@@ -181,9 +180,9 @@
 
         /**
          * Defines a new Property that the Plugin exposes.
-         * 
-         * @param {string} PropertyName 
-         * @param {object} definition 
+         *
+         * @param {string} PropertyName
+         * @param {object} definition
          */
         defineProperty(PropertyName, definition) {
             if (this.definedproperties === undefined) {
@@ -195,7 +194,7 @@
             this.definedproperties[PropertyName] = definition;
 
             // Fluentize the API
-            this[PropertyName] = function() {
+            this[PropertyName] = function () {
                 if (!arguments.length) {
                     return this.properties[PropertyName];
                 }
@@ -219,15 +218,16 @@
 
         resetProperties(overrides) {
             for (let propName in this.definedproperties) {
-                this.properties[propName] = this.definedproperties[propName].defaultValue;
+                this.properties[propName] =
+                    this.definedproperties[propName].defaultValue;
             }
             this.assignProperties(overrides);
         }
 
         /**
          * Updates the Plugin's properties with new values.
-         * 
-         * @param {object} properties 
+         *
+         * @param {object} properties
          */
         assignProperties(properties) {
             let refresh = false;
@@ -250,7 +250,9 @@
                 this.properties[propName] = properties[propName];
                 // make the callback if necessary
                 if (this.definedproperties[propName].callback) {
-                    this.definedproperties[propName].callback(properties[propName]);
+                    this.definedproperties[propName].callback(
+                        properties[propName]
+                    );
                 }
                 // if a refresh is necessary, call it later
                 if (this.definedproperties[propName].refreshOnChange === true) {
@@ -286,7 +288,7 @@
             }
             this._events[type].push({
                 cb: fn,
-                ctx: context
+                ctx: context,
             });
         }
 
@@ -296,7 +298,7 @@
         emit(type, data) {
             var event = Object.assign({}, data, {
                 type: type,
-                target: this
+                target: this,
             });
             if (this._events) {
                 var listeners = this._events[type];
@@ -321,9 +323,7 @@
          *     Context that will be provided to the callback
          */
         off(type, fn, context) {
-            var listeners,
-                i,
-                len;
+            var listeners, i, len;
             if (!type) {
                 // clear all listeners if called without arguments
                 delete this._events;
@@ -376,6 +376,6 @@
     }
 
     module.exports = {
-        Plugin: Plugin
+        Plugin: Plugin,
     };
-}());
+})();

@@ -28,35 +28,37 @@
 //////////////////////////////////////////////////////////////////////////////
 // QUnit 'mx' module
 //////////////////////////////////////////////////////////////////////////////
-QUnit.module('mx', {
-    setup: function() {},
-    teardown: function() {}
+QUnit.module("mx", {
+    setup: function () {},
+    teardown: function () {},
 });
-QUnit.test('mx format_f', function(assert) {
+QUnit.test("mx format_f", function (assert) {
     // the toFixed() function is limited to 0-20
     assert.equal(sigplot.mx.format_f(1.0, 0, -1), "1");
     assert.equal(sigplot.mx.format_f(1.0, 0, 21), "1.00000000000000000000");
     assert.equal(sigplot.mx.format_f(1.0, 0, 1), "1.0");
     assert.equal(sigplot.mx.format_f(1.0, 0, 20), "1.00000000000000000000");
 });
-QUnit.test('mx real_to_pixel test', function(assert) {
+QUnit.test("mx real_to_pixel test", function (assert) {
     var Mx = {
         origin: 1,
         x: 0,
         y: 0,
         level: 0,
-        stk: [{
-            xmin: -1,
-            xmax: 1,
-            ymin: -1,
-            ymax: 1,
-            xscl: 1 / 100,
-            yscl: 1 / 100,
-            x1: 0,
-            y1: 0,
-            x2: 200,
-            y2: 200
-        }]
+        stk: [
+            {
+                xmin: -1,
+                xmax: 1,
+                ymin: -1,
+                ymax: 1,
+                xscl: 1 / 100,
+                yscl: 1 / 100,
+                x1: 0,
+                y1: 0,
+                x2: 200,
+                y2: 200,
+            },
+        ],
     };
     var result = sigplot.mx.real_to_pixel(Mx, 0, 0);
     assert.equal(result.x, 100);

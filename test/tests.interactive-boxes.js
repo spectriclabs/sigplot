@@ -25,13 +25,13 @@
  */
 
 /* globals QUnit, sigplot, ColorMap, sigplot_plugins, assert, assert.strictEqual, QUnit.asyncTest, assert.notEqual, alert, BlueFileReader, start, ok, throws, interactiveBeforeEach, interactiveAfterEach, interactiveTest, fixture, ifixture */
-QUnit.module('sigplot-interactive-boxes', {
+QUnit.module("sigplot-interactive-boxes", {
     beforeEach: interactiveBeforeEach,
-    afterEach: interactiveAfterEach
+    afterEach: interactiveAfterEach,
 });
 
-interactiveTest('boxes', 'Do you see a boxes?', function(assert) {
-    var container = document.getElementById('plot');
+interactiveTest("boxes", "Do you see a boxes?", function (assert) {
+    var container = document.getElementById("plot");
     var plot = new sigplot.Plot(container, {});
     assert.notEqual(plot, null);
     var boxes = new sigplot_plugins.BoxesPlugin();
@@ -41,7 +41,7 @@ interactiveTest('boxes', 'Do you see a boxes?', function(assert) {
         y: 0,
         w: 0.1,
         h: 0.1,
-        text: "0,0"
+        text: "0,0",
     });
     boxes.add_box({
         x: 0.5,
@@ -49,7 +49,7 @@ interactiveTest('boxes', 'Do you see a boxes?', function(assert) {
         w: 0.1,
         h: 0.1,
         text: "0.5,0.5",
-        fill: true
+        fill: true,
     });
     boxes.add_box({
         x: -0.5,
@@ -57,7 +57,7 @@ interactiveTest('boxes', 'Do you see a boxes?', function(assert) {
         w: 0.1,
         h: 0.1,
         text: "-0.5,-0.5",
-        fillStyle: "green"
+        fillStyle: "green",
     });
     boxes.add_box({
         x: 0.5,
@@ -66,11 +66,11 @@ interactiveTest('boxes', 'Do you see a boxes?', function(assert) {
         h: 0.1,
         text: "0.5,-0.5",
         fillStyle: "red",
-        alpha: 0.25
+        alpha: 0.25,
     });
 });
-interactiveTest('clear boxes', 'Do you see one box?', function(assert) {
-    var container = document.getElementById('plot');
+interactiveTest("clear boxes", "Do you see one box?", function (assert) {
+    var container = document.getElementById("plot");
     var plot = new sigplot.Plot(container, {});
     assert.notEqual(plot, null);
     var boxes = new sigplot_plugins.BoxesPlugin();
@@ -80,16 +80,16 @@ interactiveTest('clear boxes', 'Do you see one box?', function(assert) {
         y: 0,
         w: 0.1,
         h: 0.1,
-        text: "I should be gone soon..."
+        text: "I should be gone soon...",
     });
-    window.setTimeout(function() {
+    window.setTimeout(function () {
         boxes.clear_boxes();
         boxes.add_box({
             x: 0.5,
             y: 0.5,
             w: 0.1,
             h: 0.1,
-            text: "You should see me"
+            text: "You should see me",
         });
     }, 1000);
 });

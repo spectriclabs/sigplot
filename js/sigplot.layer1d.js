@@ -26,8 +26,7 @@
 /* global module */
 /* global require */
 
-(function() {
-
+(function () {
     var m = require("./m");
     var mx = require("./mx");
 
@@ -36,7 +35,7 @@
      * @param plot
      */
 
-    var Layer1D = function(plot) {
+    var Layer1D = function (plot) {
         this.plot = plot;
 
         this.xbuf = undefined; // raw (ArrayBuffer) of ABSC data
@@ -81,7 +80,6 @@
     };
 
     Layer1D.prototype = {
-
         /**
          * Initializes the layer to display the provided data.
          *
@@ -93,7 +91,7 @@
          * @memberOf Layer1D
          * @private
          */
-        init: function(hcb, options) {
+        init: function (hcb, options) {
             var Gx = this.plot._Gx;
 
             this.hcb = hcb;
@@ -132,7 +130,7 @@
             if (hcb["class"] <= 2) {
                 this.xsub = -1;
                 this.ysub = 1;
-                this.cx = (hcb.format[0] === 'C');
+                this.cx = hcb.format[0] === "C";
             } else {
                 // TODO
             }
@@ -166,17 +164,22 @@
                 this.position = 0;
                 this.tle = options.tl;
 
-                this.ybufn = this.size * Math.max(this.skip * m.PointArray.BYTES_PER_ELEMENT, m.PointArray.BYTES_PER_ELEMENT);
+                this.ybufn =
+                    this.size *
+                    Math.max(
+                        this.skip * m.PointArray.BYTES_PER_ELEMENT,
+                        m.PointArray.BYTES_PER_ELEMENT
+                    );
                 this.ybuf = new ArrayBuffer(this.ybufn);
 
                 var self = this;
-                m.addPipeWriteListener(this.hcb, function() {
+                m.addPipeWriteListener(this.hcb, function () {
                     self._onpipewrite();
                 });
             }
         },
 
-        _onpipewrite: function() {
+        _onpipewrite: function () {
             var ybuf = new m.PointArray(this.ybuf);
 
             var tle = this.tle; // in scalars
@@ -189,7 +192,6 @@
             // Calculate transfer length in scalars
             var tl = tle * this.hcb.spa;
             while (m.pavail(this.hcb) >= tl) {
-
                 if (this.drawmode === "lefttoright") {
                     this.position = 0;
                     ybuf.set(ybuf.subarray(0, this.size - tl), tl);
@@ -202,10 +204,11 @@
                     throw "Invalid draw mode";
                 }
 
-                // transfer length is adjusted to the remaining size 
+                // transfer length is adjusted to the remaining size
                 // before wrapping
                 var ngot = m.grabx(
-                    this.hcb, ybuf,
+                    this.hcb,
+                    ybuf,
                     Math.min(tle, this.size - this.position) * this.hcb.spa,
                     this.position * this.hcb.spa
                 );
@@ -223,7 +226,7 @@
             }
         },
 
-        get_data: function(xmin, xmax) {
+        get_data: function (xmin, xmax) {
             var Gx = this.plot._Gx;
             var HCB = this.hcb;
 
@@ -245,7 +248,6 @@
                 imin = Math.floor((xmin - HCB.xstart) / HCB.xdelta) - 1;
                 imax = Math.floor((xmax - HCB.xstart) / HCB.xdelta + 0.5);
             } else {
-
                 imin = Math.floor((xmax - HCB.xstart) / HCB.xdelta) - 1;
                 imax = Math.floor((xmin - HCB.xstart) / HCB.xdelta + 0.5);
             }
@@ -257,33 +259,42 @@
                 imin = imax - npts + 1;
             }
 
-            if ((imin >= this.imin) && (imin + npts <= this.imin + this.size) && (this.ybuf !== undefined)) {
+            if (
+                imin >= this.imin &&
+                imin + npts <= this.imin + this.size &&
+                this.ybuf !== undefined
+            ) {
                 // data already in buffers
             } else if (this.modified) {
                 // modified data not yet saved off
-
             } else if (HCB["class"] <= 2) {
                 // load new data
                 var start = this.offset + imin;
                 var skip = this.skip;
-                this.ybufn = npts * Math.max(skip * m.PointArray.BYTES_PER_ELEMENT,
-                    m.PointArray.BYTES_PER_ELEMENT);
-                if ((this.ybuf === undefined) || (this.ybuf.byteLength < this.ybufn)) {
+                this.ybufn =
+                    npts *
+                    Math.max(
+                        skip * m.PointArray.BYTES_PER_ELEMENT,
+                        m.PointArray.BYTES_PER_ELEMENT
+                    );
+                if (
+                    this.ybuf === undefined ||
+                    this.ybuf.byteLength < this.ybufn
+                ) {
                     this.ybuf = new ArrayBuffer(this.ybufn);
                 }
                 var ybuf = new m.PointArray(this.ybuf);
                 var ngot = m.grab(HCB, ybuf, start, npts);
                 this.imin = imin;
-                this.xstart = HCB.xstart + (imin) * this.xdelta;
+                this.xstart = HCB.xstart + imin * this.xdelta;
                 this.size = ngot;
             } else {
                 // type 3000, 4000, 5000
                 // TODO yeah right
             }
-
         },
 
-        change_settings: function(settings) {
+        change_settings: function (settings) {
             if (settings.index !== undefined) {
                 if (settings.index) {
                     this.xstart = 1.0;
@@ -291,9 +302,10 @@
                     this.xmin = 1.0;
                     this.xmax = this.size;
                 } else {
-                    this.xstart = this.hcb.xstart + (this.imin) * this.xdelta;
+                    this.xstart = this.hcb.xstart + this.imin * this.xdelta;
                     this.xdelta = this.hcb.xdelta;
-                    var d = this.hcb.xstart + this.hcb.xdelta * (this.size - 1.0);
+                    var d =
+                        this.hcb.xstart + this.hcb.xdelta * (this.size - 1.0);
                     this.xmin = Math.min(this.hcb.xstart, d);
                     this.xmax = Math.max(this.hcb.xstart, d);
                 }
@@ -303,27 +315,37 @@
                 this.drawmode = settings.drawmode;
                 // Reset the buffer
                 this.position = 0;
-                this.ybufn = this.size * Math.max(this.skip * m.PointArray.BYTES_PER_ELEMENT, m.PointArray.BYTES_PER_ELEMENT);
+                this.ybufn =
+                    this.size *
+                    Math.max(
+                        this.skip * m.PointArray.BYTES_PER_ELEMENT,
+                        m.PointArray.BYTES_PER_ELEMENT
+                    );
                 this.ybuf = new ArrayBuffer(this.ybufn);
             }
 
             if (settings.framesize !== undefined) {
                 this.size = settings.framesize;
-                this.xstart = this.hcb.xstart + (this.imin) * this.xdelta;
+                this.xstart = this.hcb.xstart + this.imin * this.xdelta;
                 this.xdelta = this.hcb.xdelta;
                 var d = this.hcb.xstart + this.hcb.xdelta * (this.size - 1.0);
                 this.xmin = Math.min(this.hcb.xstart, d);
                 this.xmax = Math.max(this.hcb.xstart, d);
-                this.ybufn = this.size * Math.max(this.skip * m.PointArray.BYTES_PER_ELEMENT, m.PointArray.BYTES_PER_ELEMENT);
+                this.ybufn =
+                    this.size *
+                    Math.max(
+                        this.skip * m.PointArray.BYTES_PER_ELEMENT,
+                        m.PointArray.BYTES_PER_ELEMENT
+                    );
                 this.ybuf = new ArrayBuffer(this.ybufn);
             }
         },
 
-        reload: function(data, hdrmod) {
+        reload: function (data, hdrmod) {
             if (this.hcb.pipe) {
                 throw "reload cannot be used with pipe, use push instead";
             }
-            var axis_change = (this.hcb.dview.length !== data.length) || hdrmod;
+            var axis_change = this.hcb.dview.length !== data.length || hdrmod;
             if (hdrmod) {
                 for (var k in hdrmod) {
                     this.hcb[k] = hdrmod[k];
@@ -345,7 +367,8 @@
                 if (this.hcb["class"] === 2) {
                     m.force1000(this.hcb);
                 }
-                var d = this.hcb.xstart + this.hcb.xdelta * (this.hcb.size - 1.0);
+                var d =
+                    this.hcb.xstart + this.hcb.xdelta * (this.hcb.size - 1.0);
                 this.xmin = Math.min(this.hcb.xstart, d);
                 this.xmax = Math.max(this.hcb.xstart, d);
                 this.xdelta = this.hcb.xdelta;
@@ -356,11 +379,11 @@
 
             return {
                 xmin: xmin,
-                xmax: xmax
+                xmax: xmax,
             };
         },
 
-        push: function(data, hdrmod, sync) {
+        push: function (data, hdrmod, sync) {
             if (hdrmod) {
                 for (var k in hdrmod) {
                     this.hcb[k] = hdrmod[k];
@@ -375,7 +398,12 @@
                         this.size = this.hcb.subsize;
                         // Reset the buffer
                         this.position = null;
-                        this.ybufn = this.size * Math.max(this.skip * m.PointArray.BYTES_PER_ELEMENT, m.PointArray.BYTES_PER_ELEMENT);
+                        this.ybufn =
+                            this.size *
+                            Math.max(
+                                this.skip * m.PointArray.BYTES_PER_ELEMENT,
+                                m.PointArray.BYTES_PER_ELEMENT
+                            );
                         this.ybuf = new ArrayBuffer(this.ybufn);
                     }
                 }
@@ -392,10 +420,9 @@
             }
 
             return hdrmod ? true : false;
-
         },
 
-        prep: function(xmin, xmax) {
+        prep: function (xmin, xmax) {
             var Gx = this.plot._Gx;
             var Mx = this.plot._Mx;
 
@@ -409,7 +436,7 @@
                 return {
                     num: 0,
                     start: 0,
-                    end: 0
+                    end: 0,
                 };
             }
 
@@ -427,7 +454,7 @@
             var n1, n2;
             var mxmn;
             // xsub isn't really used yet, so it can largely be ignored
-            if ((Gx.cmode === 5) || (this.xsub > 0)) {
+            if (Gx.cmode === 5 || this.xsub > 0) {
                 if (npts <= 0) {
                     // This is a degenerate case when there are no points
                     qmin = Gx.panxmin;
@@ -470,11 +497,36 @@
                     n1 = 0;
                     n2 = npts - 1;
                 } else if (xdelta >= 0.0) {
-                    n1 = Math.max(1.0, Math.min(d, Math.round((xmin - xstart) / xdelta))) - 1.0;
-                    n2 = Math.max(1.0, Math.min(d, Math.round((xmax - xstart) / xdelta) + 2.0)) - 1.0;
+                    n1 =
+                        Math.max(
+                            1.0,
+                            Math.min(d, Math.round((xmin - xstart) / xdelta))
+                        ) - 1.0;
+                    n2 =
+                        Math.max(
+                            1.0,
+                            Math.min(
+                                d,
+                                Math.round((xmax - xstart) / xdelta) + 2.0
+                            )
+                        ) - 1.0;
                 } else {
-                    n1 = Math.max(1.0, Math.min(d, Math.round((xmax - xstart) / xdelta) - 1.0)) - 1.0;
-                    n2 = Math.max(1.0, Math.min(d, Math.round((xmin - xstart) / xdelta) + 2.0)) - 1.0;
+                    n1 =
+                        Math.max(
+                            1.0,
+                            Math.min(
+                                d,
+                                Math.round((xmax - xstart) / xdelta) - 1.0
+                            )
+                        ) - 1.0;
+                    n2 =
+                        Math.max(
+                            1.0,
+                            Math.min(
+                                d,
+                                Math.round((xmin - xstart) / xdelta) + 2.0
+                            )
+                        ) - 1.0;
                 }
 
                 npts = n2 - n1 + 1;
@@ -483,7 +535,7 @@
                     npts = 0;
                 }
                 dbuf = new m.PointArray(this.ybuf).subarray(n1 * skip);
-                xstart = xstart + xdelta * (n1);
+                xstart = xstart + xdelta * n1;
                 for (var i = 0; i < npts; i++) {
                     if (Gx.index) {
                         this.xpoint[i] = this.imin + i + 1;
@@ -498,7 +550,7 @@
                 return {
                     num: npts,
                     start: n1,
-                    end: n2
+                    end: n2,
                 };
             }
             if (this.cx) {
@@ -507,7 +559,12 @@
                 } else if (Gx.cmode === 2) {
                     if (Gx.plab === 25) {
                         m.cvpha(dbuf, this.ypoint, npts);
-                        m.vsmul(this.ypoint, 1.0 / (2 * Math.PI), this.ypoint, npts);
+                        m.vsmul(
+                            this.ypoint,
+                            1.0 / (2 * Math.PI),
+                            this.ypoint,
+                            npts
+                        );
                     } else if (Gx.plab !== 24) {
                         m.cvpha(dbuf, this.ypoint, npts);
                     } else {
@@ -521,9 +578,11 @@
                     m.vmov(dbuf.subarray(1), skip, this.ypoint, 1, npts);
                 }
             } else {
-                if (Gx.cmode === 5) { // I vs. R
+                if (Gx.cmode === 5) {
+                    // I vs. R
                     m.vfill(this.ypoint, 0, npts);
-                } else if ((Gx.cmode === 1) || (Gx.cmode >= 6)) { // Mag, log
+                } else if (Gx.cmode === 1 || Gx.cmode >= 6) {
+                    // Mag, log
                     for (var i = 0; i < npts; i++) {
                         this.ypoint[i] = Math.abs(dbuf[i]);
                     }
@@ -540,7 +599,7 @@
                 if (Gx.cmode === 7) {
                     dbscale = 20.0;
                 }
-                if ((Gx.lyr.length > 0) && (Gx.lyr[0].cx)) {
+                if (Gx.lyr.length > 0 && Gx.lyr[0].cx) {
                     dbscale = dbscale / 2.0;
                 }
                 m.vsmul(this.ypoint, dbscale, this.ypoint);
@@ -572,17 +631,17 @@
                 panxmin: this.xmin,
                 panxmax: this.xmax,
                 panymin: qmin,
-                panymax: qmax
+                panymax: qmax,
             };
         },
 
         /**
          * Get the pan-boundaries for the layer.
-         * 
-         * @param {*} view 
+         *
+         * @param {*} view
          *   - a specific view to calculate the bounds against
          */
-        get_pan_bounds: function(view) {
+        get_pan_bounds: function (view) {
             var Mx = this.plot._Mx;
             var Gx = this.plot._Gx;
 
@@ -590,12 +649,12 @@
             // plot will only attempt to figure-out the
             // new pany using the current view-box
             var xmin = this.xmin;
-            // Minic legacy XPLOT behavior; by default the 
+            // Minic legacy XPLOT behavior; by default the
             // pan boundaries are based off the first bufmax of
             // points.
             var xmax = Math.min(
-                xmin + (this.size * this.xdelta),
-                xmin + (Gx.bufmax * this.xdelta)
+                xmin + this.size * this.xdelta,
+                xmin + Gx.bufmax * this.xdelta
             );
 
             if (view) {
@@ -614,8 +673,14 @@
             while (xmin < xmax) {
                 let prep = this.prep(xmin, xmax);
 
-                panymin = (panymin === undefined) ? prep.panymin : Math.min(panymin, prep.panymin);
-                panymax = (panymax === undefined) ? prep.panymax : Math.max(panymax, prep.panymax);
+                panymin =
+                    panymin === undefined
+                        ? prep.panymin
+                        : Math.min(panymin, prep.panymin);
+                panymax =
+                    panymax === undefined
+                        ? prep.panymax
+                        : Math.max(panymax, prep.panymax);
                 num += prep.num;
 
                 if (Gx.all) {
@@ -626,9 +691,9 @@
                             xmin = xmin + prep.num;
                         } else {
                             if (this.xdelta >= 0) {
-                                xmin = xmin + (prep.num * this.xdelta);
+                                xmin = xmin + prep.num * this.xdelta;
                             } else {
-                                xmax = xmax + (prep.num * this.xdelta);
+                                xmax = xmax + prep.num * this.xdelta;
                             }
                         }
                     }
@@ -651,11 +716,11 @@
                 xmin: this.xmin,
                 xmax: this.xmax,
                 ymin: this.ymin,
-                ymax: this.ymax
+                ymax: this.ymax,
             };
         },
 
-        draw: function() {
+        draw: function () {
             var Mx = this.plot._Mx;
             var Gx = this.plot._Gx;
 
@@ -698,7 +763,8 @@
                 }
             }
 
-            var segment = (Gx.segment) && (Gx.cmode !== 5) && (this.xsub > 0) && (mask === 0);
+            var segment =
+                Gx.segment && Gx.cmode !== 5 && this.xsub > 0 && mask === 0;
             var xdelta = this.xdelta;
 
             var xmin;
@@ -709,13 +775,14 @@
             } else {
                 xmin = Math.max(this.xmin, Mx.stk[Mx.level].xmin);
                 xmax = Math.min(this.xmax, Mx.stk[Mx.level].xmax);
-                if (xmin >= xmax) { // no data but do scaling
+                if (xmin >= xmax) {
+                    // no data but do scaling
                     Gx.panxmin = Math.min(Gx.panxmin, this.xmin);
                     Gx.panxmax = Math.max(Gx.panxmax, this.xmax);
                 }
             }
 
-            if ((line === 0) && (symbol === 0)) {
+            if (line === 0 && symbol === 0) {
                 // Nothing to draw
                 return {
                     num: 0,
@@ -736,15 +803,22 @@
 
                 var pts = this.prep(xmin, xmax);
 
-                panymin = (panymin === undefined) ? pts.panymin : Math.min(panymin, pts.panymin);
-                panymax = (panymax === undefined) ? pts.panymax : Math.max(panymax, pts.panymax);
+                panymin =
+                    panymin === undefined
+                        ? pts.panymin
+                        : Math.min(panymin, pts.panymin);
+                panymax =
+                    panymax === undefined
+                        ? pts.panymax
+                        : Math.max(panymax, pts.panymax);
                 num += pts.num;
 
                 if (pts.num > 0) {
                     if (segment) {
                         // TODO
                     } else {
-                        mx.trace(Mx,
+                        mx.trace(
+                            Mx,
                             ic,
                             new m.PointArray(this.xptr),
                             new m.PointArray(this.yptr),
@@ -754,7 +828,8 @@
                             line,
                             symbol,
                             rad,
-                            traceoptions);
+                            traceoptions
+                        );
                     }
                 }
 
@@ -765,17 +840,17 @@
                         xmin = xmin + pts.num;
                     } else {
                         if (xdelta >= 0) {
-                            xmin = xmin + (this.size * xdelta);
+                            xmin = xmin + this.size * xdelta;
                         } else {
-                            xmax = xmax + (this.size * xdelta);
+                            xmax = xmax + this.size * xdelta;
                         }
                     }
                 }
             }
 
-            if ((this.position) && (this.drawmode === "scrolling")) {
+            if (this.position && this.drawmode === "scrolling") {
                 var pnt = mx.real_to_pixel(Mx, this.position * this.xdelta, 0);
-                if ((pnt.x > Mx.l) && (pnt.x < Mx.r)) {
+                if (pnt.x > Mx.l && pnt.x < Mx.r) {
                     mx.draw_line(Mx, "white", pnt.x, Mx.t, pnt.x, Mx.b);
                 }
             }
@@ -788,7 +863,7 @@
                 xmin: this.xmin,
                 xmax: this.xmax,
                 ymin: this.ymin,
-                ymax: this.ymax
+                ymax: this.ymax,
             };
         },
 
@@ -811,7 +886,7 @@
          * @param {String}
          *            hightlight.id the id for the highlight
          */
-        add_highlight: function(highlight) {
+        add_highlight: function (highlight) {
             if (!this.options.highlight) {
                 this.options.highlight = [];
             }
@@ -822,18 +897,18 @@
             var min_nan = isNaN(xmin);
             var max_nan = isNaN(xmax);
 
-            if ((min_nan === true) || (xmin === null) || (xmin === undefined)) {
-
+            if (min_nan === true || xmin === null || xmin === undefined) {
                 this.options.highlight = [];
             }
-            if ((max_nan === true) || (xmax === null) || (xmax === undefined)) {
-
+            if (max_nan === true || xmax === null || xmax === undefined) {
                 this.options.highlight = [];
             }
 
             if (highlight instanceof Array) {
                 this.options.highlight.push.apply(
-                    this.options.highlight, highlight);
+                    this.options.highlight,
+                    highlight
+                );
             } else {
                 this.options.highlight.push(highlight);
             }
@@ -847,11 +922,14 @@
          *             the id of the highlight to remove
          *             or the highlight object itself
          */
-        remove_highlight: function(highlight) {
+        remove_highlight: function (highlight) {
             if (this.options.highlight) {
                 var i = this.options.highlight.length;
                 while (i--) {
-                    if ((highlight === this.options.highlight[i]) || (highlight === this.options.highlight[i].id)) {
+                    if (
+                        highlight === this.options.highlight[i] ||
+                        highlight === this.options.highlight[i].id
+                    ) {
                         this.options.highlight.splice(i, 1);
                     }
                 }
@@ -859,7 +937,7 @@
             }
         },
 
-        get_highlights: function() {
+        get_highlights: function () {
             if (this.options.highlight) {
                 return this.options.highlight.slice(0);
             } else {
@@ -870,12 +948,12 @@
         /**
          * Clear all highlights from the layer.
          */
-        clear_highlights: function() {
+        clear_highlights: function () {
             if (this.options.highlight) {
                 this.options.highlight = undefined;
                 this.plot.refresh();
             }
-        }
+        },
     };
 
     /**
@@ -893,7 +971,7 @@
      *
      * @private
      */
-    Layer1D.overlay = function(plot, hcb, layerOptions) {
+    Layer1D.overlay = function (plot, hcb, layerOptions) {
         var Gx = plot._Gx;
         var Mx = plot._Mx;
 
@@ -906,7 +984,7 @@
         // it's own layer
         var n1 = 0;
         var n2 = 1;
-        if ((hcb["class"] === 2) && (hcb.size > 0)) {
+        if (hcb["class"] === 2 && hcb.size > 0) {
             var num_rows = hcb.size / hcb.subsize;
             n2 = Math.min(num_rows, 16 - Gx.lyr.length);
         }
@@ -922,7 +1000,7 @@
             layer.init(hcb, layerOptions);
 
             // Provide a default color for the layer
-            var n = (Gx.lyr.length) % mixc.length;
+            var n = Gx.lyr.length % mixc.length;
             layer.color = mx.getcolor(Mx, m.Mc.colormap[3].colors, mixc[n]);
 
             // Provide the layer name
@@ -935,7 +1013,10 @@
                         layer.name = layer_name_override[i];
                     } else {
                         layer.name = layer_name_override;
-                        layer.name = layer.name + "." + mx.pad((i + 1).toString(), 3, "0");
+                        layer.name =
+                            layer.name +
+                            "." +
+                            mx.pad((i + 1).toString(), 3, "0");
                     }
                 }
                 // If a name hasn't been assigned yet
@@ -945,7 +1026,8 @@
                     } else {
                         layer.name = "layer_" + Gx.lyr.length;
                     }
-                    layer.name = layer.name + "." + mx.pad((i + 1).toString(), 3, "0");
+                    layer.name =
+                        layer.name + "." + mx.pad((i + 1).toString(), 3, "0");
                 }
                 layer.offset = i * hcb.subsize;
             } else {
@@ -973,5 +1055,4 @@
     };
 
     module.exports = Layer1D;
-
-}());
+})();

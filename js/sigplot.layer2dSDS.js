@@ -26,32 +26,31 @@
 /* global module */
 /* global require */
 
-(function() {
-
+(function () {
     var m = require("./m");
     var mx = require("./mx");
     var common = require("./common");
 
-    var decimationModeLookup ={
+    var decimationModeLookup = {
         1: 1,
-        2:2,
-        4:3,
-        8:4,
-        16:5,
-        32:6,
-        64:7,
-        128:8,
-        256:9,
-        512:10,
+        2: 2,
+        4: 3,
+        8: 4,
+        16: 5,
+        32: 6,
+        64: 7,
+        128: 8,
+        256: 9,
+        512: 10,
     };
 
-    var decimationPossibilities = [512,256,128,64,32,16,8,4,2,1];
+    var decimationPossibilities = [512, 256, 128, 64, 32, 16, 8, 4, 2, 1];
 
     /**
      * @constructor
      * @param plot
      */
-    var LayerSDS = function(plot) {
+    var LayerSDS = function (plot) {
         this.plot = plot;
 
         this.offset = 0.0;
@@ -96,7 +95,6 @@
     };
 
     LayerSDS.prototype = {
-
         /**
          * Initializes the layer to display the provided data.
          *
@@ -108,33 +106,34 @@
          * @memberOf LayerSDS
          * @private
          */
-        init: function(hcb) {
-
+        init: function (hcb) {
             //De-Bounce this function
-            this.debounceSend = common.debounce(function(oReq) {
-                oReq.send(null);
-            }, 100,false);
-
+            this.debounceSend = common.debounce(
+                function (oReq) {
+                    oReq.send(null);
+                },
+                100,
+                false
+            );
 
             var Gx = this.plot._Gx;
             var Mx = this.plot._Mx;
 
-            // Get Header Params from URL 
+            // Get Header Params from URL
 
             this.hcb = hcb;
             this.hcb.buf_type = "D";
 
-            if (hcb.file_type ===1000) {
-                this.lps = this.hcb.lps || Math.ceil((hcb.size/hcb.subsize));
+            if (hcb.file_type === 1000) {
+                this.lps = this.hcb.lps || Math.ceil(hcb.size / hcb.subsize);
             } else {
                 this.lps = this.hcb.lps || Math.ceil(hcb.size);
             }
-            
+
             this.hcb.class = 2;
             var LRU = require("lru");
 
             this.cache = new LRU(500);
-
 
             if (Gx.index) {
                 this.xstart = 1.0;
@@ -144,29 +143,26 @@
                 this.ystart = 1.0;
                 this.ydelta = 1.0;
                 this.ymin = 1.0;
-                if (hcb.file_type ===1000) {
-                    this.ymax = (hcb.size / hcb.subsize);
+                if (hcb.file_type === 1000) {
+                    this.ymax = hcb.size / hcb.subsize;
                 } else {
-                    this.ymax = (hcb.size);
+                    this.ymax = hcb.size;
                 }
-
             } else {
                 this.xstart = hcb.xstart;
                 this.xdelta = hcb.xdelta;
-                var d = hcb.xstart + (hcb.xdelta * hcb.subsize);
+                var d = hcb.xstart + hcb.xdelta * hcb.subsize;
                 this.xmin = this.hcb.xmin || Math.min(hcb.xstart, d);
                 this.xmax = this.hcb.xmax || Math.max(hcb.xstart, d);
                 this.ystart = hcb.ystart;
                 this.ydelta = hcb.ydelta;
-                var d = hcb.ystart + (hcb.ydelta * this.lps);
+                var d = hcb.ystart + hcb.ydelta * this.lps;
                 this.ymin = this.hcb.ymin || Math.min(hcb.ystart, d);
                 this.ymax = this.hcb.ymax || Math.max(hcb.ystart, d);
             }
         },
 
-        get_data: function() {
-           
-        },
+        get_data: function () {},
 
         /**
          * Provisional API
@@ -175,38 +171,36 @@
          * @param x
          * @param y
          */
-        get_z: function(x, y) {
-           
-        },
+        get_z: function (x, y) {},
 
-        change_settings: function(settings) {
+        change_settings: function (settings) {
             var Gx = this.plot._Gx;
             if (settings.subsize) {
                 this.hcb.subsize = settings.subsize;
                 this.hcb.ape = settings.subsize;
-                if (this.hcb.file_type ===1000) {
-                    this.lps = Math.ceil(this.hcb.size/this.hcb.subsize);
+                if (this.hcb.file_type === 1000) {
+                    this.lps = Math.ceil(this.hcb.size / this.hcb.subsize);
                 } else {
                     this.lps = Math.ceil(this.hcb.size);
                 }
-                var d = this.hcb.xstart + (this.hcb.xdelta * this.hcb.subsize);
+                var d = this.hcb.xstart + this.hcb.xdelta * this.hcb.subsize;
                 this.xmin = this.hcb.xmin || Math.min(this.hcb.xstart, d);
                 this.xmax = this.hcb.xmax || Math.max(this.hcb.xstart, d);
 
-                var d = this.hcb.ystart + (this.hcb.ydelta * this.lps);
+                var d = this.hcb.ystart + this.hcb.ydelta * this.lps;
                 this.ymin = this.hcb.ymin || Math.min(this.hcb.ystart, d);
                 this.ymax = this.hcb.ymax || Math.max(this.hcb.ystart, d);
             }
             if (settings.debugCanvas) {
                 this.debugCanvas = settings.debugCanvas;
             }
-            
+
             if (settings.cmode !== undefined) {
                 this.img = undefined;
-                if (((Gx.autoz & 1) !== 0)) {
+                if ((Gx.autoz & 1) !== 0) {
                     Gx.zmin = undefined;
                 }
-                if (((Gx.autoz & 2) !== 0)) {
+                if ((Gx.autoz & 2) !== 0) {
                     Gx.zmax = undefined;
                 }
             }
@@ -228,25 +222,23 @@
                     this.xcompression = settings.xcmp;
                 }
             }
-            if (settings.usetiles !==undefined) {
+            if (settings.usetiles !== undefined) {
                 this.usetiles = settings.usetiles;
             }
         },
 
-        reload: function(data, hdrmod) {
-            
-        },
+        reload: function (data, hdrmod) {},
 
-        prep: function(xmin, xmax) {
+        prep: function (xmin, xmax) {
             return this.lps;
         },
-        get_pan_bounds: function(view) {
-            var xmin,xmax,ymin,ymax;
-            if (this.xmin<this.xmax) {
+        get_pan_bounds: function (view) {
+            var xmin, xmax, ymin, ymax;
+            if (this.xmin < this.xmax) {
                 xmin = this.xmin;
                 xmax = this.xmax;
             }
-            if (this.ymin <this.ymax) {
+            if (this.ymin < this.ymax) {
                 ymin = this.ymin;
                 ymax = this.ymax;
             }
@@ -255,27 +247,28 @@
                 xmin: xmin,
                 xmax: xmax,
                 ymin: ymin,
-                ymax: ymax
+                ymax: ymax,
             };
         },
 
-        load_tile: function(url, oReq, oEvent) {
+        load_tile: function (url, oReq, oEvent) {
             var arrayBuffer;
             var Mx = this.plot._Mx;
             var Gx = this.plot._Gx;
             if (oReq.readyState === 4) {
-                if ((oReq.status === 200) || (oReq.status === 0)) { // status = 0 is necessary for file URL
+                if (oReq.status === 200 || oReq.status === 0) {
+                    // status = 0 is necessary for file URL
 
-                    arrayBuffer = null; 
+                    arrayBuffer = null;
                     if (oReq.response) {
                         arrayBuffer = oReq.response;
                     }
 
-                    var xmin= parseFloat(oReq.getResponseHeader("Xmin"));
+                    var xmin = parseFloat(oReq.getResponseHeader("Xmin"));
                     var xmax = parseFloat(oReq.getResponseHeader("Xmax"));
                     var ymin = parseFloat(oReq.getResponseHeader("Ymin"));
-                    var ymax = parseFloat( oReq.getResponseHeader("Ymax"));
-                    arrayBuffer.width = oReq.getResponseHeader("Outxsize"); 
+                    var ymax = parseFloat(oReq.getResponseHeader("Ymax"));
+                    arrayBuffer.width = oReq.getResponseHeader("Outxsize");
                     arrayBuffer.height = oReq.getResponseHeader("Outysize");
                     arrayBuffer.contents = "rgba";
                     arrayBuffer.xmin = xmin;
@@ -284,50 +277,66 @@
                     arrayBuffer.ymax = ymax;
                     this.cache.set(url, arrayBuffer); // store the data in the cache
 
-                    delete(this.pendingURLs[url]); // Remove this url as pending
+                    delete this.pendingURLs[url]; // Remove this url as pending
                     this.plot.refresh(); // refresh the plot will cause this tile to be drawn
                 }
             }
         },
 
-        make_tile_request_url: function(tileXsize, tileYsize,  decx, decy, tileX, tileY) {
-
+        make_tile_request_url: function (
+            tileXsize,
+            tileYsize,
+            decx,
+            decy,
+            tileX,
+            tileY
+        ) {
             var Gx = this.plot._Gx;
             var url;
             var cxm = ["Ma", "Ph", "Re", "Im", "IR", "Lo", "L2"];
             var xcmp = ["first", "mean", "min", "max", "first", "absmax"];
-            
+
             var urlsplit = this.hcb.url.split("/sds/hdr/");
-            url = urlsplit[0]+"/sds/rdstile/" +
-                 tileXsize + "/" +
-                 tileYsize + "/" +
-                 decx + "/" +
-                 decy + "/" +
-                 tileX + "/" +
-                 tileY + "/" +
-                 urlsplit[1] +
+            url =
+                urlsplit[0] +
+                "/sds/rdstile/" +
+                tileXsize +
+                "/" +
+                tileYsize +
+                "/" +
+                decx +
+                "/" +
+                decy +
+                "/" +
+                tileX +
+                "/" +
+                tileY +
+                "/" +
+                urlsplit[1] +
                 "?outfmt=RGBA" +
-                "&colormap="+ m.Mc.colormap[Gx.cmap].name+
-                "&subsize="+this.hcb.subsize;
+                "&colormap=" +
+                m.Mc.colormap[Gx.cmap].name +
+                "&subsize=" +
+                this.hcb.subsize;
 
             if (Gx.zmin !== undefined) {
-                url = url+"&zmin=" + Gx.zmin;
+                url = url + "&zmin=" + Gx.zmin;
             }
             if (Gx.zmax !== undefined) {
-                url = url+"&zmax=" + Gx.zmax;
+                url = url + "&zmax=" + Gx.zmax;
             }
 
             if (Gx.cmode !== undefined) {
-                url = url+"&cxmode=" + cxm[Gx.cmode-1];
+                url = url + "&cxmode=" + cxm[Gx.cmode - 1];
             }
-            
+
             if (this.xcompression !== undefined) {
                 url = url + "&transform=" + xcmp[this.xcompression];
             }
             return url;
         },
 
-        sendTileRequest: function(url) {
+        sendTileRequest: function (url) {
             var Mx = this.plot._Mx;
 
             if (this.pendingURLs[url]) {
@@ -336,31 +345,30 @@
 
             var oReq = new XMLHttpRequest();
             this.pendingURLs[url] = oReq;
-  
+
             oReq.open("GET", url, true);
             oReq.responseType = "arraybuffer";
-            oReq.overrideMimeType('text\/plain; charset=x-user-defined');
+            oReq.overrideMimeType("text/plain; charset=x-user-defined");
 
             var that = this;
-            oReq.onload = function(oEvent) {
+            oReq.onload = function (oEvent) {
                 // `this` will be oReq within this context
                 that.load_tile(url, this, oEvent);
             };
-            oReq.onerror = function(oEvent) {
-            };
+            oReq.onerror = function (oEvent) {};
             oReq.send(null);
             // this.debounceSend(oReq);
-
         },
 
-        draw: function() {
+        draw: function () {
             var Mx = this.plot._Mx;
             var Gx = this.plot._Gx;
             var HCB = this.hcb;
 
             var xmin = Math.max(this.xmin, Mx.stk[Mx.level].xmin);
             var xmax = Math.min(this.xmax, Mx.stk[Mx.level].xmax);
-            if (xmin >= xmax) { // no data 
+            if (xmin >= xmax) {
+                // no data
                 return;
             }
             var ymin = Math.max(this.ymin, Mx.stk[Mx.level].ymin);
@@ -379,10 +387,10 @@
 
             // Make sure w/h remain within limits
             w = Math.min(w, HCB.subsize);
-            if (HCB.file_type ===1000) {
-                h = Math.min(h, (HCB.size / HCB.subsize));
+            if (HCB.file_type === 1000) {
+                h = Math.min(h, HCB.size / HCB.subsize);
             } else {
-                h = Math.min(h,  HCB.size);
+                h = Math.min(h, HCB.size);
             }
 
             // figure out the upper-left and lower-right pixel coordinates
@@ -402,62 +410,75 @@
             Gx.ye = Math.max(1, Math.round(ry));
 
             // Index values of xmax,xmin, ymax,ymin
-            var x1= Math.floor((xmin -HCB.xstart)/ HCB.xdelta); 
-            var y1= Math.floor((ymin - HCB.ystart)/ HCB.ydelta) ;
-            var x2= x1+w;
-            var y2= y1+h;
+            var x1 = Math.floor((xmin - HCB.xstart) / HCB.xdelta);
+            var y1 = Math.floor((ymin - HCB.ystart) / HCB.ydelta);
+            var x2 = x1 + w;
+            var y2 = y1 + h;
 
-            if (this.usetiles) { 
+            if (this.usetiles) {
                 //var maxtileXsize = 200;
                 //var  maxtileYsize = 200;
-                var maxtileXsize = Math.min(Math.max(Math.ceil(iw/300)*100,100),500);
-                var maxtileYsize = Math.min(Math.max(Math.ceil(ih/300)*100,100),500);
+                var maxtileXsize = Math.min(
+                    Math.max(Math.ceil(iw / 300) * 100, 100),
+                    500
+                );
+                var maxtileYsize = Math.min(
+                    Math.max(Math.ceil(ih / 300) * 100, 100),
+                    500
+                );
 
                 //var tileXsize = maxtilesize;
                 //var tileYsize = maxtilesize;
 
                 //var requestedDecx = Math.max(1,(w/iw)*1.2);  //Allow for upscaling the number of pixels needed by 20% otherwise request the next zoom level
-               // var requestedDecy = Math.max(1,(h/ih)*1.2);
-                var requestedDecx = Math.max(1,(w/iw));  
-                var requestedDecy = Math.max(1,(h/ih));
+                // var requestedDecy = Math.max(1,(h/ih)*1.2);
+                var requestedDecx = Math.max(1, w / iw);
+                var requestedDecy = Math.max(1, h / ih);
                 var i = 0;
-                while (decimationPossibilities[i]>requestedDecx) {
+                while (decimationPossibilities[i] > requestedDecx) {
                     i++;
                 }
                 var decfactorx = decimationPossibilities[i];
                 i = 0;
-                while (decimationPossibilities[i]>requestedDecy) {
+                while (decimationPossibilities[i] > requestedDecy) {
                     i++;
                 }
                 var decfactory = decimationPossibilities[i];
-    
+
                 var decx = decimationModeLookup[decfactorx];
                 var decy = decimationModeLookup[decfactory];
-    
-                var tilexsize = maxtileXsize*decfactorx;
-                var tileysize = maxtileYsize*decfactory;
-    
-                var firstcolumn = Math.floor(x1/tilexsize);
-                var fistrow = Math.floor(y1/tileysize);
-                var lastcolumn = Math.ceil(x2/tilexsize);
-                var lastrow = Math.ceil(y2/tileysize);
-    
+
+                var tilexsize = maxtileXsize * decfactorx;
+                var tileysize = maxtileYsize * decfactory;
+
+                var firstcolumn = Math.floor(x1 / tilexsize);
+                var fistrow = Math.floor(y1 / tileysize);
+                var lastcolumn = Math.ceil(x2 / tilexsize);
+                var lastrow = Math.ceil(y2 / tileysize);
+
                 //var numtilesx = Math.ceil(w/decfactorx/maxtilesize);
                 //var numtilesy = Math.ceil(h/decfactory/maxtilesize);
                 // var xsize = xmax-xmin;
                 // var ysize = ymax-ymin;
-                // var xsizeperfulltile = xsize*(maxtilesize/w); 
+                // var xsizeperfulltile = xsize*(maxtilesize/w);
                 // var ysizeperfulltile = ysize*(maxtilesize/h);
-    
-                
 
-                for (var tileY = fistrow; tileY < (lastrow); tileY++) { 
-                    for (var tileX = firstcolumn; tileX < (lastcolumn); tileX++) {
-                        var url = this.make_tile_request_url(maxtileXsize, maxtileYsize,  decx, decy, tileX, tileY);
+                for (var tileY = fistrow; tileY < lastrow; tileY++) {
+                    for (var tileX = firstcolumn; tileX < lastcolumn; tileX++) {
+                        var url = this.make_tile_request_url(
+                            maxtileXsize,
+                            maxtileYsize,
+                            decx,
+                            decy,
+                            tileX,
+                            tileY
+                        );
 
                         var img = this.cache.get(url);
-                        if (img) { //Get the data from this tile out of the cache and plot it. 
-                            mx.draw_image(Mx,
+                        if (img) {
+                            //Get the data from this tile out of the cache and plot it.
+                            mx.draw_image(
+                                Mx,
                                 img,
                                 img.xmin, // xmin
                                 img.ymin, // ymin
@@ -468,49 +489,66 @@
                                 true
                             );
                             //return;
-                        } else { // Don't already have the data for this tile to request it from the server. 
+                        } else {
+                            // Don't already have the data for this tile to request it from the server.
                             this.sendTileRequest(url);
                         }
                     }
                 }
-
             } else {
                 var oReq = new XMLHttpRequest();
 
                 var urlsplit = this.hcb.url.split("/sds/hdr/");
-                var url = urlsplit[0]+"/sds/rds/" +
-                    x1 + "/" +
-                    y1 + "/" +
-                    x2 + "/" +
-                    y2 + "/" +
-                    iw + "/" +
-                    ih + "/" +
+                var url =
+                    urlsplit[0] +
+                    "/sds/rds/" +
+                    x1 +
+                    "/" +
+                    y1 +
+                    "/" +
+                    x2 +
+                    "/" +
+                    y2 +
+                    "/" +
+                    iw +
+                    "/" +
+                    ih +
+                    "/" +
                     urlsplit[1] +
                     "?outfmt=RGBA" +
-                    "&colormap="+ m.Mc.colormap[Gx.cmap].name+
-                    "&subsize="+HCB.subsize;
-    
+                    "&colormap=" +
+                    m.Mc.colormap[Gx.cmap].name +
+                    "&subsize=" +
+                    HCB.subsize;
+
                 if (Gx.zmin !== undefined) {
-                    url = url+"&zmin=" + Gx.zmin;
+                    url = url + "&zmin=" + Gx.zmin;
                 }
                 if (Gx.zmax !== undefined) {
-                    url = url+"&zmax=" + Gx.zmax;
+                    url = url + "&zmax=" + Gx.zmax;
                 }
-    
+
                 if (Gx.cmode !== undefined) {
                     var cxm = ["Ma", "Ph", "Re", "Im", "IR", "Lo", "L2"];
-                    url = url+"&cxmode=" + cxm[Gx.cmode-1];
+                    url = url + "&cxmode=" + cxm[Gx.cmode - 1];
                 }
-                
+
                 if (this.xcompression !== undefined) {
-                    var xcmp = ["first", "mean", "min", "max", "first", "absmax"];
+                    var xcmp = [
+                        "first",
+                        "mean",
+                        "min",
+                        "max",
+                        "first",
+                        "absmax",
+                    ];
                     url = url + "&transform=" + xcmp[this.xcompression];
                 }
-    
-    
+
                 var img = this.cache.get(url);
                 if (img) {
-                    mx.draw_image(Mx,
+                    mx.draw_image(
+                        Mx,
                         img,
                         xmin, // xmin
                         ymin, // ymin
@@ -523,22 +561,23 @@
                 } else {
                     oReq.open("GET", url, true);
                     oReq.responseType = "arraybuffer";
-                    oReq.overrideMimeType('text\/plain; charset=x-user-defined');
-        
+                    oReq.overrideMimeType("text/plain; charset=x-user-defined");
+
                     var that = this;
-                    oReq.onload = function(oEvent) {
+                    oReq.onload = function (oEvent) {
                         if (oReq.readyState === 4) {
-                            if ((oReq.status === 200) || (oReq.status === 0)) { // status = 0 is necessary for file URL
+                            if (oReq.status === 200 || oReq.status === 0) {
+                                // status = 0 is necessary for file URL
                                 var zmin = oReq.getResponseHeader("Zmin");
                                 var zmax = oReq.getResponseHeader("Zmax");
-                                
-                                if ((Mx.level === 0) && (Gx.zmin === undefined)) {
-                                    if (((Gx.autoz & 1) !== 0)) {
+
+                                if (Mx.level === 0 && Gx.zmin === undefined) {
+                                    if ((Gx.autoz & 1) !== 0) {
                                         Gx.zmin = zmin;
                                     }
                                 }
-                                if ((Mx.level === 0) && (Gx.zmax === undefined)) {
-                                    if (((Gx.autoz & 2) !== 0)) {
+                                if (Mx.level === 0 && Gx.zmax === undefined) {
+                                    if ((Gx.autoz & 2) !== 0) {
                                         Gx.zmax = zmax;
                                     }
                                 }
@@ -546,13 +585,14 @@
                                 if (oReq.response) {
                                     arrayBuffer = oReq.response;
                                 }
-        
+
                                 //let imgd = new Uint8ClampedArray(arrayBuffer);
                                 arrayBuffer.width = iw;
                                 arrayBuffer.height = ih;
                                 arrayBuffer.contents = "rgba";
                                 that.cache.set(url, arrayBuffer);
-                                mx.draw_image(Mx,
+                                mx.draw_image(
+                                    Mx,
                                     arrayBuffer,
                                     xmin, // xmin
                                     ymin, // ymin
@@ -562,42 +602,36 @@
                                     false,
                                     true
                                 );
-                                
+
                                 return;
                             }
                         }
                     };
-                    oReq.onerror = function(oEvent) {
-                    };
-    
+                    oReq.onerror = function (oEvent) {};
+
                     this.debounceSend(oReq);
-    
                 }
-               
             }
             return {
                 xmin: this.xmin,
                 xmax: this.xmax,
                 ymin: this.ymin,
-                ymax: this.ymax
+                ymax: this.ymax,
             };
-            
-
         },
-         /**
+        /**
          * Display an xCut
          *
          * @param ypos
          *     the y-position to extract the x-cut, leave undefined to
          *     leave xCut
          */
-        xCut: function(ypos) {
+        xCut: function (ypos) {
             var Mx = this.plot._Mx;
             var Gx = this.plot._Gx;
 
             //display the x-cut of the raster
             if (ypos !== undefined) {
-
                 // Stash important values
                 this.cut_stash = {};
                 this.cut_stash.ylabel = Gx.ylabel;
@@ -605,28 +639,30 @@
                 this.cut_stash.level = Mx.level;
                 this.cut_stash.stk = JSON.parse(JSON.stringify(Mx.stk));
 
-
                 var row = Math.round((ypos - this.ystart) / this.ydelta);
-                if ((row < 0) || (row > this.lps)) {
+                if (row < 0 || row > this.lps) {
                     return;
                 }
 
-                //Adjust the zoom stack to adjust y values to be undefined. 
-                for (var stk_num = 0; stk_num < Mx.stk.length; stk_num ++ ) {
+                //Adjust the zoom stack to adjust y values to be undefined.
+                for (var stk_num = 0; stk_num < Mx.stk.length; stk_num++) {
                     Mx.stk[stk_num].ymin = undefined;
                     Mx.stk[stk_num].ymax = undefined;
                 }
                 Gx.panymax = undefined;
                 Gx.panymin = undefined;
 
-                this.xcut_layer = this.plot.overlay_href(this.hcb.url, null, {
-                    name: "x_cut_data",
-                    layerType: "1DSDS",
-                    mode: "xcut",
-                    xypos_index: row,
-                    bottom_level: Mx.level
-                },
-                {}
+                this.xcut_layer = this.plot.overlay_href(
+                    this.hcb.url,
+                    null,
+                    {
+                        name: "x_cut_data",
+                        layerType: "1DSDS",
+                        mode: "xcut",
+                        xypos_index: row,
+                        bottom_level: Mx.level,
+                    },
+                    {}
                 );
                 Mx.origin = 1;
 
@@ -638,7 +674,6 @@
                     }
                 }
                 Gx.x_cut_press_on = true;
-
             } else if (Gx.x_cut_press_on) {
                 // ypos wasn't provided so turn x-cut off
                 Gx.x_cut_press_on = false;
@@ -662,7 +697,7 @@
                     this.xcut_layer = undefined;
                     this.plot.change_settings({
                         drawmode: this.old_drawmode,
-                        autol: this.old_autol
+                        autol: this.old_autol,
                     });
                 }
             }
@@ -675,7 +710,7 @@
          *     the x-position to extract the y-cut, leave undefined to
          *     leave yCut
          */
-        yCut: function(xpos) {
+        yCut: function (xpos) {
             var Mx = this.plot._Mx;
             var Gx = this.plot._Gx;
 
@@ -693,15 +728,14 @@
                 this.cut_stash.panxmin = Gx.panxmin;
                 this.cut_stash.panxmax = Gx.panxmax;
 
-
                 var column = Math.round((xpos - this.xstart) / this.xdelta);
-                if (column < 0)  { //TODO - Check if column is out or max range. 
+                if (column < 0) {
+                    //TODO - Check if column is out or max range.
                     return;
                 }
 
-
-                //Adjust the zoom stack to move y vales to x and adjust y values to be undefined. 
-                for (var stk_num = 0; stk_num < Mx.stk.length; stk_num ++ ) {
+                //Adjust the zoom stack to move y vales to x and adjust y values to be undefined.
+                for (var stk_num = 0; stk_num < Mx.stk.length; stk_num++) {
                     Mx.stk[stk_num].xmin = Mx.stk[stk_num].ymin;
                     Mx.stk[stk_num].xmax = Mx.stk[stk_num].ymax;
                     Mx.stk[stk_num].xscl = Mx.stk[stk_num].yscl;
@@ -714,16 +748,19 @@
                 Gx.panymax = undefined;
                 Gx.panymin = undefined;
 
-                this.ycut_layer = this.plot.overlay_href(this.hcb.url, null,  
+                this.ycut_layer = this.plot.overlay_href(
+                    this.hcb.url,
+                    null,
                     {
-                    name: "y_cut_data",
-                    layerType: "1DSDS",
-                    mode: "ycut",
-                    xypos_index: column,
-                    bottom_level: Mx.level
-                    }, {});
+                        name: "y_cut_data",
+                        layerType: "1DSDS",
+                        mode: "ycut",
+                        xypos_index: column,
+                        bottom_level: Mx.level,
+                    },
+                    {}
+                );
                 Mx.origin = 1;
-
 
                 //do not display any other layers
                 var ycut_lyrn = this.plot.get_lyrn(this.ycut_layer);
@@ -734,7 +771,6 @@
                 }
 
                 Gx.y_cut_press_on = true;
-
             } else if (Gx.y_cut_press_on) {
                 Gx.y_cut_press_on = false;
                 for (var j = 0; j < Gx.lyr.length; j++) {
@@ -759,7 +795,7 @@
                     this.ycut_layer = undefined;
                     this.plot.change_settings({
                         drawmode: this.old_drawmode,
-                        autol: this.old_autol
+                        autol: this.old_autol,
                     });
                 }
             }
@@ -771,7 +807,7 @@
      *
      * @private
      */
-    LayerSDS.overlay = function(plot, hcb, layerOptions) {
+    LayerSDS.overlay = function (plot, hcb, layerOptions) {
         var Gx = plot._Gx;
         var Mx = plot._Mx;
 
@@ -797,5 +833,4 @@
     };
 
     module.exports = LayerSDS;
-
-}());
+})();

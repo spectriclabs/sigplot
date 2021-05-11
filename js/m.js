@@ -31,8 +31,8 @@
 /* global module */
 /* global require */
 
-(function() {
-    'use strict';
+(function () {
+    "use strict";
 
     var bluefile = require("sigfile").bluefile;
     var loglevel = require("loglevel");
@@ -55,16 +55,18 @@
      * @memberOf sigplot
      * @private
      */
-    var iOS = (navigator.userAgent.match(/(iPad|iPhone|iPod)/i) ? true : false);
-    if ((iOS) || // iOS doesn't support Float64
-        (typeof Float64Array === 'undefined') || // If it's undefined it's obviously not supported
-        (Float64Array.emulated) || // If it's emulated, don't waste time on extra precision
-        (!Float64Array.BYTES_PER_ELEMENT)) { // If bytes per element isn't defined, it's a buggy implementation (i.e. PhantomJS)
+    var iOS = navigator.userAgent.match(/(iPad|iPhone|iPod)/i) ? true : false;
+    if (
+        iOS || // iOS doesn't support Float64
+        typeof Float64Array === "undefined" || // If it's undefined it's obviously not supported
+        Float64Array.emulated || // If it's emulated, don't waste time on extra precision
+        !Float64Array.BYTES_PER_ELEMENT
+    ) {
+        // If bytes per element isn't defined, it's a buggy implementation (i.e. PhantomJS)
         m.PointArray = Float32Array;
     } else {
         m.PointArray = Float64Array;
     }
-
 
     /** UNITS Structure:
      *		0: ["None", "U"],
@@ -187,7 +189,7 @@
         60: ["Latitude", "deg", true, false],
         61: ["Longitude", "deg", true, false],
         62: ["Altitude", "ft", true, false],
-        63: ["Altitude", "m", false, false]
+        63: ["Altitude", "m", false, false],
     };
 
     m.UNITS = UNITS;
@@ -205,305 +207,464 @@
         // are listed here are from xcolordef.prm (use the XCOLORMAP widget).
         //
         // The actual values are a result of tribal knowledge and years of experience
-        colormap: [{
+        colormap: [
+            {
                 name: "Greyscale",
-                colors: [{
-                    pos: 0,
-                    red: 0,
-                    green: 0,
-                    blue: 0
-                }, {
-                    pos: 60,
-                    red: 50,
-                    green: 50,
-                    blue: 50
-                }, {
-                    pos: 100,
-                    red: 100,
-                    green: 100,
-                    blue: 100
-                }, {
-                    pos: 100,
-                    red: 0,
-                    green: 0,
-                    blue: 0
-                }, {
-                    pos: 100,
-                    red: 0,
-                    green: 0,
-                    blue: 0
-                }, {
-                    pos: 100,
-                    red: 0,
-                    green: 0,
-                    blue: 0
-                }, {
-                    pos: 100,
-                    red: 0,
-                    green: 0,
-                    blue: 0
-                }]
-            }, {
+                colors: [
+                    {
+                        pos: 0,
+                        red: 0,
+                        green: 0,
+                        blue: 0,
+                    },
+                    {
+                        pos: 60,
+                        red: 50,
+                        green: 50,
+                        blue: 50,
+                    },
+                    {
+                        pos: 100,
+                        red: 100,
+                        green: 100,
+                        blue: 100,
+                    },
+                    {
+                        pos: 100,
+                        red: 0,
+                        green: 0,
+                        blue: 0,
+                    },
+                    {
+                        pos: 100,
+                        red: 0,
+                        green: 0,
+                        blue: 0,
+                    },
+                    {
+                        pos: 100,
+                        red: 0,
+                        green: 0,
+                        blue: 0,
+                    },
+                    {
+                        pos: 100,
+                        red: 0,
+                        green: 0,
+                        blue: 0,
+                    },
+                ],
+            },
+            {
                 name: "Ramp Colormap",
-                colors: [{
-                    pos: 0,
-                    red: 0,
-                    green: 0,
-                    blue: 15
-                }, {
-                    pos: 10,
-                    red: 0,
-                    green: 0,
-                    blue: 50
-                }, {
-                    pos: 31,
-                    red: 0,
-                    green: 65,
-                    blue: 75
-                }, {
-                    pos: 50,
-                    red: 0,
-                    green: 85,
-                    blue: 0
-                }, {
-                    pos: 70,
-                    red: 75,
-                    green: 80,
-                    blue: 0
-                }, {
-                    pos: 83,
-                    red: 100,
-                    green: 60,
-                    blue: 0
-                }, {
-                    pos: 100,
-                    red: 100,
-                    green: 0,
-                    blue: 0
-                }]
-            }, {
+                colors: [
+                    {
+                        pos: 0,
+                        red: 0,
+                        green: 0,
+                        blue: 15,
+                    },
+                    {
+                        pos: 10,
+                        red: 0,
+                        green: 0,
+                        blue: 50,
+                    },
+                    {
+                        pos: 31,
+                        red: 0,
+                        green: 65,
+                        blue: 75,
+                    },
+                    {
+                        pos: 50,
+                        red: 0,
+                        green: 85,
+                        blue: 0,
+                    },
+                    {
+                        pos: 70,
+                        red: 75,
+                        green: 80,
+                        blue: 0,
+                    },
+                    {
+                        pos: 83,
+                        red: 100,
+                        green: 60,
+                        blue: 0,
+                    },
+                    {
+                        pos: 100,
+                        red: 100,
+                        green: 0,
+                        blue: 0,
+                    },
+                ],
+            },
+            {
                 name: "Color Wheel",
-                colors: [{
-                    pos: 0,
-                    red: 100,
-                    green: 100,
-                    blue: 0
-                }, {
-                    pos: 20,
-                    red: 0,
-                    green: 80,
-                    blue: 40
-                }, {
-                    pos: 30,
-                    red: 0,
-                    green: 100,
-                    blue: 100
-                }, {
-                    pos: 50,
-                    red: 10,
-                    green: 10,
-                    blue: 0
-                }, {
-                    pos: 65,
-                    red: 100,
-                    green: 0,
-                    blue: 0
-                }, {
-                    pos: 88,
-                    red: 100,
-                    green: 40,
-                    blue: 0
-                }, {
-                    pos: 100,
-                    red: 100,
-                    green: 100,
-                    blue: 0
-                }]
-            }, {
+                colors: [
+                    {
+                        pos: 0,
+                        red: 100,
+                        green: 100,
+                        blue: 0,
+                    },
+                    {
+                        pos: 20,
+                        red: 0,
+                        green: 80,
+                        blue: 40,
+                    },
+                    {
+                        pos: 30,
+                        red: 0,
+                        green: 100,
+                        blue: 100,
+                    },
+                    {
+                        pos: 50,
+                        red: 10,
+                        green: 10,
+                        blue: 0,
+                    },
+                    {
+                        pos: 65,
+                        red: 100,
+                        green: 0,
+                        blue: 0,
+                    },
+                    {
+                        pos: 88,
+                        red: 100,
+                        green: 40,
+                        blue: 0,
+                    },
+                    {
+                        pos: 100,
+                        red: 100,
+                        green: 100,
+                        blue: 0,
+                    },
+                ],
+            },
+            {
                 name: "Spectrum",
-                colors: [{
-                    pos: 0,
-                    red: 0,
-                    green: 75,
-                    blue: 0
-                }, {
-                    pos: 22,
-                    red: 0,
-                    green: 90,
-                    blue: 90
-                }, {
-                    pos: 37,
-                    red: 0,
-                    green: 0,
-                    blue: 85
-                }, {
-                    pos: 49,
-                    red: 90,
-                    green: 0,
-                    blue: 85
-                }, {
-                    pos: 68,
-                    red: 90,
-                    green: 0,
-                    blue: 0
-                }, {
-                    pos: 80,
-                    red: 90,
-                    green: 90,
-                    blue: 0
-                }, {
-                    pos: 100,
-                    red: 95,
-                    green: 95,
-                    blue: 95
-                }]
-            }, {
+                colors: [
+                    {
+                        pos: 0,
+                        red: 0,
+                        green: 75,
+                        blue: 0,
+                    },
+                    {
+                        pos: 22,
+                        red: 0,
+                        green: 90,
+                        blue: 90,
+                    },
+                    {
+                        pos: 37,
+                        red: 0,
+                        green: 0,
+                        blue: 85,
+                    },
+                    {
+                        pos: 49,
+                        red: 90,
+                        green: 0,
+                        blue: 85,
+                    },
+                    {
+                        pos: 68,
+                        red: 90,
+                        green: 0,
+                        blue: 0,
+                    },
+                    {
+                        pos: 80,
+                        red: 90,
+                        green: 90,
+                        blue: 0,
+                    },
+                    {
+                        pos: 100,
+                        red: 95,
+                        green: 95,
+                        blue: 95,
+                    },
+                ],
+            },
+            {
                 name: "calewhite",
-                colors: [{
-                    pos: 0,
-                    red: 100,
-                    green: 100,
-                    blue: 100
-                }, {
-                    pos: 16.666,
-                    red: 0,
-                    green: 0,
-                    blue: 100
-                }, {
-                    pos: 33.333,
-                    red: 0,
-                    green: 100,
-                    blue: 100
-                }, {
-                    pos: 50,
-                    red: 0,
-                    green: 100,
-                    blue: 0
-                }, {
-                    pos: 66.666,
-                    red: 100,
-                    green: 100,
-                    blue: 0
-                }, {
-                    pos: 83.333,
-                    red: 100,
-                    green: 0,
-                    blue: 0
-                }, {
-                    pos: 100,
-                    red: 100,
-                    green: 0,
-                    blue: 100
-                }]
-            }, {
+                colors: [
+                    {
+                        pos: 0,
+                        red: 100,
+                        green: 100,
+                        blue: 100,
+                    },
+                    {
+                        pos: 16.666,
+                        red: 0,
+                        green: 0,
+                        blue: 100,
+                    },
+                    {
+                        pos: 33.333,
+                        red: 0,
+                        green: 100,
+                        blue: 100,
+                    },
+                    {
+                        pos: 50,
+                        red: 0,
+                        green: 100,
+                        blue: 0,
+                    },
+                    {
+                        pos: 66.666,
+                        red: 100,
+                        green: 100,
+                        blue: 0,
+                    },
+                    {
+                        pos: 83.333,
+                        red: 100,
+                        green: 0,
+                        blue: 0,
+                    },
+                    {
+                        pos: 100,
+                        red: 100,
+                        green: 0,
+                        blue: 100,
+                    },
+                ],
+            },
+            {
                 name: "HotDesat",
-                colors: [{
-                    pos: 0,
-                    red: 27.84,
-                    green: 27.84,
-                    blue: 85.88
-                }, {
-                    pos: 14.2857,
-                    red: 0,
-                    green: 0,
-                    blue: 35.69
-                }, {
-                    pos: 28.571,
-                    red: 0,
-                    green: 100,
-                    blue: 100
-                }, {
-                    pos: 42.857,
-                    red: 0,
-                    green: 49.8,
-                    blue: 0
-                }, {
-                    pos: 57.14286,
-                    red: 100,
-                    green: 100,
-                    blue: 0
-                }, {
-                    pos: 71.42857,
-                    red: 100,
-                    green: 37.65,
-                    blue: 0
-                }, {
-                    pos: 85.7143,
-                    red: 41.96,
-                    green: 0,
-                    blue: 0
-                }, {
-                    pos: 100,
-                    red: 87.84,
-                    green: 29.8,
-                    blue: 29.8
-                }]
-            }, {
+                colors: [
+                    {
+                        pos: 0,
+                        red: 27.84,
+                        green: 27.84,
+                        blue: 85.88,
+                    },
+                    {
+                        pos: 14.2857,
+                        red: 0,
+                        green: 0,
+                        blue: 35.69,
+                    },
+                    {
+                        pos: 28.571,
+                        red: 0,
+                        green: 100,
+                        blue: 100,
+                    },
+                    {
+                        pos: 42.857,
+                        red: 0,
+                        green: 49.8,
+                        blue: 0,
+                    },
+                    {
+                        pos: 57.14286,
+                        red: 100,
+                        green: 100,
+                        blue: 0,
+                    },
+                    {
+                        pos: 71.42857,
+                        red: 100,
+                        green: 37.65,
+                        blue: 0,
+                    },
+                    {
+                        pos: 85.7143,
+                        red: 41.96,
+                        green: 0,
+                        blue: 0,
+                    },
+                    {
+                        pos: 100,
+                        red: 87.84,
+                        green: 29.8,
+                        blue: 29.8,
+                    },
+                ],
+            },
+            {
                 name: "Sunset",
-                colors: [{
-                    pos: 0,
-                    red: 10,
-                    green: 0,
-                    blue: 23
-                }, {
-                    pos: 18,
-                    red: 34,
-                    green: 0,
-                    blue: 60
-                }, {
-                    pos: 36,
-                    red: 58,
-                    green: 20,
-                    blue: 47
-                }, {
-                    pos: 55,
-                    red: 74,
-                    green: 20,
-                    blue: 28
-                }, {
-                    pos: 72,
-                    red: 90,
-                    green: 43,
-                    blue: 0
-                }, {
-                    pos: 87,
-                    red: 100,
-                    green: 72,
-                    blue: 0
-                }, {
-                    pos: 100,
-                    red: 100,
-                    green: 100,
-                    blue: 76
-                }]
+                colors: [
+                    {
+                        pos: 0,
+                        red: 10,
+                        green: 0,
+                        blue: 23,
+                    },
+                    {
+                        pos: 18,
+                        red: 34,
+                        green: 0,
+                        blue: 60,
+                    },
+                    {
+                        pos: 36,
+                        red: 58,
+                        green: 20,
+                        blue: 47,
+                    },
+                    {
+                        pos: 55,
+                        red: 74,
+                        green: 20,
+                        blue: 28,
+                    },
+                    {
+                        pos: 72,
+                        red: 90,
+                        green: 43,
+                        blue: 0,
+                    },
+                    {
+                        pos: 87,
+                        red: 100,
+                        green: 72,
+                        blue: 0,
+                    },
+                    {
+                        pos: 100,
+                        red: 100,
+                        green: 100,
+                        blue: 76,
+                    },
+                ],
             },
             {
                 name: "Hot",
-                colors: ["#000000", "#7f0000", "#b30000", "#d7301f", "#ef6548", "#fc8d59", "#fdbb84", "#fdd49e", "#fee8c8", "#fff7ec", "#ffffff"]
-            }, {
+                colors: [
+                    "#000000",
+                    "#7f0000",
+                    "#b30000",
+                    "#d7301f",
+                    "#ef6548",
+                    "#fc8d59",
+                    "#fdbb84",
+                    "#fdd49e",
+                    "#fee8c8",
+                    "#fff7ec",
+                    "#ffffff",
+                ],
+            },
+            {
                 name: "Cold",
-                colors: ["#000000", "#023858", "#045a8d", "#0570b0", "#3690c0", "#74a9cf", "#a6bddb", "#d0d1e6", "#ece7f2", "#fff7fb", "#ffffff"]
+                colors: [
+                    "#000000",
+                    "#023858",
+                    "#045a8d",
+                    "#0570b0",
+                    "#3690c0",
+                    "#74a9cf",
+                    "#a6bddb",
+                    "#d0d1e6",
+                    "#ece7f2",
+                    "#fff7fb",
+                    "#ffffff",
+                ],
             },
             {
                 name: "Purple",
-                colors: ["#230022", "#4d004b", "#810f7c", "#88419d", "#8c6bb1", "#8c96c6", "#9ebcda", "#bfd3e6", "#e0ecf4", "#f7fcfd"]
-            }, {
+                colors: [
+                    "#230022",
+                    "#4d004b",
+                    "#810f7c",
+                    "#88419d",
+                    "#8c6bb1",
+                    "#8c96c6",
+                    "#9ebcda",
+                    "#bfd3e6",
+                    "#e0ecf4",
+                    "#f7fcfd",
+                ],
+            },
+            {
                 name: "BuGn",
-                colors: ['#f7fcfd', '#e5f5f9', '#ccece6', '#99d8c9', '#66c2a4', '#41ae76', '#238b45', '#006d2c', '#00441b']
-            }, {
+                colors: [
+                    "#f7fcfd",
+                    "#e5f5f9",
+                    "#ccece6",
+                    "#99d8c9",
+                    "#66c2a4",
+                    "#41ae76",
+                    "#238b45",
+                    "#006d2c",
+                    "#00441b",
+                ],
+            },
+            {
                 name: "YlOrBr",
-                colors: ['#ffffe5', '#fff7bc', '#fee391', '#fec44f', '#fe9929', '#ec7014', '#cc4c02', '#993404', '#662506']
-            }, {
+                colors: [
+                    "#ffffe5",
+                    "#fff7bc",
+                    "#fee391",
+                    "#fec44f",
+                    "#fe9929",
+                    "#ec7014",
+                    "#cc4c02",
+                    "#993404",
+                    "#662506",
+                ],
+            },
+            {
                 name: "YlGnBu",
-                colors: ['#ffffd9', '#edf8b1', '#c7e9b4', '#7fcdbb', '#41b6c4', '#1d91c0', '#225ea8', '#253494', '#081d58']
-            }, {
+                colors: [
+                    "#ffffd9",
+                    "#edf8b1",
+                    "#c7e9b4",
+                    "#7fcdbb",
+                    "#41b6c4",
+                    "#1d91c0",
+                    "#225ea8",
+                    "#253494",
+                    "#081d58",
+                ],
+            },
+            {
                 name: "YlOrRd",
-                colors: ["#000000", "#662506", "#993404", "#cc4c02", "#ec7014", "#fe9929", "#fec44f", "#fee391", "#fff7bc", "#ffffe5", "#ffffff"]
-            }, {
+                colors: [
+                    "#000000",
+                    "#662506",
+                    "#993404",
+                    "#cc4c02",
+                    "#ec7014",
+                    "#fe9929",
+                    "#fec44f",
+                    "#fee391",
+                    "#fff7bc",
+                    "#ffffe5",
+                    "#ffffff",
+                ],
+            },
+            {
                 name: "GreyNRed",
-                colors: ['#67001f', '#b2182b', '#d6604d', '#f4a582', '#fddbc7', '#ffffff', '#e0e0e0', '#bababa', '#878787', '#4d4d4d', '#1a1a1a'].reverse()
-            }
-        ]
+                colors: [
+                    "#67001f",
+                    "#b2182b",
+                    "#d6604d",
+                    "#f4a582",
+                    "#fddbc7",
+                    "#ffffff",
+                    "#e0e0e0",
+                    "#bababa",
+                    "#878787",
+                    "#4d4d4d",
+                    "#1a1a1a",
+                ].reverse(),
+            },
+        ],
     };
 
     /** Pipe Size
@@ -515,7 +676,7 @@
      * Converts unit strings to number code
      * @param	{string}	unitInput	User unit input
      */
-    m.unit_lookup = function(unitInput) {
+    m.unit_lookup = function (unitInput) {
         for (var i = 0; i < 64; i++) {
             var u;
             if (UNITS[i] === undefined) {
@@ -535,7 +696,7 @@
                 if (u[3]) {
                     return i;
                 }
-            } else if ((unitInput === comparer1) || (unitInput === comparer2)) {
+            } else if (unitInput === comparer1 || unitInput === comparer2) {
                 return i;
             }
         }
@@ -550,13 +711,13 @@
      * @param  	{array}	  	overrides	List of fields/values to be overridden in the bluefile header
      * @return 	{header} 	hcb		Return <hcb> type-1000 bluefile header, filename=null
      */
-    m.initialize = function(data, overrides) {
+    m.initialize = function (data, overrides) {
         var hcb = new bluefile.BlueHeader(null);
 
-        hcb.version = 'BLUE';
+        hcb.version = "BLUE";
         hcb.size = 0;
         hcb.type = 1000;
-        hcb.format = 'SF';
+        hcb.format = "SF";
         hcb.timecode = 0.0;
         hcb.xstart = 0.0;
         hcb.xdelta = 1.0;
@@ -577,25 +738,26 @@
         }
 
         //Convert xunits and yunits to numbers if they are strings
-        hcb["xunits"] = m.unit_lookup(hcb["xunits"]);
-        hcb["yunits"] = m.unit_lookup(hcb["yunits"]);
-
+        hcb.xunits = m.unit_lookup(hcb.xunits);
+        hcb.yunits = m.unit_lookup(hcb.yunits);
 
         // Force type 2000 is subsize is specified
-        if (hcb["subsize"] > 1) {
+        if (hcb.subsize > 1) {
             hcb.type = 2000;
-        } else if (Array.isArray(data) && (Array.isArray(data[0]) || ArrayBuffer.isView(data[0]))) {
+        } else if (
+            Array.isArray(data) &&
+            (Array.isArray(data[0]) || ArrayBuffer.isView(data[0]))
+        ) {
             //If this is a 2-D array automatically set subsize
             hcb.type = 2000;
             hcb.subsize = data[0].length;
             hcb.size = data.length;
         }
-        hcb["class"] = hcb.type / 1000;
+        hcb.class = hcb.type / 1000;
         // If this is a type 2000 , subsize *must* be provided
-        if ((hcb["class"] === 2) && (hcb["subsize"] === undefined)) {
+        if (hcb.class === 2 && hcb.subsize === undefined) {
             throw "subsize must be provided with type 2000 files";
         }
-
 
         if (!overrides.pipe) {
             hcb.setData(data);
@@ -618,9 +780,9 @@
      * Convert type-2000 header internals to force GRAB and FILAD routines to treat file as a 1000-type file.
      * @param	{header}	hcb		Bluefile header control block
      */
-    m.force1000 = function(hcb) {
-        if (hcb["class"] === 2) {
-            if ((hcb.size) && (!hcb.pipe)) {
+    m.force1000 = function (hcb) {
+        if (hcb.class === 2) {
+            if (hcb.size && !hcb.pipe) {
                 hcb.size = hcb.subsize * hcb.size;
             } else {
                 // assume the size is 0
@@ -639,20 +801,20 @@
      * @param	{number}	nget		Number of requested data
      * @return	{number}	ngot		Number of received data
      */
-    m.grab = function(hcb, bufview, start, nget) {
+    m.grab = function (hcb, bufview, start, nget) {
         if (!hcb.dview) {
             return 0;
         }
 
         // TODO reformat
-        if (hcb.format[0] === 'C') {
+        if (hcb.format[0] === "C") {
             start = start * 2;
         }
 
         nget = hcb.ape * nget; // TODO - this is never used????
 
         //var ngot = Math.min(bufview.length, (hcb.dview.length-start)); //mmm
-        var ngot = Math.min(bufview.length, (hcb.dview.length - start));
+        var ngot = Math.min(bufview.length, hcb.dview.length - start);
         // iOS doesn't have .set on TypedArrays
         if (bufview.set === undefined) {
             for (var i = 0; i < ngot; i++) {
@@ -661,7 +823,7 @@
         } else {
             bufview.set(hcb.dview.subarray(start, start + ngot));
         }
-        if (hcb.format[0] === 'C') {
+        if (hcb.format[0] === "C") {
             ngot = ngot / 2;
         }
         return ngot;
@@ -673,12 +835,12 @@
      * @param	{array}		data		Data buffer
      * @param   {boolean}       [sync=false]    dispatch onpipewrite syncronously
      */
-    m.filad = function(hcb, data, sync) {
+    m.filad = function (hcb, data, sync) {
         if (hcb.data_free < data.length) {
             throw "Pipe full";
         }
         var sidx = hcb.in_byte / hcb.dview.BYTES_PER_ELEMENT;
-        var eidx = (sidx + data.length);
+        var eidx = sidx + data.length;
         if (eidx > hcb.dview.length) {
             var head = hcb.dview.length - sidx;
             var tail = data.length - head;
@@ -689,10 +851,11 @@
                 hcb.dview.set(data.slice(0, head), sidx);
                 hcb.dview.set(data.slice(head, data.length), 0);
             }
-            hcb.in_byte = (tail * hcb.dview.BYTES_PER_ELEMENT);
+            hcb.in_byte = tail * hcb.dview.BYTES_PER_ELEMENT;
         } else {
             hcb.dview.set(data, sidx);
-            hcb.in_byte = (eidx * hcb.dview.BYTES_PER_ELEMENT) % hcb.buf.byteLength;
+            hcb.in_byte =
+                (eidx * hcb.dview.BYTES_PER_ELEMENT) % hcb.buf.byteLength;
         }
         hcb.data_free -= data.length;
         if (hcb.onwritelisteners) {
@@ -711,7 +874,7 @@
      * @return	{number}	elements available
      * @private
      */
-    m.pavail = function(hcb) {
+    m.pavail = function (hcb) {
         return hcb.dview.length - hcb.data_free;
     };
 
@@ -724,7 +887,7 @@
      * @return	{number}	ngot	Number of data values gotten
      */
     // WARNING - nget is number of scalars...which differs from the normal API
-    m.grabx = function(hcb, dview, nget, offset) {
+    m.grabx = function (hcb, dview, nget, offset) {
         var navail = hcb.dview.length - hcb.data_free;
         if (offset === undefined) {
             offset = 0;
@@ -742,7 +905,7 @@
         }
 
         var sidx = hcb.out_byte / hcb.dview.BYTES_PER_ELEMENT;
-        var eidx = (sidx + nget);
+        var eidx = sidx + nget;
         if (eidx >= hcb.dview.length) {
             var head = hcb.dview.length - sidx;
             eidx = eidx - hcb.dview.length;
@@ -751,19 +914,19 @@
         } else {
             dview.set(hcb.dview.subarray(sidx, eidx), offset);
         }
-        hcb.out_byte = (eidx * hcb.dview.BYTES_PER_ELEMENT) % hcb.buf.byteLength;
+        hcb.out_byte =
+            (eidx * hcb.dview.BYTES_PER_ELEMENT) % hcb.buf.byteLength;
         hcb.data_free += nget;
         var ngot = nget;
         return ngot;
     };
-
 
     /**
      * @param	{header}	hcb		Bluefile header control block
      * @param	{number}	onwrite		-
      * @private
      */
-    m.addPipeWriteListener = function(hcb, onwrite) {
+    m.addPipeWriteListener = function (hcb, onwrite) {
         if (!hcb.onwritelisteners) {
             hcb.onwritelisteners = [];
         }
@@ -778,7 +941,7 @@
      * @return 	{string}	ASCII code pair
      */
     // ~= M$UNITS_NAME
-    m.units_name = function(units) {
+    m.units_name = function (units) {
         var u = UNITS[units];
         return u[0] + " (" + u[1] + ")";
     };
@@ -788,15 +951,15 @@
      * @param 	{string}	pathfilename	Full path, including filename
      * @return	{string}	filename	    Trimmed filename
      */
-    m.trim_name = function(pathfilename) {
-        var i = pathfilename.indexOf(']');
+    m.trim_name = function (pathfilename) {
+        var i = pathfilename.indexOf("]");
         if (i === -1) {
-            i = pathfilename.indexOf('/');
+            i = pathfilename.indexOf("/");
         }
         if (i === -1) {
-            i = pathfilename.indexOf(':');
+            i = pathfilename.indexOf(":");
         }
-        var j = pathfilename.substr(i + 1, pathfilename.length).indexOf('.');
+        var j = pathfilename.substr(i + 1, pathfilename.length).indexOf(".");
         if (j < 0) {
             j = pathfilename.length - i;
         }
@@ -812,7 +975,7 @@
      * @return {string} representation of units and multiplier
      */
     // ~= M$LABEL
-    m.label = function(units, mult) {
+    m.label = function (units, mult) {
         var u = ["Unknown", "U"];
 
         if (typeof units === "string") {
@@ -841,46 +1004,46 @@
      * @param b
      * @param c
      */
-    m.bound = function(a, b, c) {
-        return a < b ? b : (a > c ? c : a);
+    m.bound = function (a, b, c) {
+        return a < b ? b : a > c ? c : a;
     };
 
-    m.touch_distance = function(touchA, touchB) {
-        var xd = (touchA.pageX - touchB.pageX);
-        var yd = (touchA.pageY - touchB.pageY);
-        return Math.sqrt((xd * xd) + (yd * yd));
+    m.touch_distance = function (touchA, touchB) {
+        var xd = touchA.pageX - touchB.pageX;
+        var yd = touchA.pageY - touchB.pageY;
+        return Math.sqrt(xd * xd + yd * yd);
     };
 
-    m.mult_prefix = function(mult) {
+    m.mult_prefix = function (mult) {
         var prefix = "?";
 
         /* jshint -W116 */
         if (mult == 1) {
             prefix = "";
         } else if (mult == 10) {
-            prefix = 'da';
+            prefix = "da";
         } else if (mult == 0.1) {
-            prefix = 'd';
+            prefix = "d";
         } else if (mult == 100) {
-            prefix = 'h';
+            prefix = "h";
         } else if (mult == 0.01) {
-            prefix = 'c';
+            prefix = "c";
         } else if (mult == 1.0e3) {
-            prefix = 'K';
+            prefix = "K";
         } else if (mult == 1.0e-3) {
-            prefix = 'm';
+            prefix = "m";
         } else if (mult == 1.0e6) {
-            prefix = 'M';
+            prefix = "M";
         } else if (mult == 1.0e-6) {
-            prefix = 'u';
+            prefix = "u";
         } else if (mult == 1.0e9) {
-            prefix = 'G';
+            prefix = "G";
         } else if (mult == 1.0e-9) {
-            prefix = 'n';
+            prefix = "n";
         } else if (mult == 1.0e12) {
-            prefix = 'T';
+            prefix = "T";
         } else if (mult == 1.0e-12) {
-            prefix = 'p';
+            prefix = "p";
         }
         /* jshint +W116 */
 
@@ -891,35 +1054,34 @@
      * @private
      */
     var VECTOR = {
-        MV: 'F', // vector type
-        MS: 'F', // scalar type...not really necessary in javascript
+        MV: "F", // vector type
+        MS: "F", // scalar type...not really necessary in javascript
         nbpt: 4,
-        view: undefined
+        view: undefined,
     };
-
 
     /**
      * Sets data type for all subsequent calls to vector libraries.  Remains in effect until another call to this routine.
      * @param ctype
      */
     // ~= VSTYPE - not really necessary
-    m.vstype = function(ctype) {
+    m.vstype = function (ctype) {
         VECTOR.MS = ctype;
         VECTOR.MV = ctype;
-        if (VECTOR.MV === 'D') {
+        if (VECTOR.MV === "D") {
             VECTOR.nbpt = 8;
-        } else if ((VECTOR.MV === 'L') || (VECTOR.MV === 'F')) {
+        } else if (VECTOR.MV === "L" || VECTOR.MV === "F") {
             VECTOR.nbpt = 4;
-        } else if (VECTOR.MV === 'I') {
+        } else if (VECTOR.MV === "I") {
             VECTOR.nbpt = 2;
-        } else if (VECTOR.MV === 'B') {
+        } else if (VECTOR.MV === "B") {
             VECTOR.nbpt = 1;
         } else {
             alert("Unsupported vector type");
         }
     };
 
-    m.log10 = function(v, lo_thresh) {
+    m.log10 = function (v, lo_thresh) {
         if (lo_thresh === undefined) {
             lo_thresh = 1.0e-20;
         }
@@ -933,7 +1095,7 @@
      * @param 	{array}		dst		Ouput vector.  If undefined, <src> elements will be overwritten.
      */
     // ~= M$VLOG10- not really necessary
-    m.vlog10 = function(src, lo_thresh, dst) {
+    m.vlog10 = function (src, lo_thresh, dst) {
         if (lo_thresh === undefined) {
             lo_thresh = 1.0e-20;
         }
@@ -957,7 +1119,7 @@
      * @param 	{array}		dst		Output vector. If undefined, <src> elements will be overwritten.
      * @private
      */
-    m.vlogscale = function(src, lo_thresh, dbscale, dst) {
+    m.vlogscale = function (src, lo_thresh, dbscale, dst) {
         if (lo_thresh === undefined) {
             lo_thresh = 1.0e-20;
         }
@@ -971,7 +1133,8 @@
             if (dst.length <= i) {
                 break;
             }
-            dst[i] = Math.log(Math.abs(Math.max(src[i], lo_thresh))) / Math.log(10);
+            dst[i] =
+                Math.log(Math.abs(Math.max(src[i], lo_thresh))) / Math.log(10);
             dst[i] = dst[i] * dbscale;
         }
     };
@@ -986,7 +1149,7 @@
      * @param 	{array}		dst		Output vector. If undefined, <src> elements will be overwritten.
      * @private
      */
-    m.cvmag2logscale = function(src, lo_thresh, dbscale, dst) {
+    m.cvmag2logscale = function (src, lo_thresh, dbscale, dst) {
         if (lo_thresh === undefined) {
             lo_thresh = 1.0e-20;
         }
@@ -1002,8 +1165,9 @@
             if (j >= src.length) {
                 break;
             }
-            dst[i] = (src[j - 1] * src[j - 1]) + (src[j] * src[j]);
-            dst[i] = Math.log(Math.abs(Math.max(dst[i], lo_thresh))) / Math.log(10);
+            dst[i] = src[j - 1] * src[j - 1] + src[j] * src[j];
+            dst[i] =
+                Math.log(Math.abs(Math.max(dst[i], lo_thresh))) / Math.log(10);
             dst[i] = dst[i] * dbscale;
         }
     };
@@ -1016,7 +1180,7 @@
      * @param	{number}	count		Number of elements to apply multiplier, starting with first <src> element.
      */
     // ~= M$VSMUL
-    m.vsmul = function(src, mul, dst, count) {
+    m.vsmul = function (src, mul, dst, count) {
         if (dst === undefined) {
             dst = src;
         }
@@ -1041,7 +1205,7 @@
      * @return 	{array}		mxmin		Index and value of min and max elements in <vec>.
      */
     // ~= M$VMXMN
-    m.vmxmn = function(vec, size) {
+    m.vmxmn = function (vec, size) {
         // Originally this code used an object to hold the values
         // but Chrome 34.0.1847.131 seemed to have a bug where
         // these values would somehow get messed up...oddly
@@ -1066,7 +1230,7 @@
             smax: smax,
             smin: smin,
             imax: imax,
-            imin: imin
+            imin: imin,
         };
     };
 
@@ -1079,7 +1243,7 @@
      * @param {number}	count		Number of input vector elements to move, starting with 0th element of <vec>. Cannot exceed vector lengths,
      *					taking into account the strides.
      */
-    m.vmov = function(src, sstride, dest, dstride, count) {
+    m.vmov = function (src, sstride, dest, dstride, count) {
         if (count === undefined) {
             count = src.length;
         }
@@ -1107,7 +1271,7 @@
      */
     // ~= M$VFILL
     // TODO - more optimal version?
-    m.vfill = function(vec, inpval, count) {
+    m.vfill = function (vec, inpval, count) {
         if (count === undefined) {
             count = vec.length;
         }
@@ -1123,7 +1287,7 @@
      * @param 	{array}		dest		Ouput vector. If <dest> is undefined, overwrite input vector <vec>.
      * @param 	{number}	count		Number of elements to write, starting with 0th element of <vec>. Cannot exceed vector lengths.
      */
-    m.vabs = function(vec, dest, count) {
+    m.vabs = function (vec, dest, count) {
         if (count === undefined) {
             count = vec.length;
         }
@@ -1136,7 +1300,6 @@
         }
     };
 
-
     /**
      * Computes the magnitude of <count> complex vector <cxvec> elements. Store results in output vector <dest>.
      * @param	{array}		cxvec		Input vector
@@ -1144,7 +1307,7 @@
      * @param 	{number}	count		Number of elements to write, starting with 0th element of <cxvec>. Cannot exceed vector lengths.  If undefined, defaults to output vector <dest> length.
      */
     // ~= M$CVMAG
-    m.cvmag = function(cxvec, dest, count) {
+    m.cvmag = function (cxvec, dest, count) {
         if (count === undefined) {
             count = dest.length;
         }
@@ -1156,7 +1319,9 @@
             if (j >= cxvec.length) {
                 break;
             }
-            dest[i] = Math.sqrt((cxvec[j - 1] * cxvec[j - 1]) + (cxvec[j] * cxvec[j]));
+            dest[i] = Math.sqrt(
+                cxvec[j - 1] * cxvec[j - 1] + cxvec[j] * cxvec[j]
+            );
         }
     };
 
@@ -1167,7 +1332,7 @@
      * @param 	{number}	count		Number of elements to write, starting with 0th element of <cxvec>. Cannot exceed vector lengths.  If undefined, defaults to output vector <dest> length.
      */
     // ~= M$CVMAG2
-    m.cvmag2 = function(cxvec, dest, count) {
+    m.cvmag2 = function (cxvec, dest, count) {
         if (count === undefined) {
             count = dest.length;
         }
@@ -1180,7 +1345,7 @@
             if (j >= cxvec.length) {
                 break;
             }
-            dest[i] = (cxvec[j - 1] * cxvec[j - 1]) + (cxvec[j] * cxvec[j]);
+            dest[i] = cxvec[j - 1] * cxvec[j - 1] + cxvec[j] * cxvec[j];
         }
     };
 
@@ -1191,7 +1356,7 @@
      * @param 	{number}	count		Number of elements to write, starting with 0th element of <cxvec>. Cannot exceed vector lengths.  If undefined, defaults to output vector <dest> length.
      */
     // ~= M$CVPHA
-    m.cvpha = function(cxvec, dest, count) {
+    m.cvpha = function (cxvec, dest, count) {
         if (count === undefined) {
             count = dest.length;
         }
@@ -1208,7 +1373,7 @@
             }
             re = cxvec[j - 1];
             im = cxvec[j];
-            if ((re === 0.0) && (im === 0.0)) {
+            if (re === 0.0 && im === 0.0) {
                 re = 1.0;
             }
             dest[i] = Math.atan2(im, re);
@@ -1222,7 +1387,7 @@
      * @param 	{number}	count		Number of elements to write, starting with 0th element of <cxvec>. Cannot exceed vector lengths.  If undefined, defaults to output vector <dest> length.
      */
     // ~= M$CVPHAD
-    m.cvphad = function(cxvec, dest, count) {
+    m.cvphad = function (cxvec, dest, count) {
         if (count === undefined) {
             count = dest.length;
         }
@@ -1238,7 +1403,7 @@
             }
             re = cxvec[j - 1];
             im = cxvec[j];
-            if ((re === 0.0) && (im === 0.0)) {
+            if (re === 0.0 && im === 0.0) {
                 re = 1.0;
             }
             dest[i] = Math.atan2(im, re) * (180.0 / Math.PI);
@@ -1250,8 +1415,8 @@
      * @private
      */
     // ~= INT(), DINT
-    m.trunc = function(n) {
-        return n - n % 1;
+    m.trunc = function (n) {
+        return n - (n % 1);
     };
 
     /**
@@ -1260,7 +1425,7 @@
      * @private
      */
     // Transfer of sign function from Fortran
-    m.sign = function(a1, a2) {
+    m.sign = function (a1, a2) {
         if (a2 >= 0) {
             return Math.abs(a1);
         } else {
@@ -1275,7 +1440,7 @@
      */
 
     function pad2(number) {
-        return (number < 10 ? '0' : '') + number;
+        return (number < 10 ? "0" : "") + number;
     }
 
     /**
@@ -1293,12 +1458,20 @@
      *
      */
 
-    m.sec2tod = function(sec, trim_trailing_zeros) {
+    m.sec2tod = function (sec, trim_trailing_zeros) {
         var tod = "";
         var j1950 = Date.UTC(1950, 0, 1); //From 1950 to 1970
         var j1950Date = new Date(j1950); //debug var
         var d = new Date();
-        var midnightToday = new Date(d.getFullYear(), d.getMonth(), d.getDate(), 0, 0, 0, 0);
+        var midnightToday = new Date(
+            d.getFullYear(),
+            d.getMonth(),
+            d.getDate(),
+            0,
+            0,
+            0,
+            0
+        );
         var diffDaySecs = 86400; //    86400 secs = 24*60*60
         var diffYearSecs = 31536000; // 31536000 secs = 365*24*60*60
         var negDiffYearSecs = -1 * diffYearSecs; //-31536000 secs
@@ -1306,9 +1479,14 @@
         if (sec >= 0) {
             if (sec < diffDaySecs) {
                 // hh:mm:ss
-                var millisecs = midnightToday.getTime() + (sec * 1000);
+                var millisecs = midnightToday.getTime() + sec * 1000;
                 var d = new Date(millisecs);
-                tod = pad2(d.getHours()) + ":" + pad2(d.getMinutes()) + ":" + pad2(d.getSeconds());
+                tod =
+                    pad2(d.getHours()) +
+                    ":" +
+                    pad2(d.getMinutes()) +
+                    ":" +
+                    pad2(d.getSeconds());
             } else if (sec === 86400) {
                 tod = "24:00:00";
             } else if (sec < diffYearSecs) {
@@ -1322,19 +1500,36 @@
                 var minutes = Math.floor((seconds / 60) % 60);
                 seconds %= 60;
 
-                tod = days.toString() + "::" + pad2(hours) + ":" + pad2(minutes) + ":" + pad2(seconds);
+                tod =
+                    days.toString() +
+                    "::" +
+                    pad2(hours) +
+                    ":" +
+                    pad2(minutes) +
+                    ":" +
+                    pad2(seconds);
             } else {
                 // convert to j1950
                 var secMilli = Math.floor(sec * 1000) + j1950;
                 d = new Date(secMilli);
-                tod = d.getUTCFullYear() + ":" + pad2(d.getUTCMonth() + 1) + ":" + pad2(d.getUTCDate()) + "::" +
-                    pad2(d.getUTCHours()) + ":" + pad2(d.getUTCMinutes()) + ":" + pad2(d.getUTCSeconds());
+                tod =
+                    d.getUTCFullYear() +
+                    ":" +
+                    pad2(d.getUTCMonth() + 1) +
+                    ":" +
+                    pad2(d.getUTCDate()) +
+                    "::" +
+                    pad2(d.getUTCHours()) +
+                    ":" +
+                    pad2(d.getUTCMinutes()) +
+                    ":" +
+                    pad2(d.getUTCSeconds());
             }
         } else {
             if (sec > negDiffYearSecs) {
                 // -ddd:hh:mm:ss
                 var days = sec / diffDaySecs;
-                days = (days <= 0) ? Math.ceil(days) : Math.floor(days);
+                days = days <= 0 ? Math.ceil(days) : Math.floor(days);
 
                 // Break down integral seconds in the day into hours, minutes and seconds.
                 var seconds = Math.floor(Math.abs(sec) % diffDaySecs);
@@ -1347,13 +1542,30 @@
                 } else {
                     days = days.toString();
                 }
-                tod = days + "::" + pad2(hours) + ":" + pad2(minutes) + ":" + pad2(seconds);
+                tod =
+                    days +
+                    "::" +
+                    pad2(hours) +
+                    ":" +
+                    pad2(minutes) +
+                    ":" +
+                    pad2(seconds);
             } else {
                 // convert to j1950
                 var secMilli = Math.floor(sec * 1000) + j1950;
                 d = new Date(secMilli);
-                tod = d.getUTCFullYear() + ":" + pad2(d.getUTCMonth() + 1) + ":" + pad2(d.getUTCDate()) + "::" +
-                    pad2(d.getUTCHours()) + ":" + pad2(d.getUTCMinutes()) + ":" + pad2(d.getUTCSeconds());
+                tod =
+                    d.getUTCFullYear() +
+                    ":" +
+                    pad2(d.getUTCMonth() + 1) +
+                    ":" +
+                    pad2(d.getUTCDate()) +
+                    "::" +
+                    pad2(d.getUTCHours()) +
+                    ":" +
+                    pad2(d.getUTCMinutes()) +
+                    ":" +
+                    pad2(d.getUTCSeconds());
             }
         }
 
@@ -1361,11 +1573,15 @@
         // even if we are on a full second boundary, otherwise
         // on rising/falling rasters it can look like the display
         // is flickering
-        var fractional = (sec % 1);
+        var fractional = sec % 1;
         if (fractional === 0.0) {
             tod += ".000000";
         } else {
-            tod += "." + Math.abs(sec % 1).toPrecision(6).slice(2, 8);
+            tod +=
+                "." +
+                Math.abs(sec % 1)
+                    .toPrecision(6)
+                    .slice(2, 8);
         }
 
         if (trim_trailing_zeros) {
@@ -1380,7 +1596,6 @@
             }
         }
         return tod;
-
     };
 
     /**
@@ -1397,7 +1612,7 @@
      *   if modulo <= 0 return m.sec2tod(modulo)+86400
      *   if module <
      */
-    m.sec2tspec = function(sec, mode, trim_trailing_zeros) {
+    m.sec2tspec = function (sec, mode, trim_trailing_zeros) {
         mode = mode || "";
         if (sec >= 0 && sec <= 86400) {
             return m.sec2tod(sec, trim_trailing_zeros);
@@ -1418,41 +1633,62 @@
      * @return	{string}	tod		Time of day
      */
 
-    m.sec2tod_j1970 = function(sec) {
+    m.sec2tod_j1970 = function (sec) {
         var tod = "";
         var d;
-        if ((sec >= 0) && (sec < 86400)) {
+        if (sec >= 0 && sec < 86400) {
             // hh:mm:ss
             d = new Date(sec * 1000);
-            tod = pad2(d.getHours()) + ":" + pad2(d.getMinutes()) + ":" + pad2(d.getSeconds());
-
-        } else if ((sec < 0) && (sec > -31536000)) {
+            tod =
+                pad2(d.getHours()) +
+                ":" +
+                pad2(d.getMinutes()) +
+                ":" +
+                pad2(d.getSeconds());
+        } else if (sec < 0 && sec > -31536000) {
             // -ddd:hh:mm:ss
             var days = -1 * (sec / (24 * 60 * 60));
             d = new Date(sec * 1000);
-            tod = days.toString() + "::" + pad2(d.getHours()) + ":" + pad2(d.getMinutes()) + ":" + pad2(d.getSeconds());
+            tod =
+                days.toString() +
+                "::" +
+                pad2(d.getHours()) +
+                ":" +
+                pad2(d.getMinutes()) +
+                ":" +
+                pad2(d.getSeconds());
         } else {
             // convert to j1950
             d = new Date((sec - j1950offset) * 1000);
-            tod = d.getFullYear() + ":" + pad2(d.getMonth()) + ":" + pad2(d.getDate()) + "::" +
-                pad2(d.getHours()) + ":" + pad2(d.getMinutes()) + ":" + pad2(d.getSeconds());
+            tod =
+                d.getFullYear() +
+                ":" +
+                pad2(d.getMonth()) +
+                ":" +
+                pad2(d.getDate()) +
+                "::" +
+                pad2(d.getHours()) +
+                ":" +
+                pad2(d.getMinutes()) +
+                ":" +
+                pad2(d.getSeconds());
         }
-        if ((sec % 1) !== 0) {
+        if (sec % 1 !== 0) {
             tod += "." + (sec % 1).toPrecision(6).slice(2, 8);
         }
         return tod;
     };
 
-    m.j1970toj1950 = function(t) {
+    m.j1970toj1950 = function (t) {
         if (t.getTime !== undefined) {
-            return ((t.getTime() / 1000) + j1950offset);
+            return t.getTime() / 1000 + j1950offset;
         } else {
-            return (t + j1950offset);
+            return t + j1950offset;
         }
     };
 
-    m.j1950toj1970 = function(t) {
-        return (t - j1950offset);
+    m.j1950toj1970 = function (t) {
+        return t - j1950offset;
     };
 
     /**
@@ -1461,9 +1697,9 @@
     // Throttle calls to "callback" routine and ensure that it
     // is not invoked any more often than "delay" milliseconds.
     //
-    m.throttle = function(delay, callback) {
+    m.throttle = function (delay, callback) {
         var previousCall = new Date().getTime();
-        return function() {
+        return function () {
             var time = new Date().getTime();
 
             //
@@ -1471,18 +1707,18 @@
             // the previous call then propagate this call to
             // "callback"
             //
-            if ((time - previousCall) >= delay) {
+            if (time - previousCall >= delay) {
                 previousCall = time;
                 callback.apply(null, arguments);
             }
         };
     };
 
-    m.pad = function(value, padamt) {
+    m.pad = function (value, padamt) {
         if (!padamt) {
             return 0;
         }
-        if (typeof padamt === 'string') {
+        if (typeof padamt === "string") {
             if (padamt.endsWith("%")) {
                 padamt = value * (parseFloat(padamt) / 100.0);
             } else {
@@ -1495,5 +1731,4 @@
 
     // Node: Export function
     module.exports = m;
-
-}());
+})();

@@ -26,16 +26,14 @@
 /* global module */
 /* global require */
 
-(function() {
-
-// Bundle all the standard-plugins into this module
-module.exports = {
-    Plugin                 : require("./sigplot.plugin"),
-    AccordionPlugin        : require("./sigplot.accordion"),
-    AnnotationPlugin       : require("./sigplot.annotations"),
-    BoxesPlugin            : require("./sigplot.boxes"),
-    PlaybackControlsPlugin : require("./sigplot.playback"),
-    SliderPlugin           : require("./sigplot.slider")
-};
-
-}());
+(function () {
+    // Bundle all the standard-plugins into this module
+    module.exports = {
+        Plugin: require("./sigplot.plugin"),
+        AccordionPlugin: require("./sigplot.accordion"),
+        AnnotationPlugin: require("./sigplot.annotations"),
+        BoxesPlugin: require("./sigplot.boxes"),
+        PlaybackControlsPlugin: require("./sigplot.playback"),
+        SliderPlugin: require("./sigplot.slider"),
+    };
+})();

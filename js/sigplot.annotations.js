@@ -26,8 +26,7 @@
 /* global module */
 /* global require */
 
-(function() {
-
+(function () {
     var m = require("./m");
     var mx = require("./mx");
 
@@ -36,8 +35,8 @@
      * @param options
      * @returns {AnnotationPlugin}
      */
-    var AnnotationPlugin = function(options) {
-        this.options = (options === undefined) ? {} : options;
+    var AnnotationPlugin = function (options) {
+        this.options = options === undefined ? {} : options;
 
         if (this.options.display === undefined) {
             this.options.display = true;
@@ -50,12 +49,12 @@
     };
 
     AnnotationPlugin.prototype = {
-        init: function(plot) {
+        init: function (plot) {
             var self = this;
             this.plot = plot;
             var Mx = this.plot._Mx;
 
-            this.onmousemove = function(evt) {
+            this.onmousemove = function (evt) {
                 // Ignore if there are no annotations
                 if (self.annotations.length === 0) {
                     return;
@@ -67,11 +66,11 @@
                 }
 
                 // Ignore if the mouse is outside of the plot area, clear the highlights
-                if ((evt.xpos < Mx.l) || (evt.xpos > Mx.r)) {
+                if (evt.xpos < Mx.l || evt.xpos > Mx.r) {
                     self.set_highlight(false);
                     return;
                 }
-                if ((evt.ypos > Mx.b) || (evt.ypos < Mx.t)) {
+                if (evt.ypos > Mx.b || evt.ypos < Mx.t) {
                     self.set_highlight(false);
                     return;
                 }
@@ -83,7 +82,7 @@
 
                     var pxl = {
                         x: undefined,
-                        y: undefined
+                        y: undefined,
                     };
                     // Perserve the legacy API for now
                     if (annotation.absolute_placement) {
@@ -108,11 +107,14 @@
 
                     var rect_upperleft = {
                         x: pxl.x,
-                        y: pxl.y
+                        y: pxl.y,
                     };
-                    if ((annotation.value instanceof HTMLImageElement) ||
-                        (annotation.value instanceof HTMLCanvasElement) ||
-                        ((typeof HTMLVideoElement !== 'undefined') && annotation.value instanceof HTMLVideoElement)) {
+                    if (
+                        annotation.value instanceof HTMLImageElement ||
+                        annotation.value instanceof HTMLCanvasElement ||
+                        (typeof HTMLVideoElement !== "undefined" &&
+                            annotation.value instanceof HTMLVideoElement)
+                    ) {
                         // For image, pxl.x and pxl.y are center
                         rect_upperleft.x -= annotation.width / 2;
                         rect_upperleft.y -= annotation.height / 2;
@@ -121,9 +123,23 @@
                         rect_upperleft.y -= annotation.height;
                     }
 
-                    if (mx.inrect(evt.xpos, evt.ypos, rect_upperleft.x, rect_upperleft.y, annotation.width, annotation.height)) {
+                    if (
+                        mx.inrect(
+                            evt.xpos,
+                            evt.ypos,
+                            rect_upperleft.x,
+                            rect_upperleft.y,
+                            annotation.width,
+                            annotation.height
+                        )
+                    ) {
                         if (!annotation.highlight) {
-                            self.set_highlight(true, [annotation], pxl.x, pxl.y);
+                            self.set_highlight(
+                                true,
+                                [annotation],
+                                pxl.x,
+                                pxl.y
+                            );
                             need_refresh = true;
                         }
                     } else {
@@ -142,7 +158,7 @@
             };
             this.plot.addListener("mmove", this.onmousemove);
 
-            this.onmousedown = function(evt) {
+            this.onmousedown = function (evt) {
                 for (var i = 0; i < self.annotations.length; i++) {
                     // leverage the fact that annotation.highlight is
                     // set when the mouse is over the annotation
@@ -153,17 +169,20 @@
             };
             this.plot.addListener("mdown", this.onmousedown);
 
-            this.onmouseup = function(evt) {
+            this.onmouseup = function (evt) {
                 for (var i = 0; i < self.annotations.length; i++) {
                     // leverage the fact that annotation.highlight is
                     // set when the mouse is over the annotation
                     if (self.annotations[i].selected) {
                         // Issue a highlight event
-                        var evt = document.createEvent('Event');
-                        evt.initEvent('annotationclick', true, true);
+                        var evt = document.createEvent("Event");
+                        evt.initEvent("annotationclick", true, true);
                         evt.annotation = self.annotations[i];
-                        var executeDefault = mx.dispatchEvent(self.plot._Mx, evt);
-                        if ((executeDefault) && (self.annotations[i].onclick)) {
+                        var executeDefault = mx.dispatchEvent(
+                            self.plot._Mx,
+                            evt
+                        );
+                        if (executeDefault && self.annotations[i].onclick) {
                             self.annotations[i].onclick();
                         }
                     }
@@ -173,12 +192,12 @@
             document.addEventListener("mouseup", this.onmouseup, false);
         },
 
-        set_highlight: function(state, annotations, x, y) {
+        set_highlight: function (state, annotations, x, y) {
             var _annotations = annotations || this.annotations;
             for (var i = 0; i < _annotations.length; i++) {
                 // Issue a highlight event
-                var evt = document.createEvent('Event');
-                evt.initEvent('annotationhighlight', true, true);
+                var evt = document.createEvent("Event");
+                evt.initEvent("annotationhighlight", true, true);
                 evt.annotation = _annotations[i];
                 evt.state = state;
                 evt.x = x;
@@ -190,52 +209,55 @@
             }
         },
 
-        menu: function() {
-            var _display_handler = (function(self) {
-                return function() {
+        menu: function () {
+            var _display_handler = (function (self) {
+                return function () {
                     self.options.display = !self.options.display;
                     self.plot.redraw();
                 };
-            }(this));
+            })(this);
 
-            var _clearall_handler = (function(self) {
-                return function() {
+            var _clearall_handler = (function (self) {
+                return function () {
                     self.annotations = [];
                     self.plot.redraw();
                 };
-            }(this));
+            })(this);
 
             return {
                 text: "Annotations...",
                 menu: {
                     title: "ANNOTATIONS",
-                    items: [{
-                        text: "Display",
-                        checked: this.options.display,
-                        style: "checkbox",
-                        handler: _display_handler
-                    }, {
-                        text: "Clear All",
-                        handler: _clearall_handler
-                    }]
-                }
+                    items: [
+                        {
+                            text: "Display",
+                            checked: this.options.display,
+                            style: "checkbox",
+                            handler: _display_handler,
+                        },
+                        {
+                            text: "Clear All",
+                            handler: _clearall_handler,
+                        },
+                    ],
+                },
             };
         },
 
-        add_annotation: function(annotation) {
+        add_annotation: function (annotation) {
             this.annotations.push(annotation);
 
             this.plot.redraw();
             return this.annotations.length;
         },
 
-        clear_annotations: function() {
+        clear_annotations: function () {
             this.annotations = [];
 
             this.plot.redraw();
         },
 
-        refresh: function(canvas) {
+        refresh: function (canvas) {
             if (!this.options.display) {
                 return;
             }
@@ -250,8 +272,7 @@
             ctx.rect(Mx.l, Mx.t, Mx.r - Mx.l, Mx.b - Mx.t);
             ctx.clip();
 
-            mx.onCanvas(Mx, canvas, function() {
-
+            mx.onCanvas(Mx, canvas, function () {
                 // iterate backwards so we can remove from the end...in the future
                 // if we decide to have annotations auto-remove
                 for (var i = self.annotations.length - 1; i >= 0; i--) {
@@ -259,7 +280,7 @@
 
                     var pxl = {
                         x: undefined,
-                        y: undefined
+                        y: undefined,
                     };
                     // Perserve the legacy API for now
                     if (annotation.absolute_placement) {
@@ -282,21 +303,39 @@
                         pxl.y = res.y;
                     }
 
-                    if (!mx.inrect(pxl.x, pxl.y, Mx.l, Mx.t, Mx.r - Mx.l, Mx.b - Mx.t)) {
+                    if (
+                        !mx.inrect(
+                            pxl.x,
+                            pxl.y,
+                            Mx.l,
+                            Mx.t,
+                            Mx.r - Mx.l,
+                            Mx.b - Mx.t
+                        )
+                    ) {
                         // do we want to auto-remove?
                         //self.annotations.splice(i,1);
                         continue;
                     }
 
-                    if ((annotation.value instanceof HTMLImageElement) ||
-                        (annotation.value instanceof HTMLCanvasElement) ||
-                        ((typeof HTMLVideoElement !== 'undefined') && annotation.value instanceof HTMLVideoElement)) {
+                    if (
+                        annotation.value instanceof HTMLImageElement ||
+                        annotation.value instanceof HTMLCanvasElement ||
+                        (typeof HTMLVideoElement !== "undefined" &&
+                            annotation.value instanceof HTMLVideoElement)
+                    ) {
                         annotation.width = annotation.value.width;
                         annotation.height = annotation.value.height;
-                        ctx.drawImage(annotation.value, pxl.x - (annotation.width / 2), pxl.y - (annotation.height / 2));
+                        ctx.drawImage(
+                            annotation.value,
+                            pxl.x - annotation.width / 2,
+                            pxl.y - annotation.height / 2
+                        );
                     } else {
                         // Setup the text styles
-                        ctx.font = annotation.font || "bold italic 20px new century schoolbook";
+                        ctx.font =
+                            annotation.font ||
+                            "bold italic 20px new century schoolbook";
                         if (!annotation.highlight) {
                             ctx.fillStyle = annotation.color || Mx.fg;
                         } else {
@@ -304,32 +343,40 @@
                         }
                         ctx.globalAlpha = 1;
                         // Measure the text
-                        annotation.width = ctx.measureText(annotation.value).width;
+                        annotation.width = ctx.measureText(
+                            annotation.value
+                        ).width;
                         annotation.height = ctx.measureText("M").width; // approximation of height
 
                         // Render the text
-                        ctx.textBaseline = annotation.textBaseline || self.options.textBaseline;
-                        ctx.textAlign = annotation.textAlign || self.options.textAlign;
+                        ctx.textBaseline =
+                            annotation.textBaseline ||
+                            self.options.textBaseline;
+                        ctx.textAlign =
+                            annotation.textAlign || self.options.textAlign;
                         ctx.fillText(annotation.value, pxl.x, pxl.y);
                     }
 
-
                     if (annotation.highlight && annotation.popup) {
-                        mx.render_message_box(Mx, annotation.popup, pxl.x + 5, pxl.y + 5, annotation.popupTextColor);
+                        mx.render_message_box(
+                            Mx,
+                            annotation.popup,
+                            pxl.x + 5,
+                            pxl.y + 5,
+                            annotation.popupTextColor
+                        );
                     }
                 }
-
             });
 
             ctx.restore();
         },
 
-        dispose: function() {
+        dispose: function () {
             this.plot = undefined;
             this.annotations = undefined;
-        }
+        },
     };
 
     module.exports = AnnotationPlugin;
-
-}());
+})();

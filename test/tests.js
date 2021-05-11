@@ -39,7 +39,7 @@ function interactiveTest(testName, msg, callback) {
     if (!ifixture) {
         return;
     }
-    var wrapped_callback = function(assert) {
+    var wrapped_callback = function (assert) {
         var done = assert.async();
 
         callback(assert);
@@ -48,15 +48,20 @@ function interactiveTest(testName, msg, callback) {
             var toolbar = document.getElementById("qunit-testrunner-toolbar");
             var question = document.createElement("div");
             toolbar.appendChild(question);
-            question.innerHTML = "<input id='askOkYes' type='button' value='Yes'></input>" + "<input id='askOkNo' type='button' value='No'></input>" + "<span>" + msg + "?</span>";
+            question.innerHTML =
+                "<input id='askOkYes' type='button' value='Yes'></input>" +
+                "<input id='askOkNo' type='button' value='No'></input>" +
+                "<span>" +
+                msg +
+                "?</span>";
             var askOkYes = document.getElementById("askOkYes");
-            askOkYes.onclick = function() {
+            askOkYes.onclick = function () {
                 question.innerHTML = "";
                 assert.ok(true, msg);
                 done();
             };
             var askOkNo = document.getElementById("askOkNo");
-            askOkNo.onclick = function() {
+            askOkNo.onclick = function () {
                 question.innerHTML = "";
                 assert.ok(false, msg);
                 done();
@@ -69,7 +74,7 @@ function interactiveTest(testName, msg, callback) {
 }
 
 function interactiveBeforeEach() {
-    ifixture.innerHTML = '';
+    ifixture.innerHTML = "";
     var plotdiv = document.createElement("div");
     plotdiv.id = "plot";
     plotdiv.style.margin = "0 auto";
@@ -86,7 +91,7 @@ function interactiveBeforeEach() {
 }
 
 function interactiveAfterEach() {
-    ifixture.innerHTML = '';
+    ifixture.innerHTML = "";
     if (ifixture.interval) {
         window.clearInterval(ifixture.interval);
         ifixture.interval = undefined;

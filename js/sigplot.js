@@ -28,8 +28,7 @@
 /* global module */
 /* global require */
 
-(function() {
-
+(function () {
     var version = "version-PLACEHOLDER";
 
     var _ = require("underscore");
@@ -65,7 +64,8 @@
      * @memberOf sigplot
      * @private
      */
-    var KEYPRESS_HELP = "Keypress Table:\n" +
+    var KEYPRESS_HELP =
+        "Keypress Table:\n" +
         "--------------\n" +
         "?       - Main help box.\n" +
         "A       - Toggle display x,y readouts:\n" +
@@ -93,7 +93,8 @@
      * @memberOf sigplot
      * @private
      */
-    var MAIN_HELP = "To zoom, press and drag the left mouse (LM) over the region of interest and release. " +
+    var MAIN_HELP =
+        "To zoom, press and drag the left mouse (LM) over the region of interest and release. " +
         "To unzoom, press right mouse (RM).  Press the middle mouse (MM) button or press the 'M' key to open the main menu." +
         "View the function of all keypresses by selecting 'Keypress Info' from the main menu.";
 
@@ -110,15 +111,15 @@
         radius: 10, // The radius of the inner circle
         corners: 1, // Corner roundness (0..1)
         rotate: 0, // The rotation offset
-        color: '#FFF', // #rgb or #rrggbb
+        color: "#FFF", // #rgb or #rrggbb
         speed: 1, // Rounds per second
         trail: 60, // Afterglow percentage
         shadow: false, // Whether to render a shadow
         hwaccel: false, // Whether to use hardware acceleration
-        className: 'spinner', // The CSS class to assign to the spinner
+        className: "spinner", // The CSS class to assign to the spinner
         zIndex: 2e9, // The z-index (defaults to 2000000000)
-        top: 'auto', // Top position relative to parent in px
-        left: 'auto' // Left position relative to parent in px
+        top: "auto", // Top position relative to parent in px
+        left: "auto", // Left position relative to parent in px
     };
 
     /**
@@ -130,18 +131,16 @@
      */
     sigplot.browserIsCompatible = function browserIsCompatible() {
         // We need a Canvas
-        var test_canvas = document.createElement('canvas');
-        var hascanvas = (test_canvas.getContext) ? true : false;
+        var test_canvas = document.createElement("canvas");
+        var hascanvas = test_canvas.getContext ? true : false;
 
         // We need ArrayBuffer
-        var hasarraybuf = ("ArrayBuffer" in window);
+        var hasarraybuf = "ArrayBuffer" in window;
 
         // File and FileReader are optional...and only
         // required if the user wants to plot local files
-        return (hascanvas && hasarraybuf);
+        return hascanvas && hasarraybuf;
     };
-
-
 
     /**
      * Construct and render a plot.
@@ -325,7 +324,7 @@
      *
      * @returns {Plot}
      */
-    var Plot = function(element, options) {
+    var Plot = function (element, options) {
         if (!sigplot.browserIsCompatible()) {
             throw "Browser is not compatible";
         }
@@ -351,20 +350,26 @@
                 zoom: null,
                 unzoom: null,
                 xpan: null,
-                ypan: null
-            }
+                ypan: null,
+            },
         };
 
         this._refresh(); // Draw immediately
 
-        this.onmousemove = (function(plot) {
-            return function(e) {
+        this.onmousemove = (function (plot) {
+            return function (e) {
                 var Mx = plot._Mx;
                 var Gx = plot._Gx;
 
                 var rect = e.target.getBoundingClientRect();
-                var xpos = (e.offsetX === undefined) ? (e.pageX - rect.left - window.scrollX) : e.offsetX;
-                var ypos = (e.offsetX === undefined) ? (e.pageY - rect.top - window.scrollY) : e.offsetY;
+                var xpos =
+                    e.offsetX === undefined
+                        ? e.pageX - rect.left - window.scrollX
+                        : e.offsetX;
+                var ypos =
+                    e.offsetX === undefined
+                        ? e.pageY - rect.top - window.scrollY
+                        : e.offsetY;
 
                 // var xpos = (e.offsetX === undefined) ? e.layerX : e.offsetX;
                 // var ypos = (e.offsetY === undefined) ? e.layerY : e.offsetY;
@@ -377,8 +382,8 @@
                 }
                 display_specs(plot);
 
-                var evt = document.createEvent('Event');
-                evt.initEvent('mmove', true, true);
+                var evt = document.createEvent("Event");
+                evt.initEvent("mmove", true, true);
                 evt.originalEvent = e;
                 evt.xpos = xpos;
                 evt.ypos = ypos;
@@ -400,19 +405,33 @@
                     if (Mx.warpbox) {
                         // during zoom operations undraw the crosshairs
                         if (Gx.cross_xpos !== undefined) {
-                            mx.rubberline(Mx, Gx.cross_xpos, Mx.t,
-                                Gx.cross_xpos, Mx.b);
+                            mx.rubberline(
+                                Mx,
+                                Gx.cross_xpos,
+                                Mx.t,
+                                Gx.cross_xpos,
+                                Mx.b
+                            );
                         }
                         if (Gx.cross_ypos !== undefined) {
-                            mx.rubberline(Mx, Mx.l, Gx.cross_ypos, Mx.r,
-                                Gx.cross_ypos);
+                            mx.rubberline(
+                                Mx,
+                                Mx.l,
+                                Gx.cross_ypos,
+                                Mx.r,
+                                Gx.cross_ypos
+                            );
                         }
                         Gx.cross_xpos = undefined;
                         Gx.cross_ypos = undefined;
                     } else {
                         if (plot.mouseOnCanvas) {
                             draw_crosshairs(plot);
-                            if (Gx.p_cuts && (Gx.lyr.length === 1) && (Gx.lyr[0].hcb["class"] === 2)) {
+                            if (
+                                Gx.p_cuts &&
+                                Gx.lyr.length === 1 &&
+                                Gx.lyr[0].hcb["class"] === 2
+                            ) {
                                 if (!Gx.y_cut_press_on && !Gx.x_cut_press_on) {
                                     draw_p_cuts(plot);
                                 }
@@ -422,8 +441,8 @@
                 }
 
                 if (Gx.cntrls === 2) {
-                    var evt = document.createEvent('Event');
-                    evt.initEvent('mtag', true, true);
+                    var evt = document.createEvent("Event");
+                    evt.initEvent("mtag", true, true);
                     evt.originalEvent = e;
                     evt.x = Gx.retx;
                     evt.y = Gx.rety;
@@ -432,15 +451,17 @@
                     mx.dispatchEvent(Mx, evt);
                 }
             };
-        }(this));
+        })(this);
 
-        this.throttledOnMouseMove = m.throttle(this._Gx.scroll_time_interval,
-            this.onmousemove);
+        this.throttledOnMouseMove = m.throttle(
+            this._Gx.scroll_time_interval,
+            this.onmousemove
+        );
 
         mx.addEventListener(Mx, "mousemove", this.throttledOnMouseMove, false);
 
-        this.onmouseout = (function(plot) {
-            return function(event) {
+        this.onmouseout = (function (plot) {
+            return function (event) {
                 var Gx = plot._Gx;
                 var Mx = plot._Mx;
                 if (plot.mouseOnCanvas) {
@@ -457,11 +478,11 @@
                     }
                 }
             };
-        }(this));
+        })(this);
         mx.addEventListener(Mx, "mouseout", this.onmouseout, false);
 
-        this.onmouseover = (function(plot) {
-            return function(event) {
+        this.onmouseover = (function (plot) {
+            return function (event) {
                 var Gx = plot._Gx;
                 var Mx = plot._Mx;
                 plot.mouseOnCanvas = true;
@@ -472,17 +493,17 @@
                     Mx.prompt.input.disableBlur();
                 }
             };
-        }(this));
+        })(this);
         mx.addEventListener(Mx, "mouseover", this.onmouseover, false);
 
-        this.onmousedown = (function(plot) {
-            return function(event) {
+        this.onmousedown = (function (plot) {
+            return function (event) {
                 event.preventDefault(); // mouse down on the canvas should never do a browser default action
 
                 var Mx = plot._Mx;
                 var Gx = plot._Gx;
 
-                if (Mx.widget && (Mx.widget.type === "ONESHOT")) {
+                if (Mx.widget && Mx.widget.type === "ONESHOT") {
                     Mx.widget = null;
                     plot.refresh();
                 }
@@ -490,8 +511,8 @@
                 // Update Mx event fields
                 mx.ifevent(Mx, event);
 
-                var evt = document.createEvent('Event');
-                evt.initEvent('mdown', true, true);
+                var evt = document.createEvent("Event");
+                evt.initEvent("mdown", true, true);
                 evt.originalEvent = event;
                 evt.xpos = Mx.xpos;
                 evt.ypos = Mx.ypos;
@@ -507,10 +528,11 @@
                 var inPan = inPanRegion(plot);
 
                 // Event processing
-                if (inPan.inPanRegion) { // Mouse position lies in a pan
+                if (inPan.inPanRegion) {
+                    // Mouse position lies in a pan
                     // region
                     event.preventDefault();
-                    if (inPan.command !== ' ') {
+                    if (inPan.command !== " ") {
                         var scrollbar = null;
                         var position = null;
                         if (inPan.command === "XPAN") {
@@ -522,19 +544,26 @@
                         if (event.which === 2) {
                             position = {
                                 x: Mx.xpos,
-                                y: Mx.ypos
+                                y: Mx.ypos,
                             };
-                            if ((scrollbar !== undefined) && (onScrollbar(position, scrollbar))) {
+                            if (
+                                scrollbar !== undefined &&
+                                onScrollbar(position, scrollbar)
+                            ) {
                                 // Only show menu if on the scrollbar itself
                                 sigplot_scrollScaleMenu(plot, inPan.command);
                             }
                         } else {
-                            if (inPan.command !== ' ') {
+                            if (inPan.command !== " ") {
                                 position = {
                                     x: Mx.xpos,
-                                    y: Mx.ypos
+                                    y: Mx.ypos,
                                 };
-                                if (!onScrollbar(position, scrollbar) && event.which === 1) { // Left-clicking
+                                if (
+                                    !onScrollbar(position, scrollbar) &&
+                                    event.which === 1
+                                ) {
+                                    // Left-clicking
                                     // not on a
                                     // scrollbar -
                                     // handle
@@ -543,11 +572,16 @@
                                     // the
                                     // first
                                     // pan
-                                    var repeatPan = function() {
-                                        if (!onScrollbar({
-                                                "x": Mx.xpos,
-                                                "y": Mx.ypos
-                                            }, scrollbar)) {
+                                    var repeatPan = function () {
+                                        if (
+                                            !onScrollbar(
+                                                {
+                                                    x: Mx.xpos,
+                                                    y: Mx.ypos,
+                                                },
+                                                scrollbar
+                                            )
+                                        ) {
                                             pan(plot, inPan.command, 0, event);
                                             // execute
                                             // a
@@ -562,7 +596,9 @@
                                             // hit the
                                             // scrollbar
                                             if (Gx.stillPanning) {
-                                                window.clearInterval(Gx.stillPanning);
+                                                window.clearInterval(
+                                                    Gx.stillPanning
+                                                );
                                                 Gx.repeatPanning = undefined;
                                             }
                                         }
@@ -571,23 +607,32 @@
                                     // Make scrolling smooth, the longer initial prevents
                                     // a single click from counting twice
                                     Gx.stillPanning = window.setTimeout(
-
-                                        function() {
-                                            Gx.repeatPanning = window.setInterval(repeatPan, 50);
-                                        }, 250);
+                                        function () {
+                                            Gx.repeatPanning =
+                                                window.setInterval(
+                                                    repeatPan,
+                                                    50
+                                                );
+                                        },
+                                        250
+                                    );
                                 }
                             }
                         }
                     }
-                } else { // Mouse not in a pan region, handle other cases
+                } else {
+                    // Mouse not in a pan region, handle other cases
                     if (event.which === 1 || event.which === 3) {
                         var lButtonPressed = false;
                         if (Gx.legendBtnLocation) {
-                            lButtonPressed = coordsInRectangle(Mx.xpos,
-                                Mx.ypos, Gx.legendBtnLocation.x,
+                            lButtonPressed = coordsInRectangle(
+                                Mx.xpos,
+                                Mx.ypos,
+                                Gx.legendBtnLocation.x,
                                 Gx.legendBtnLocation.y,
                                 Gx.legendBtnLocation.width,
-                                Gx.legendBtnLocation.height);
+                                Gx.legendBtnLocation.height
+                            );
                         }
 
                         // a variable to hold the legend y positon of each layer
@@ -596,8 +641,12 @@
                             var layerheight = legendPos.height / Gx.lyr.length;
 
                             for (var i = 0; i < Gx.lyr.length; i++) {
-                                if ((legendPos.x <= Mx.xpos) && ((legendPos.x + legendPos.width) >= Mx.xpos) &&
-                                    ((legendPos.y <= Mx.ypos)) && (legendPos.y + layerheight) >= Mx.ypos) {
+                                if (
+                                    legendPos.x <= Mx.xpos &&
+                                    legendPos.x + legendPos.width >= Mx.xpos &&
+                                    legendPos.y <= Mx.ypos &&
+                                    legendPos.y + layerheight >= Mx.ypos
+                                ) {
                                     //find a way to pull up the menu
                                     Mx.mouseUpLatch = true;
                                     sigplot_legend_menu(plot, i);
@@ -608,7 +657,7 @@
                         }
 
                         // If we have a large colorbar, we also have buttons:
-                        if (Gx.lg_colorbar && (Gx.lyr[0].hcb["class"] === 2)) {
+                        if (Gx.lg_colorbar && Gx.lyr[0].hcb["class"] === 2) {
                             if (event.which === 1 || event.which === 3) {
                                 var mouse_x = Mx.xpos;
                                 var mouse_y = Mx.ypos;
@@ -621,7 +670,16 @@
                                 var top_x3 = top_x1 + (1 / 2) * Gx.cbb_width;
                                 var top_y3 = top_y1 - Gx.cbb_height;
 
-                                var topButtonPressed = coordsInTriangle(mouse_x, mouse_y, top_x1, top_y1, top_x2, top_y2, top_x3, top_y3);
+                                var topButtonPressed = coordsInTriangle(
+                                    mouse_x,
+                                    mouse_y,
+                                    top_x1,
+                                    top_y1,
+                                    top_x2,
+                                    top_y2,
+                                    top_x3,
+                                    top_y3
+                                );
                                 //console.log("Top ", topButtonPressed);
 
                                 if (topButtonPressed) {
@@ -629,7 +687,11 @@
                                     plot.get_layer(0).img = undefined;
                                     var current_map = m.Mc.colormap[cur_cmap];
 
-                                    for (var i = 0; i < current_map.colors.length; i++) {
+                                    for (
+                                        var i = 0;
+                                        i < current_map.colors.length;
+                                        i++
+                                    ) {
                                         current_map.colors[i].pos += 5.0;
                                     }
                                     mx.colormap(Mx, current_map.colors, 16);
@@ -645,27 +707,38 @@
                                 var bot_x3 = bot_x1 + (1 / 2) * Gx.cbb_width;
                                 var bot_y3 = bot_y1 + Gx.cbb_height;
 
-                                var botButtonPressed = coordsInTriangle(mouse_x, mouse_y, bot_x1, bot_y1, bot_x2, bot_y2, bot_x3, bot_y3);
+                                var botButtonPressed = coordsInTriangle(
+                                    mouse_x,
+                                    mouse_y,
+                                    bot_x1,
+                                    bot_y1,
+                                    bot_x2,
+                                    bot_y2,
+                                    bot_x3,
+                                    bot_y3
+                                );
 
                                 if (botButtonPressed) {
                                     //Gx.zoff -= (1/10)*(Gx.zmax - Gx.zmin);
                                     var cur_cmap = Gx.cmap;
                                     var current_map = m.Mc.colormap[cur_cmap];
                                     plot.get_layer(0).img = undefined;
-                                    for (var i = 0; i < current_map.colors.length; i++) {
+                                    for (
+                                        var i = 0;
+                                        i < current_map.colors.length;
+                                        i++
+                                    ) {
                                         current_map.colors[i].pos -= 5.0;
                                     }
                                     mx.colormap(Mx, current_map.colors, 16);
                                     plot.refresh();
                                 }
-
                             }
-
                         }
 
                         if (lButtonPressed) {
                             plot.change_settings({
-                                legend: !Gx.legend
+                                legend: !Gx.legend,
                             }); // toggle the legend
                         } else {
                             display_specs(plot);
@@ -673,34 +746,58 @@
                             // Styles for rubberbox
                             var zoom_style = {
                                 opacity: 0,
-                                return_value: "zoom"
+                                return_value: "zoom",
                             };
 
                             var select_style = {
                                 opacity: 0.4,
                                 fill_color: Mx.hi,
-                                return_value: "select"
+                                return_value: "select",
                             };
 
                             if (event.which === 1) {
                                 if (Gx.default_rubberbox_action === "zoom") {
-                                    mx.rubberbox(Mx, rubberbox_cb(plot, event.which),
-                                        Gx.default_rubberbox_mode, zoom_style,
-                                        select_style);
-                                } else if (Gx.default_rubberbox_action === "select") {
-                                    mx.rubberbox(Mx, rubberbox_cb(plot, event.which),
+                                    mx.rubberbox(
+                                        Mx,
+                                        rubberbox_cb(plot, event.which),
                                         Gx.default_rubberbox_mode,
-                                        select_style, zoom_style);
+                                        zoom_style,
+                                        select_style
+                                    );
+                                } else if (
+                                    Gx.default_rubberbox_action === "select"
+                                ) {
+                                    mx.rubberbox(
+                                        Mx,
+                                        rubberbox_cb(plot, event.which),
+                                        Gx.default_rubberbox_mode,
+                                        select_style,
+                                        zoom_style
+                                    );
                                 } // otherwise rubber-box is considered disabled
                             } else if (event.which === 3) {
-                                if (Gx.default_rightclick_rubberbox_action === "zoom") {
-                                    mx.rubberbox(Mx, rubberbox_cb(plot, event.which),
-                                        Gx.default_rightclick_rubberbox_mode, zoom_style,
-                                        select_style);
-                                } else if (Gx.default_rightclick_rubberbox_action === "select") {
-                                    mx.rubberbox(Mx, rubberbox_cb(plot, event.which),
+                                if (
+                                    Gx.default_rightclick_rubberbox_action ===
+                                    "zoom"
+                                ) {
+                                    mx.rubberbox(
+                                        Mx,
+                                        rubberbox_cb(plot, event.which),
                                         Gx.default_rightclick_rubberbox_mode,
-                                        select_style, zoom_style);
+                                        zoom_style,
+                                        select_style
+                                    );
+                                } else if (
+                                    Gx.default_rightclick_rubberbox_action ===
+                                    "select"
+                                ) {
+                                    mx.rubberbox(
+                                        Mx,
+                                        rubberbox_cb(plot, event.which),
+                                        Gx.default_rightclick_rubberbox_mode,
+                                        select_style,
+                                        zoom_style
+                                    );
                                 } // otherwise right-click rubber-box is considered disabled
                             }
                         }
@@ -712,19 +809,18 @@
                 }
                 return false;
             };
-        }(this));
+        })(this);
         mx.addEventListener(Mx, "mousedown", this.onmousedown, false);
 
         // Putting a finger on the screen and moving it, simulates
         // pan.
-        this.ontouchstart = (function(plot) {
-            return function(event) {
+        this.ontouchstart = (function (plot) {
+            return function (event) {
                 event.preventDefault();
 
                 // See how many fingers are on the screen
                 // 1 finger == pan and/or unzoom
                 if (event.targetTouches.length === 1) {
-
                     // See if this is a double-tap
                     if (Mx.touchClear && Mx.touches) {
                         // Double tap unzooms to L=0 and fully expands the plot
@@ -738,8 +834,8 @@
                         // Determine the touch position, relative to the canvas
                         var rect = touchEvent.target.getBoundingClientRect();
                         var position = {
-                            x: (touchEvent.pageX - rect.left - window.scrollX),
-                            y: (touchEvent.pageY - rect.top - window.scrollY)
+                            x: touchEvent.pageX - rect.left - window.scrollX,
+                            y: touchEvent.pageY - rect.top - window.scrollY,
                         };
 
                         // Update the Mx coordinates
@@ -753,15 +849,18 @@
                         } // TODO support touch 'pan' on the panbars
                     }
                 } else if (event.targetTouches.length === 2) {
-                    Mx.touch_distance = m.touch_distance(event.targetTouches[0], event.targetTouches[1]);
+                    Mx.touch_distance = m.touch_distance(
+                        event.targetTouches[0],
+                        event.targetTouches[1]
+                    );
                 }
             };
-        }(this));
+        })(this);
 
         mx.addEventListener(Mx, "touchstart", this.ontouchstart, false);
 
-        this.ontouchmove = (function(plot) {
-            return function(event) {
+        this.ontouchmove = (function (plot) {
+            return function (event) {
                 var Mx = plot._Mx;
                 var Gx = plot._Gx;
                 var k = Mx.level;
@@ -772,15 +871,15 @@
                     var touchStart = Mx.touches[0];
                     var rect = touchStart.target.getBoundingClientRect();
                     var startPosition = {
-                        x: (touchStart.pageX - rect.left - window.scrollX),
-                        y: (touchStart.pageY - rect.top - window.scrollY)
+                        x: touchStart.pageX - rect.left - window.scrollX,
+                        y: touchStart.pageY - rect.top - window.scrollY,
                     };
 
                     var touchEvent = event.targetTouches[0];
                     var rect = touchEvent.target.getBoundingClientRect();
                     var position = {
-                        x: (touchEvent.pageX - rect.left - window.scrollX),
-                        y: (touchEvent.pageY - rect.top - window.scrollY)
+                        x: touchEvent.pageX - rect.left - window.scrollX,
+                        y: touchEvent.pageY - rect.top - window.scrollY,
                     };
 
                     var new_xpos = m.bound(position.x, 0, Mx.width);
@@ -797,8 +896,8 @@
                     }
 
                     // Pan proportionally to the movement of the touch
-                    var xdelta = (Mx.stk[k].xscl * delta_xpos);
-                    var ydelta = (Mx.stk[k].yscl * delta_ypos);
+                    var xdelta = Mx.stk[k].xscl * delta_xpos;
+                    var ydelta = Mx.stk[k].yscl * delta_ypos;
 
                     if (Mx.origin === 1) {
                         // regular x, regular y
@@ -820,12 +919,12 @@
                     var ymin = Mx.stk[k].ymin + ydelta;
                     var ymax = Mx.stk[k].ymax + ydelta;
 
-                    if ((xmin >= Gx.xmin) && (xmax <= Gx.xmax)) {
+                    if (xmin >= Gx.xmin && xmax <= Gx.xmax) {
                         Mx.stk[k].xmin = xmin;
                         Mx.stk[k].xmax = xmax;
                     }
 
-                    if ((ymin >= Gx.ymin) && (ymax <= Gx.ymax)) {
+                    if (ymin >= Gx.ymin && ymax <= Gx.ymax) {
                         Mx.stk[k].ymin = ymin;
                         Mx.stk[k].ymax = ymax;
                     }
@@ -838,16 +937,19 @@
                     }
                     plot.refresh();
                 } else if (event.targetTouches.length === 2) {
-                    var cur_distance = m.touch_distance(event.targetTouches[0], event.targetTouches[1]);
-                    var scaling = (1 - (Mx.touch_distance / cur_distance)) * 0.05;
+                    var cur_distance = m.touch_distance(
+                        event.targetTouches[0],
+                        event.targetTouches[1]
+                    );
+                    var scaling = (1 - Mx.touch_distance / cur_distance) * 0.05;
 
                     var xran = Mx.stk[k].xmax - Mx.stk[k].xmin;
                     var yran = Mx.stk[k].ymax - Mx.stk[k].ymin;
 
-                    var xmin = Mx.stk[k].xmin + (scaling * xran);
-                    var xmax = Mx.stk[k].xmax - (scaling * xran);
-                    var ymin = Mx.stk[k].ymin + (scaling * yran);
-                    var ymax = Mx.stk[k].ymax - (scaling * yran);
+                    var xmin = Mx.stk[k].xmin + scaling * xran;
+                    var xmax = Mx.stk[k].xmax - scaling * xran;
+                    var ymin = Mx.stk[k].ymin + scaling * yran;
+                    var ymax = Mx.stk[k].ymax - scaling * yran;
 
                     Mx.stk[k].xmin = Math.max(Gx.xmin, xmin);
                     Mx.stk[k].xmax = Math.min(Gx.xmax, xmax);
@@ -857,16 +959,17 @@
                     plot.refresh();
                 }
             };
-        }(this));
+        })(this);
 
         this.throttledOnTouchMove = m.throttle(
             this._Gx.scroll_time_interval,
-            this.ontouchmove);
+            this.ontouchmove
+        );
 
         mx.addEventListener(Mx, "touchmove", this.throttledOnTouchMove, false);
 
-        this.ontouchend = (function(plot) {
-            return function(event) {
+        this.ontouchend = (function (plot) {
+            return function (event) {
                 var Gx = plot._Gx;
                 var Mx = plot._Mx;
 
@@ -880,19 +983,17 @@
                 mx.widget_callback(Mx, event);
                 // Only clear the touches after a slight delay so we can
                 // detect double-tap
-                Mx.touchClear = window.setTimeout(
-
-                    function() {
-                        Mx.touches = undefined;
-                        Mx.touchClear = undefined;
-                    }, 100);
+                Mx.touchClear = window.setTimeout(function () {
+                    Mx.touches = undefined;
+                    Mx.touchClear = undefined;
+                }, 100);
             };
-        }(this));
+        })(this);
 
         mx.addEventListener(Mx, "touchend", this.ontouchend, false);
 
-        this.docMouseUp = (function(plot) {
-            return function(event) {
+        this.docMouseUp = (function (plot) {
+            return function (event) {
                 var Gx = plot._Gx;
 
                 if (event.which === 1) {
@@ -911,18 +1012,19 @@
                     window.clearTimeout(Gx.stillPanning);
                     Gx.stillPanning = undefined;
                 }
-                if (Gx.repeatPanning) { // Clear the panning interval on any
+                if (Gx.repeatPanning) {
+                    // Clear the panning interval on any
                     // mouse up in the document
                     window.clearInterval(Gx.repeatPanning);
                     Gx.repeatPanning = undefined;
                 }
                 return false;
             };
-        }(this));
+        })(this);
         document.addEventListener("mouseup", this.docMouseUp, false);
 
-        this.mouseup = (function(plot) {
-            return function(event) {
+        this.mouseup = (function (plot) {
+            return function (event) {
                 event.preventDefault(); // mouse up on the canvas should never do a browser default action
 
                 var Gx = plot._Gx;
@@ -931,8 +1033,8 @@
                 // Update Mx event fields
                 mx.ifevent(plot._Mx, event);
 
-                var evt = document.createEvent('Event');
-                evt.initEvent('mup', true, true);
+                var evt = document.createEvent("Event");
+                evt.initEvent("mup", true, true);
                 evt.originalEvent = event;
                 evt.xpos = Mx.xpos;
                 evt.ypos = Mx.ypos;
@@ -956,7 +1058,7 @@
                         // otherwise emit an mtag
                         var inCenter = inPanCenterRegion(plot);
                         if (inCenter.inCenterRegion) {
-                            if (inCenter.command !== ' ') {
+                            if (inCenter.command !== " ") {
                                 pan(plot, inCenter.command, 0, event); // pan
                             }
                         } else if (Gx.cntrls === 1) {
@@ -964,8 +1066,8 @@
                             Gx.xmrk = Gx.retx;
                             Gx.ymrk = Gx.rety;
 
-                            var mtagevt = document.createEvent('Event');
-                            mtagevt.initEvent('mtag', true, true);
+                            var mtagevt = document.createEvent("Event");
+                            mtagevt.initEvent("mtag", true, true);
                             mtagevt.originalEvent = event;
                             mtagevt.x = Gx.xmrk;
                             mtagevt.y = Gx.ymrk;
@@ -985,8 +1087,8 @@
                         if (Gx.nomenu) {
                             // Send an event so that a custom menu can be displayed
                             // if desired
-                            var evt = document.createEvent('Event');
-                            evt.initEvent('showmenu', true, true);
+                            var evt = document.createEvent("Event");
+                            evt.initEvent("showmenu", true, true);
                             evt.originalEvent = event;
                             evt.x = event.x || event.clientX;
                             evt.y = event.y || event.clientY;
@@ -997,23 +1099,47 @@
                                     event.stopPropagation();
                                 }
                                 event.cancelBubble = true;
-                                mx.removeEventListener(Mx, "mousedown", plot.onmousedown, false);
+                                mx.removeEventListener(
+                                    Mx,
+                                    "mousedown",
+                                    plot.onmousedown,
+                                    false
+                                );
 
-                                var emit_hidemenu = function() {
+                                var emit_hidemenu = function () {
                                     try {
-                                        var hideMenuEvt = document.createEvent('Event');
-                                        hideMenuEvt.initEvent('hidemenu', true, true);
+                                        var hideMenuEvt =
+                                            document.createEvent("Event");
+                                        hideMenuEvt.initEvent(
+                                            "hidemenu",
+                                            true,
+                                            true
+                                        );
                                         if (mx.dispatchEvent(Mx, hideMenuEvt)) {
-                                            mx.addEventListener(Mx, "mousedown", plot.onmousedown, false);
+                                            mx.addEventListener(
+                                                Mx,
+                                                "mousedown",
+                                                plot.onmousedown,
+                                                false
+                                            );
                                         }
                                     } finally {
-                                        document.removeEventListener("mouseup", emit_hidemenu, false);
+                                        document.removeEventListener(
+                                            "mouseup",
+                                            emit_hidemenu,
+                                            false
+                                        );
                                     }
                                 };
-                                document.addEventListener("mouseup", emit_hidemenu, false);
+                                document.addEventListener(
+                                    "mouseup",
+                                    emit_hidemenu,
+                                    false
+                                );
                             }
                         }
-                    } else if (event.which === 3) { // unzoom only happens on
+                    } else if (event.which === 3) {
+                        // unzoom only happens on
                         // right-clicks on plot
                         // unzoom/expand
                         event.preventDefault();
@@ -1022,14 +1148,13 @@
                         plot.refresh();
                     }
                 }
-
             };
-        }(this));
+        })(this);
 
         mx.addEventListener(Mx, "mouseup", this.mouseup, false);
 
-        this.mouseclick = (function(plot) {
-            return function(event) {
+        this.mouseclick = (function (plot) {
+            return function (event) {
                 event.preventDefault(); // alway prevent any default browser actions on the plot
 
                 var Gx = plot._Gx;
@@ -1038,8 +1163,8 @@
                 // Update Mx event fields
                 mx.ifevent(plot._Mx, event);
 
-                var evt = document.createEvent('Event');
-                evt.initEvent('mclick', true, true);
+                var evt = document.createEvent("Event");
+                evt.initEvent("mclick", true, true);
                 evt.originalEvent = event;
                 evt.xpos = Mx.xpos;
                 evt.ypos = Mx.ypos;
@@ -1051,11 +1176,11 @@
                 }
                 return false;
             };
-        }(this));
+        })(this);
         mx.addEventListener(Mx, "click", this.mouseclick, false);
 
-        this.mousedblclick = (function(plot) {
-            return function(event) {
+        this.mousedblclick = (function (plot) {
+            return function (event) {
                 event.preventDefault(); // alway prevent any default browser actions on the plot
 
                 var Gx = plot._Gx;
@@ -1064,8 +1189,8 @@
                 // Update Mx event fields
                 mx.ifevent(plot._Mx, event);
 
-                var evt = document.createEvent('Event');
-                evt.initEvent('mdblclick', true, true);
+                var evt = document.createEvent("Event");
+                evt.initEvent("mdblclick", true, true);
                 evt.originalEvent = event;
                 evt.xpos = Mx.xpos;
                 evt.ypos = Mx.ypos;
@@ -1077,12 +1202,12 @@
                 }
                 return false;
             };
-        }(this));
+        })(this);
         mx.addEventListener(Mx, "dblclick", this.mousedblclick, false);
 
         // PANBAR DRAGGING mouse event handlers:
-        this.dragMouseDownHandler = (function(plot) {
-            return function(event) {
+        this.dragMouseDownHandler = (function (plot) {
+            return function (event) {
                 var Mx = plot._Mx;
                 var Gx = plot._Gx;
 
@@ -1090,10 +1215,11 @@
                 var inPan = inPanRegion(plot);
 
                 // Event processing
-                if (inPan.inPanRegion) { // Mouse position lies in a pan
+                if (inPan.inPanRegion) {
+                    // Mouse position lies in a pan
                     // region
                     event.preventDefault();
-                    if (inPan.command !== ' ') {
+                    if (inPan.command !== " ") {
                         var scrollbar;
                         if (inPan.command === "XPAN") {
                             scrollbar = Mx.scrollbar_x;
@@ -1103,9 +1229,14 @@
 
                         var position = {
                             x: Mx.xpos,
-                            y: Mx.ypos
+                            y: Mx.ypos,
                         };
-                        if (scrollbar !== undefined && onScrollbar(position, scrollbar) && event.which === 1) { // On scrollbar, set up
+                        if (
+                            scrollbar !== undefined &&
+                            onScrollbar(position, scrollbar) &&
+                            event.which === 1
+                        ) {
+                            // On scrollbar, set up
                             // a DRAG
                             Gx.panning = {
                                 axis: inPan.command,
@@ -1117,20 +1248,21 @@
                                 xmin: Mx.stk[Mx.level].xmin,
                                 xmax: Mx.stk[Mx.level].xmax,
                                 ymin: Mx.stk[Mx.level].ymin,
-                                ymax: Mx.stk[Mx.level].ymax
+                                ymax: Mx.stk[Mx.level].ymax,
                             };
                         }
                     }
                 }
             };
-        }(this));
+        })(this);
         window.addEventListener("mousedown", this.dragMouseDownHandler, false);
 
-        this.dragMouseMoveHandler = (function(plot) {
-            return function(e) {
+        this.dragMouseMoveHandler = (function (plot) {
+            return function (e) {
                 var Gx = plot._Gx;
 
-                if (Gx.panning !== undefined) { // execute a scrollbar DRAG
+                if (Gx.panning !== undefined) {
+                    // execute a scrollbar DRAG
                     try {
                         drag_scrollbar(plot, Gx.panning.axis, e);
                     } catch (err) {
@@ -1140,16 +1272,21 @@
                     }
                 }
             };
-        }(this));
+        })(this);
 
-        this.throttledDragOnMouseMove = m.throttle(this._Gx.scroll_time_interval,
-            this.dragMouseMoveHandler);
+        this.throttledDragOnMouseMove = m.throttle(
+            this._Gx.scroll_time_interval,
+            this.dragMouseMoveHandler
+        );
 
-        window.addEventListener("mousemove", this.throttledDragOnMouseMove,
-            false);
+        window.addEventListener(
+            "mousemove",
+            this.throttledDragOnMouseMove,
+            false
+        );
 
-        this.dragMouseUpHandler = (function(plot) {
-            return function(event) {
+        this.dragMouseUpHandler = (function (plot) {
+            return function (event) {
                 var Gx = plot._Gx;
 
                 if (event.which === 1) {
@@ -1157,25 +1294,24 @@
                     // the state variable
                 }
             };
-        }(this));
+        })(this);
         window.addEventListener("mouseup", this.dragMouseUpHandler, false);
 
         // TODO this may need to be throttled or debounced
-        this.onresize = (function(plot) {
-            return function(event) {
+        this.onresize = (function (plot) {
+            return function (event) {
                 if (mx.checkresize(plot._Mx)) {
                     plot.refresh();
                 }
             };
-        }(this));
+        })(this);
 
         // Mouse Wheel logic
-        this.wheelHandler = (function(plot) {
-
+        this.wheelHandler = (function (plot) {
             var Mx = plot._Mx;
             var Gx = plot._Gx;
 
-            var throttledPan = m.throttle(100, function(inPan) {
+            var throttledPan = m.throttle(100, function (inPan) {
                 // Mouse wheel
                 // event over a
                 // panning
@@ -1191,31 +1327,40 @@
                 // For now, vertical mouse scrolling is the only action that
                 // will trigger a pan
                 // Later, we can add horizontal mouse scrolling if we choose
-                if (Gx.wheelscroll_mode_natural) { // Original Sig-Plot
+                if (Gx.wheelscroll_mode_natural) {
+                    // Original Sig-Plot
                     // orientation
-                    scrollbar.action = (event.deltaY < 0 ? mx.SB_WHEELDOWN : mx.SB_WHEELUP);
-                } else { // Inverted/"un-natural" orientation
-                    scrollbar.action = (event.deltaY < 0 ? mx.SB_WHEELUP : mx.SB_WHEELDOWN);
+                    scrollbar.action =
+                        event.deltaY < 0 ? mx.SB_WHEELDOWN : mx.SB_WHEELUP;
+                } else {
+                    // Inverted/"un-natural" orientation
+                    scrollbar.action =
+                        event.deltaY < 0 ? mx.SB_WHEELUP : mx.SB_WHEELDOWN;
                 }
 
                 scrollbar.step = 0.1 * scrollbar.srange;
                 scrollbar.page = 9 * scrollbar.step;
 
                 // Execute wheel action on the scrollbar
-                mx.scroll(Mx, scrollbar, mx.XW_COMMAND, undefined,
-                    scrollbar);
+                mx.scroll(Mx, scrollbar, mx.XW_COMMAND, undefined, scrollbar);
 
                 // Update the viewbox
-                updateViewbox(plot, scrollbar.smin, scrollbar.smin + scrollbar.srange, inPan.command.slice(0, 1));
+                updateViewbox(
+                    plot,
+                    scrollbar.smin,
+                    scrollbar.smin + scrollbar.srange,
+                    inPan.command.slice(0, 1)
+                );
             });
 
-            var throttledZoom = m.throttle(100, function() {
+            var throttledZoom = m.throttle(100, function () {
                 var zoomperc = Gx.wheelZoomPercent || 0.2;
                 if (Gx.wheelscroll_mode_natural) {
                     if (event.deltaY > 0) {
                         zoomperc = -1 * zoomperc;
                     }
-                } else { // Inverted/"un-natural" orientation
+                } else {
+                    // Inverted/"un-natural" orientation
                     if (event.deltaY < 0) {
                         zoomperc = -1 * zoomperc;
                     }
@@ -1230,7 +1375,7 @@
                 }
             });
 
-            return function(event) {
+            return function (event) {
                 // Update Mx event fields
                 mx.ifevent(Mx, event);
 
@@ -1248,7 +1393,7 @@
                     }
                 }
             };
-        }(this));
+        })(this);
 
         window.addWheelListener(window, this.wheelHandler, false);
 
@@ -1259,17 +1404,16 @@
         // it at a higher-level...by default keypress behavior
         // is enabled and only works if the mouse if over the plot
         if (!options.nokeypress) {
-            this.onkeypress = (function(plot) {
-                return function(event) {
+            this.onkeypress = (function (plot) {
+                return function (event) {
                     var Mx = plot._Mx;
                     var Gx = plot._Gx;
                     if (plot.mouseOnCanvas) {
-
-                        if (Mx.widget && (Mx.widget.type === "MENU")) {
+                        if (Mx.widget && Mx.widget.type === "MENU") {
                             return; // The menu absorbs the keypress
                         }
 
-                        if (Mx.widget && (Mx.widget.type === "ONESHOT")) {
+                        if (Mx.widget && Mx.widget.type === "ONESHOT") {
                             Mx.widget = null;
                             plot.refresh();
                             return;
@@ -1278,8 +1422,8 @@
                         var keyCode = common.getKeyCode(event);
 
                         // Since the mouse is in the plot area, send a keypress event
-                        var evt = document.createEvent('Event');
-                        evt.initEvent('plotkeypress', true, true);
+                        var evt = document.createEvent("Event");
+                        evt.initEvent("plotkeypress", true, true);
                         evt.originalEvent = event;
                         evt.keyCode = keyCode;
                         evt.shiftKey = event.shiftKey;
@@ -1294,7 +1438,8 @@
                         // Only respond to keypresses if the mouse is
                         // in the plot area....
 
-                        if (keyCode === 97) { // 'a'
+                        if (keyCode === 97) {
+                            // 'a'
                             Gx.iabsc = (Gx.iabsc + 1) % 4;
                             // It's kinda up in the air if changing the 'specs'
                             // area should also change the plotting mode itself...
@@ -1308,15 +1453,18 @@
                             //	index : Gx.iabsc === 1
                             //});
                             display_specs(plot);
-                        } else if (keyCode === 108) { // 'l'
+                        } else if (keyCode === 108) {
+                            // 'l'
                             plot.change_settings({
-                                legend: !Gx.legend
+                                legend: !Gx.legend,
                             }); // toggle the legend
-                        } else if (keyCode === 103) { // 'g'
+                        } else if (keyCode === 103) {
+                            // 'g'
                             plot.change_settings({
-                                grid: !Gx.grid
+                                grid: !Gx.grid,
                             }); // toggle the grid
-                        } else if ((keyCode === 98) || (keyCode === 2)) { // 'b' and CTRL-'b'
+                        } else if (keyCode === 98 || keyCode === 2) {
+                            // 'b' and CTRL-'b'
                             if (Mx.warpbox) {
                                 if (Mx.warpbox.mode === "box") {
                                     Mx.warpbox.mode = "horizontal";
@@ -1327,23 +1475,28 @@
                                 }
                                 mx.redraw_warpbox(Mx);
                             }
-                        } else if (keyCode === 99) { // 'c'
+                        } else if (keyCode === 99) {
+                            // 'c'
                             plot.change_settings({
-                                xcnt: -1 * Gx.cntrls
+                                xcnt: -1 * Gx.cntrls,
                             });
-                        } else if (keyCode === 114) { // 'r'
+                        } else if (keyCode === 114) {
+                            // 'r'
                             plot.change_settings({
-                                show_readout: !Gx.show_readout
+                                show_readout: !Gx.show_readout,
                             });
-                        } else if (keyCode === 115) { // 's'
+                        } else if (keyCode === 115) {
+                            // 's'
                             plot.change_settings({
-                                specs: !Gx.specs
+                                specs: !Gx.specs,
                             });
-                        } else if (keyCode === 112) { // 'p'
+                        } else if (keyCode === 112) {
+                            // 'p'
                             plot.change_settings({
-                                p_cuts: !Gx.p_cuts
+                                p_cuts: !Gx.p_cuts,
                             });
-                        } else if (keyCode === 120) { // 'x'
+                        } else if (keyCode === 120) {
+                            // 'x'
                             if (Gx.x_cut_press_on) {
                                 // leave xCut
                                 for (var i = 0; i < Gx.lyr.length; i++) {
@@ -1359,27 +1512,37 @@
                                 } else {
                                     Gx.x_pop_now = false;
                                 }
-                            } else if ((Gx.lyr[0].hcb["class"] === 1) && (Gx.xyKeys === "automatic")) {
+                            } else if (
+                                Gx.lyr[0].hcb["class"] === 1 &&
+                                Gx.xyKeys === "automatic"
+                            ) {
                                 if (!Gx.x_pop_now) {
                                     sigplot_show_x(plot);
                                     Gx.x_pop_now = true;
                                 } else {
                                     Gx.x_pop_now = false;
                                 }
-                            } else if ((Gx.xyKeys !== "disable") && (Gx.lyr[0].hcb["class"] === 2)) {
+                            } else if (
+                                Gx.xyKeys !== "disable" &&
+                                Gx.lyr[0].hcb["class"] === 2
+                            ) {
                                 // show xCut if xyKeys aren't disabled and the first layer is
                                 // type 2000 and y-cut isn't currently enabled (we already checked
                                 // that x_cut above)
                                 if (!Gx.y_cut_press_on) {
                                     for (var i = 0; i < Gx.lyr.length; i++) {
                                         if (Gx.lyr[i].xCut) {
-                                            Gx.lyr[i].xCut(pixel_to_real(plot, 0, Mx.ypos).y);
+                                            Gx.lyr[i].xCut(
+                                                pixel_to_real(plot, 0, Mx.ypos)
+                                                    .y
+                                            );
                                             break;
                                         }
                                     }
                                 }
                             }
-                        } else if (keyCode === 121) { // 'y'
+                        } else if (keyCode === 121) {
+                            // 'y'
                             if (Gx.y_cut_press_on) {
                                 for (var i = 0; i < Gx.lyr.length; i++) {
                                     if (Gx.lyr[i].yCut) {
@@ -1394,34 +1557,46 @@
                                 } else {
                                     Gx.y_pop_now = false;
                                 }
-                            } else if ((Gx.lyr[0].hcb["class"] === 1) && (Gx.xyKeys === "automatic")) {
+                            } else if (
+                                Gx.lyr[0].hcb["class"] === 1 &&
+                                Gx.xyKeys === "automatic"
+                            ) {
                                 if (!Gx.y_pop_now) {
                                     sigplot_show_y(plot);
                                     Gx.y_pop_now = true;
                                 } else {
                                     Gx.y_pop_now = false;
                                 }
-                            } else if ((Gx.xyKeys !== "disable") && (Gx.lyr[0].hcb["class"] === 2)) {
+                            } else if (
+                                Gx.xyKeys !== "disable" &&
+                                Gx.lyr[0].hcb["class"] === 2
+                            ) {
                                 // show xCut if xyKeys aren't disabled and the first layer is
                                 // type 2000 and y-cut isn't currently enabled (we already checked
                                 // that y_cut above)
                                 if (!Gx.x_cut_press_on) {
                                     for (var i = 0; i < Gx.lyr.length; i++) {
                                         if (Gx.lyr[i].yCut) {
-                                            Gx.lyr[i].yCut(pixel_to_real(plot, Mx.xpos, 0).x);
+                                            Gx.lyr[i].yCut(
+                                                pixel_to_real(plot, Mx.xpos, 0)
+                                                    .x
+                                            );
                                             break;
                                         }
                                     }
                                 }
                             }
-                        } else if (keyCode === 122) { // 'z'
+                        } else if (keyCode === 122) {
+                            // 'z'
                             sigplot_show_z(plot);
-                        } else if (keyCode === 116) { // 't'
+                        } else if (keyCode === 116) {
+                            // 't'
                             sigplot_show_timecode(plot);
-                        } else if (keyCode === 109) { // 'm'
+                        } else if (keyCode === 109) {
+                            // 'm'
                             if (!Gx.nomenu) {
-                                var evt = document.createEvent('Event');
-                                evt.initEvent('showmenu', true, true);
+                                var evt = document.createEvent("Event");
+                                evt.initEvent("showmenu", true, true);
                                 evt.originalEvent = event;
                                 evt.x = Mx.x;
                                 evt.y = Mx.y;
@@ -1430,23 +1605,26 @@
                                     sigplot_mainmenu(plot);
                                 }
                             }
-                        } else if (keyCode === 63) { // '?'
+                        } else if (keyCode === 63) {
+                            // '?'
                             mx.message(Mx, MAIN_HELP);
-                        } else if (keyCode === 102) { // 'f'
+                        } else if (keyCode === 102) {
+                            // 'f'
                             mx.fullscreen(Mx);
                             plot.refresh();
-                        } else if ((keyCode === 9) && (event.ctrlKey)) { // ctrl-i
+                        } else if (keyCode === 9 && event.ctrlKey) {
+                            // ctrl-i
                             plot.change_settings({
-                                invert: null
+                                invert: null,
                             });
-                        } else if (keyCode === 107) { // 'k' show marker
+                        } else if (keyCode === 107) {
+                            // 'k' show marker
                             Gx.show_marker = !Gx.show_marker;
                             plot.redraw();
-
                         }
                     }
                 };
-            }(this));
+            })(this);
 
             common.setKeypressHandler(this.onkeypress);
         }
@@ -1469,7 +1647,7 @@
          *            the zorder for the plugin to render, all plugins render as
          *            overlays on top of the plot
          */
-        add_plugin: function(plugin, zorder) {
+        add_plugin: function (plugin, zorder) {
             if (zorder === undefined) {
                 zorder = Number.MAX_VALUE;
             }
@@ -1477,7 +1655,7 @@
                 throw "Invalid plugin zorder";
             }
 
-            var canvas = document.createElement('canvas');
+            var canvas = document.createElement("canvas");
             canvas.width = this._Mx.canvas.width;
             canvas.height = this._Mx.canvas.height;
 
@@ -1486,13 +1664,12 @@
             this._Gx.plugins.push({
                 impl: plugin,
                 zorder: zorder,
-                canvas: canvas
+                canvas: canvas,
             });
 
-            this._Gx.plugins.sort(function(a, b) {
-                return (a.zorder - b.zorder);
+            this._Gx.plugins.sort(function (a, b) {
+                return a.zorder - b.zorder;
             });
-
 
             this.refresh();
         },
@@ -1503,7 +1680,7 @@
          * @param plugin
          *            the plugin object
          */
-        remove_plugin: function(plugin) {
+        remove_plugin: function (plugin) {
             var i = this._Gx.plugins.length;
             while (i--) {
                 if (this._Gx.plugins[i].impl === plugin) {
@@ -1511,13 +1688,15 @@
                         plugin.dispose();
                     }
                     if (this._Gx.plugins[i].canvas.parentNode) {
-                        this._Gx.plugins[i].canvas.parentNode.removeElement(this._Gx.plugins[i].canvas);
+                        this._Gx.plugins[i].canvas.parentNode.removeElement(
+                            this._Gx.plugins[i].canvas
+                        );
                     }
                     this._Gx.plugins.splice(i, 1);
                 }
             }
-            this._Gx.plugins.sort(function(a, b) {
-                return (a.zorder - b.zorder);
+            this._Gx.plugins.sort(function (a, b) {
+                return a.zorder - b.zorder;
             });
 
             this.refresh();
@@ -1575,7 +1754,7 @@
          * @param [function]
          *            callback the function that will be called when the event is heard
          */
-        addListener: function(what, callback) {
+        addListener: function (what, callback) {
             var Mx = this._Mx;
             mx.addEventListener(Mx, what, callback, false);
         },
@@ -1587,7 +1766,7 @@
          *            the event that was listned to
          * @param callback
          */
-        removeListener: function(what, callback) {
+        removeListener: function (what, callback) {
             var Mx = this._Mx;
             mx.removeEventListener(Mx, what, callback, false);
         },
@@ -1675,7 +1854,7 @@
          * @param {Boolean}
          *            settings.p_cuts true displays p_cuts on a 2D plot
          */
-        change_settings: function(settings) {
+        change_settings: function (settings) {
             var Gx = this._Gx;
             var Mx = this._Mx;
 
@@ -1719,7 +1898,7 @@
                 Gx.autol = settings.autol;
             }
 
-            if ((settings.index !== undefined) && (settings.index !== Gx.index)) {
+            if (settings.index !== undefined && settings.index !== Gx.index) {
                 if (settings.index === null) {
                     Gx.index = !Gx.index;
                 } else {
@@ -1729,17 +1908,22 @@
                 // the original sigplot.for fails
                 // to do this so that the specs area
                 // has the correct setting.
-                if ((Gx.index) && (Gx.iabsc !== 1)) {
+                if (Gx.index && Gx.iabsc !== 1) {
                     Gx.iabsc = 1;
-                } else if ((!Gx.index) && (Gx.iabsc === 1)) {
+                } else if (!Gx.index && Gx.iabsc === 1) {
                     Gx.iabsc = 0;
                 }
 
                 var xmin;
                 var xmax;
-                scale_base(this, {
-                    get_data: false
-                }, xmin, xmax);
+                scale_base(
+                    this,
+                    {
+                        get_data: false,
+                    },
+                    xmin,
+                    xmax
+                );
 
                 // like sigplot, undo all zoom levels
                 this.unzoom();
@@ -1759,7 +1943,7 @@
                 } else {
                     Gx.show_x_axis = settings.show_x_axis;
                 }
-                Gx.specs = (Gx.show_x_axis || Gx.show_y_axis || Gx.show_readout);
+                Gx.specs = Gx.show_x_axis || Gx.show_y_axis || Gx.show_readout;
             }
 
             if (settings.show_y_axis !== undefined) {
@@ -1768,7 +1952,7 @@
                 } else {
                     Gx.show_y_axis = settings.show_y_axis;
                 }
-                Gx.specs = (Gx.show_x_axis || Gx.show_y_axis || Gx.show_readout);
+                Gx.specs = Gx.show_x_axis || Gx.show_y_axis || Gx.show_readout;
             }
 
             if (settings.show_readout !== undefined) {
@@ -1777,7 +1961,7 @@
                 } else {
                     Gx.show_readout = settings.show_readout;
                 }
-                Gx.specs = (Gx.show_x_axis || Gx.show_y_axis || Gx.show_readout);
+                Gx.specs = Gx.show_x_axis || Gx.show_y_axis || Gx.show_readout;
             }
 
             if (settings.specs !== undefined) {
@@ -1802,9 +1986,9 @@
                     Gx.cntrls = 1;
                 } else if (settings.xcnt === "continuous") {
                     Gx.cntrls = 2;
-                } else if ((settings.xcnt === "disable") && (Gx.cntrls > 0)) {
+                } else if (settings.xcnt === "disable" && Gx.cntrls > 0) {
                     Gx.cntrls = -1 * Gx.cntrls;
-                } else if ((settings.xcnt === "enable") && (Gx.cntrls < 0)) {
+                } else if (settings.xcnt === "enable" && Gx.cntrls < 0) {
                     Gx.cntrls = -1 * Gx.cntrls;
                 } else {
                     Gx.cntrls = settings.xcnt;
@@ -1828,26 +2012,37 @@
             }
 
             if (settings.cross !== undefined) {
-                if (settings.cross === null) { // catch null or undefined here
+                if (settings.cross === null) {
+                    // catch null or undefined here
                     Gx.cross = !Gx.cross;
                 } else {
                     Gx.cross = settings.cross;
                 }
                 if (!Gx.cross) {
                     if (Gx.cross_xpos !== undefined) {
-                        mx.rubberline(Mx, Gx.cross_xpos, Mx.t, Gx.cross_xpos,
-                            Mx.b);
+                        mx.rubberline(
+                            Mx,
+                            Gx.cross_xpos,
+                            Mx.t,
+                            Gx.cross_xpos,
+                            Mx.b
+                        );
                     }
                     if (Gx.cross_ypos !== undefined) {
-                        mx.rubberline(Mx, Mx.l, Gx.cross_ypos, Mx.r,
-                            Gx.cross_ypos);
+                        mx.rubberline(
+                            Mx,
+                            Mx.l,
+                            Gx.cross_ypos,
+                            Mx.r,
+                            Gx.cross_ypos
+                        );
                     }
                     Gx.cross_xpos = undefined;
                     Gx.cross_ypos = undefined;
                 } else {
                     Gx.cross_xpos = undefined;
                     Gx.cross_ypos = undefined;
-                    if ((!Mx.warpbox) && (this.mouseOnCanvas)) {
+                    if (!Mx.warpbox && this.mouseOnCanvas) {
                         draw_crosshairs(this);
                     }
                 }
@@ -1863,37 +2058,91 @@
             }
 
             if (settings.cmode !== undefined) {
-                if ((cmode === "MA") || (cmode === "INMA") || (cmode === "ABMA") ||
-                    (cmode === "__MA") || (cmode === "MAGNITUDE") || (cmode === 1)) {
+                if (
+                    cmode === "MA" ||
+                    cmode === "INMA" ||
+                    cmode === "ABMA" ||
+                    cmode === "__MA" ||
+                    cmode === "MAGNITUDE" ||
+                    cmode === 1
+                ) {
                     cmode = 1;
                 }
-                if ((cmode === "PH") || (cmode === "INPH") || (cmode === "ABPH") ||
-                    (cmode === "__PH") || (cmode === "PHASE") || (cmode === 2)) {
+                if (
+                    cmode === "PH" ||
+                    cmode === "INPH" ||
+                    cmode === "ABPH" ||
+                    cmode === "__PH" ||
+                    cmode === "PHASE" ||
+                    cmode === 2
+                ) {
                     cmode = 2;
                 }
-                if ((cmode === "RE") || (cmode === "INRE") || (cmode === "ABRE") ||
-                    (cmode === "__RE") || (cmode === "REAL") || (cmode === 3)) {
+                if (
+                    cmode === "RE" ||
+                    cmode === "INRE" ||
+                    cmode === "ABRE" ||
+                    cmode === "__RE" ||
+                    cmode === "REAL" ||
+                    cmode === 3
+                ) {
                     cmode = 3;
                 }
-                if ((cmode === "IM") || (cmode === "INIM") || (cmode === "ABIM") ||
-                    (cmode === "__IM") || (cmode === "IMAGINARY") || (cmode === 4)) {
+                if (
+                    cmode === "IM" ||
+                    cmode === "INIM" ||
+                    cmode === "ABIM" ||
+                    cmode === "__IM" ||
+                    cmode === "IMAGINARY" ||
+                    cmode === 4
+                ) {
                     cmode = 4;
                 }
-                if ((cmode === "LO") || (cmode === "D1") || (cmode === "INLO") || (cmode === "IND1") ||
-                    (cmode === "ABIM") || (cmode === "ABD1") || (cmode === "__LO") ||
-                    (cmode === "__D1") || (cmode === "10*LOG10") || (cmode === 6)) {
+                if (
+                    cmode === "LO" ||
+                    cmode === "D1" ||
+                    cmode === "INLO" ||
+                    cmode === "IND1" ||
+                    cmode === "ABIM" ||
+                    cmode === "ABD1" ||
+                    cmode === "__LO" ||
+                    cmode === "__D1" ||
+                    cmode === "10*LOG10" ||
+                    cmode === 6
+                ) {
                     cmode = 6;
                 }
-                if ((cmode === "L2") || (cmode === "D2") || (cmode === "INL2") || (cmode === "IND2") ||
-                    (cmode === "ABLO") || (cmode === "ABD2") || (cmode === "__L2") ||
-                    (cmode === "__D2") || (cmode === "20*LOG10") || (cmode === 7)) {
+                if (
+                    cmode === "L2" ||
+                    cmode === "D2" ||
+                    cmode === "INL2" ||
+                    cmode === "IND2" ||
+                    cmode === "ABLO" ||
+                    cmode === "ABD2" ||
+                    cmode === "__L2" ||
+                    cmode === "__D2" ||
+                    cmode === "20*LOG10" ||
+                    cmode === 7
+                ) {
                     cmode = 7;
                 }
-                if ((cmode === "RI") || (cmode === "IR") || (cmode === "INRI") || (cmode === "INIR") ||
-                    (cmode === "ABRI") || (cmode === "ABIR") || (cmode === "__RI") ||
-                    (cmode === "__IR") || (cmode === "IMAG/REAL") || (cmode === "REAL/IMAG") || (cmode === 5)) {
+                if (
+                    cmode === "RI" ||
+                    cmode === "IR" ||
+                    cmode === "INRI" ||
+                    cmode === "INIR" ||
+                    cmode === "ABRI" ||
+                    cmode === "ABIR" ||
+                    cmode === "__RI" ||
+                    cmode === "__IR" ||
+                    cmode === "IMAG/REAL" ||
+                    cmode === "REAL/IMAG" ||
+                    cmode === 5
+                ) {
                     if (Gx.index) {
-                        m.log.error("Imag/Real mode not permitted in INDEX mode");
+                        m.log.error(
+                            "Imag/Real mode not permitted in INDEX mode"
+                        );
                     } else {
                         cmode = 5;
                     }
@@ -1915,11 +2164,13 @@
             }
 
             if (settings.rightclick_rubberbox_action !== undefined) {
-                Gx.default_rightclick_rubberbox_action = settings.rightclick_rubberbox_action;
+                Gx.default_rightclick_rubberbox_action =
+                    settings.rightclick_rubberbox_action;
             }
 
             if (settings.rightclick_rubberbox_mode !== undefined) {
-                Gx.default_rightclick_rubberbox_mode = settings.rightclick_rubberbox_mode;
+                Gx.default_rightclick_rubberbox_mode =
+                    settings.rightclick_rubberbox_mode;
             }
 
             if (settings.wheelscroll_mode_natural !== undefined) {
@@ -1997,7 +2248,7 @@
                     Gx.ymax = Gx.panymax;
                 } else {
                     // autoy must be set correctly before calling updateViewbox
-                    Gx.autoy = Gx.autoy & 0xD;
+                    Gx.autoy = Gx.autoy & 0xd;
                     Gx.ymax = settings.ymax;
                     updateViewbox(this, Mx.stk[0].ymin, settings.ymax, "Y");
                     this.redraw();
@@ -2012,7 +2263,7 @@
                     Gx.ymin = Gx.panymin;
                 } else {
                     // autoy must be set correctly before calling updateViewbox
-                    Gx.autoy = Gx.autoy & 0xE;
+                    Gx.autoy = Gx.autoy & 0xe;
                     Gx.ymin = settings.ymin;
                     updateViewbox(this, settings.ymin, Mx.stk[0].ymax, "Y");
                     this.redraw();
@@ -2024,42 +2275,42 @@
             // implicit settings via ymin/ymax
             if (settings.autoy !== undefined) {
                 Gx.autoy = settings.autoy;
-                if (((Gx.autoy & 1) !== 0)) {
+                if ((Gx.autoy & 1) !== 0) {
                     Gx.ymin = undefined;
                 }
-                if (((Gx.autoy & 2) !== 0)) {
+                if ((Gx.autoy & 2) !== 0) {
                     Gx.ymax = undefined;
                 }
             }
 
             if (settings.xmin !== undefined) {
                 updateViewbox(this, settings.xmin, Mx.stk[0].xmax, "X");
-                Gx.autox = (Gx.autox & 2);
+                Gx.autox = Gx.autox & 2;
                 this.redraw();
             }
 
             if (settings.xmax !== undefined) {
                 updateViewbox(this, Mx.stk[0].xmin, settings.xmax, "X");
-                Gx.autox = (Gx.autox & 1);
+                Gx.autox = Gx.autox & 1;
                 this.redraw();
             }
 
             if (settings.zmin !== undefined) {
                 Gx.zmin = settings.zmin;
-                Gx.autoz = (Gx.autoz & 2);
+                Gx.autoz = Gx.autoz & 2;
             }
 
             if (settings.zmax !== undefined) {
                 Gx.zmax = settings.zmax;
-                Gx.autoz = (Gx.autoz & 1);
+                Gx.autoz = Gx.autoz & 1;
             }
 
             if (settings.autoz !== undefined) {
                 Gx.autoz = settings.autoz;
-                if (((Gx.autoz & 1) !== 0)) {
+                if ((Gx.autoz & 1) !== 0) {
                     Gx.zmin = undefined;
                 }
-                if (((Gx.autoz & 2) !== 0)) {
+                if ((Gx.autoz & 2) !== 0) {
                     Gx.zmax = undefined;
                 }
             }
@@ -2093,7 +2344,8 @@
             }
 
             this.refresh();
-            if (settings.pan !== undefined) { // refactor - new code to handle
+            if (settings.pan !== undefined) {
+                // refactor - new code to handle
                 // disappearing specs
                 display_specs(this);
             }
@@ -2102,10 +2354,11 @@
         /**
          * Reread all files and refresh the plot.
          */
-        reread: function() {
+        reread: function () {
             var Gx = this._Gx;
             var oldLayerData = [];
-            for (var k = 0; k < Gx.lyr.length; k++) { // make a copy of layer
+            for (var k = 0; k < Gx.lyr.length; k++) {
+                // make a copy of layer
                 // data before
                 // destroying Gx.lyr
                 // with the deoverlay
@@ -2131,15 +2384,15 @@
             this.refresh();
 
             // Notify listeners that a reread was performed
-            var evt = document.createEvent('Event');
-            evt.initEvent('reread', true, true);
+            var evt = document.createEvent("Event");
+            evt.initEvent("reread", true, true);
             mx.dispatchEvent(this._Mx, evt);
         },
 
         /**
          * Placeholder for cleanup logic.
          */
-        cleanup: function() {
+        cleanup: function () {
             // TODO not sure what we really want to do here yet
         },
 
@@ -2153,7 +2406,7 @@
          * @param {Object} hdrmod
          *            optional changes to the file header
          */
-        reload: function(lyr, data, hdrmod, rsync) {
+        reload: function (lyr, data, hdrmod, rsync) {
             var Mx = this._Mx;
             var Gx = this._Gx;
 
@@ -2162,7 +2415,7 @@
                 n = this.get_lyrn(lyr);
             }
 
-            if ((n < 0) || (n >= Gx.lyr.length)) {
+            if (n < 0 || n >= Gx.lyr.length) {
                 if (typeof lyr === "number") {
                     throw "reload requires use the layer uuid returned by overlay and no longer supports layer indexes";
                 }
@@ -2178,9 +2431,14 @@
             if (Mx.level === 0) {
                 // Unlike push(), always call scale_base
                 // when reload is invoked
-                scale_base(this, {
-                    get_data: false
-                }, xbnds.xmin, xbnds.xmax);
+                scale_base(
+                    this,
+                    {
+                        get_data: false,
+                    },
+                    xbnds.xmin,
+                    xbnds.xmax
+                );
             }
 
             if (rsync) {
@@ -2188,16 +2446,20 @@
             } else {
                 this.refresh();
             }
-
         },
 
-        rescale: function() {
+        rescale: function () {
             var Mx = this._Mx;
 
             if (Mx.level === 0) {
-                scale_base(this, {
-                    get_data: false
-                }, undefined, undefined);
+                scale_base(
+                    this,
+                    {
+                        get_data: false,
+                    },
+                    undefined,
+                    undefined
+                );
             }
 
             this.refresh();
@@ -2211,7 +2473,7 @@
          * @param {Object} hdrmod
          *            changes to the file header
          */
-        headermod: function(n, hdrmod) {
+        headermod: function (n, hdrmod) {
             this.change_settings(hdrmod);
             this.push(n, [], hdrmod);
         },
@@ -2232,7 +2494,7 @@
          * @param {boolean} [rsync=false]
          *            optional dispatch refresh syncronously
          */
-        push: function(lyr, data, hdrmod, sync, rsync) {
+        push: function (lyr, data, hdrmod, sync, rsync) {
             var Mx = this._Mx;
             var Gx = this._Gx;
 
@@ -2241,7 +2503,7 @@
                 n = this.get_lyrn(lyr);
             }
 
-            if ((n < 0) || (n >= Gx.lyr.length)) {
+            if (n < 0 || n >= Gx.lyr.length) {
                 if (typeof lyr === "number") {
                     throw "push requires use the layer uuid returned by overlay and no longer supports layer indexes";
                 }
@@ -2276,9 +2538,9 @@
 
             var rescale = Gx.lyr[n].push(data, hdrmod_clone, sync);
 
-            if ((Mx.level === 0) && rescale) {
+            if (Mx.level === 0 && rescale) {
                 scale_base(this, {
-                    get_data: false
+                    get_data: false,
                 });
             }
 
@@ -2324,7 +2586,7 @@
          *
          */
 
-        overlay_array: function(data, overrides, layerOptions) {
+        overlay_array: function (data, overrides, layerOptions) {
             m.log.debug("Overlay array");
             var hcb = m.initialize(data, overrides);
             return this.overlay_bluefile(hcb, layerOptions);
@@ -2362,7 +2624,7 @@
          *
          */
 
-        overlay_pipe: function(overrides, layerOptions) {
+        overlay_pipe: function (overrides, layerOptions) {
             m.log.debug("Overlay pipe");
             if (!overrides) {
                 overrides = {};
@@ -2406,7 +2668,7 @@
          *
          */
 
-        overlay_websocket: function(wsurl, overrides, layerOptions) {
+        overlay_websocket: function (wsurl, overrides, layerOptions) {
             m.log.debug("Overlay websocket: " + wsurl);
             var ws = new WebSocket(wsurl, "plot-data");
             ws.binaryType = "arraybuffer";
@@ -2421,10 +2683,10 @@
 
             var layer_n = this.overlay_bluefile(hcb, layerOptions);
 
-            ws.onopen = function(evt) {};
+            ws.onopen = function (evt) {};
 
-            ws.onmessage = (function(theSocket) {
-                return function(evt) {
+            ws.onmessage = (function (theSocket) {
+                return function (evt) {
                     if (evt.data instanceof ArrayBuffer) {
                         var data = hcb.createArray(evt.data);
                         plot.push(layer_n, data);
@@ -2432,7 +2694,9 @@
                         var Gx = plot._Gx;
                         var hdr = Gx.lyr[layer_n].hcb;
                         if (!hdr) {
-                            m.log.warning("Couldn't find header for layer " + layer_n);
+                            m.log.warning(
+                                "Couldn't find header for layer " + layer_n
+                            );
                         }
 
                         var newHdr = JSON.parse(evt.data);
@@ -2443,7 +2707,6 @@
 
             return layer_n;
         },
-
 
         /**
          * Create a plot layer from an HREF that points to a BLUEFILE or MATFILE
@@ -2471,11 +2734,16 @@
          * @returns data_layer
          *
          */
-        overlay_href: function(href, onload, layerOptions, overrides) {
+        overlay_href: function (href, onload, layerOptions, overrides) {
             var self = this;
             var lyr_uuids = [];
-            href.split('|').forEach(function(hr) {
-                var lyr_uuid = self.overlay_href_single(hr.trim(), onload, layerOptions, overrides);
+            href.split("|").forEach(function (hr) {
+                var lyr_uuid = self.overlay_href_single(
+                    hr.trim(),
+                    onload,
+                    layerOptions,
+                    overrides
+                );
                 lyr_uuids.push(lyr_uuid);
             });
 
@@ -2514,14 +2782,14 @@
          * @returns data_layer
          *
          */
-        overlay_href_single: function(href, onload, layerOptions, overrides) {
+        overlay_href_single: function (href, onload, layerOptions, overrides) {
             var lyr_uuid = this.reg_hcb(null);
 
             m.log.debug("Overlay href: " + href + " " + lyr_uuid);
             try {
                 this.show_spinner();
-                var handleHeader = (function(plot, onload) {
-                    return function(hcb) {
+                var handleHeader = (function (plot, onload) {
+                    return function (hcb) {
                         try {
                             if (!hcb) {
                                 m.log.error("Failed to load data: " + href);
@@ -2533,7 +2801,10 @@
                                 if (href.endsWith(".mat")) {
                                     i = plot.overlay_matfile(hcb, layerOptions);
                                 } else {
-                                    i = plot.overlay_bluefile(hcb, layerOptions);
+                                    i = plot.overlay_bluefile(
+                                        hcb,
+                                        layerOptions
+                                    );
                                 }
                                 if (onload) {
                                     onload(hcb, i);
@@ -2543,10 +2814,10 @@
                             plot.hide_spinner();
                         }
                     };
-                }(this, onload));
+                })(this, onload);
 
-                var handleSDS = (function(plot, onload) {
-                    return function(hcb, layertype) {
+                var handleSDS = (function (plot, onload) {
+                    return function (hcb, layertype) {
                         // LOWER CASE CRAP THAT GRANT SENT US
                         try {
                             var i = null;
@@ -2574,28 +2845,32 @@
                             plot.hide_spinner();
                         }
                     };
-                }(this, onload));
+                })(this, onload);
 
                 var reader;
                 var oReq;
                 if (href.endsWith(".mat")) {
                     reader = new matfile.MatFileReader();
                     oReq = reader.read_http(href, handleHeader);
-                } else if (layerOptions && (layerOptions.layerType === "2DSDS" || layerOptions.layerType === "1DSDS" || layerOptions.layerType === "SDS")) {
+                } else if (
+                    layerOptions &&
+                    (layerOptions.layerType === "2DSDS" ||
+                        layerOptions.layerType === "1DSDS" ||
+                        layerOptions.layerType === "SDS")
+                ) {
                     // TODO it would be nice to not check layerType here but either
                     // peek at the URL contents OR use something in the URL
                     oReq = new XMLHttpRequest();
                     oReq.open("GET", href, true);
                     oReq.responseType = "";
-                    oReq.onload = function(oEvent) {
+                    oReq.onload = function (oEvent) {
                         var hcb = JSON.parse(oReq.responseText);
                         if (hcb) {
                             hcb.url = href;
                         }
                         handleSDS(hcb, layerOptions.layerType);
-
                     };
-                    oReq.onerror = function(oEvent) {
+                    oReq.onerror = function (oEvent) {
                         //console.log("error fetching SDS header" + oEvent)
                     };
                     oReq.send(null);
@@ -2614,14 +2889,16 @@
             return lyr_uuid;
         },
 
-        show_spinner: function() {
+        show_spinner: function () {
             if (!this._Gx.spinner) {
                 SPINNER_OPTS.color = this._Mx.xwfg;
-                this._Gx.spinner = new Spinner(SPINNER_OPTS).spin(this._Gx.parent);
+                this._Gx.spinner = new Spinner(SPINNER_OPTS).spin(
+                    this._Gx.parent
+                );
             }
         },
 
-        hide_spinner: function(force) {
+        hide_spinner: function (force) {
             var cnt_pending = 0;
             _.mapObject(this._Gx.HCB_UCB, (k, v) => {
                 if (v === null) {
@@ -2629,7 +2906,7 @@
                 }
             });
 
-            if ((cnt_pending === 0) || force) {
+            if (cnt_pending === 0 || force) {
                 if (this._Gx.spinner) {
                     this._Gx.spinner.stop();
                 }
@@ -2637,36 +2914,36 @@
             }
         },
 
-        reg_hcb: function(hcb) {
+        reg_hcb: function (hcb) {
             var uuid = common.uuidv4();
             this._Gx.HCB_UUID[uuid] = hcb;
 
             return uuid;
         },
 
-        get_lyrn: function(uuid) {
+        get_lyrn: function (uuid) {
             return _.indexOf(this._Gx.HCB, uuid);
         },
 
-        get_lyr_uuid: function(lyrN) {
+        get_lyr_uuid: function (lyrN) {
             return this._Gx.HCB[lyrN];
         },
 
-        get_hcb_by_uuid: function(uuid) {
+        get_hcb_by_uuid: function (uuid) {
             return this._Gx.HCB[uuid];
         },
 
-        get_hcb_by_lyrn: function(lyrN) {
+        get_hcb_by_lyrn: function (lyrN) {
             return this.get_hcb_by_uuid(this.get_lyr_uuid(lyrN));
         },
 
-        add_layer: function(layer) {
+        add_layer: function (layer) {
             var Gx = this._Gx;
             var Mx = this._Mx;
 
             // Notify listeners that a file was overlayed
-            var evt = document.createEvent('Event');
-            evt.initEvent('lyradd', true, true);
+            var evt = document.createEvent("Event");
+            evt.initEvent("lyradd", true, true);
             evt.name = layer.name; // the name of the layer
             evt.layer = layer;
             var executeDefault = mx.dispatchEvent(Mx, evt);
@@ -2691,20 +2968,20 @@
          *
          */
 
-        get_layer: function(lyr) {
+        get_layer: function (lyr) {
             var Gx = this._Gx;
 
             if (_.has(Gx.HCB_UUID, lyr)) {
                 lyr = this.get_lyrn(lyr);
             }
-            if ((lyr >= 0) && (lyr < Gx.lyr.length)) {
+            if (lyr >= 0 && lyr < Gx.lyr.length) {
                 return Gx.lyr[lyr];
             } else {
                 return null;
             }
         },
 
-        overlay_matfile: function(mfile, layerOptions) {
+        overlay_matfile: function (mfile, layerOptions) {
             m.log.debug("Overlay matfile: " + mfile.file_name);
             return this.overlay_array(mfile.dview);
         },
@@ -2716,7 +2993,7 @@
          *            {BlueHeader} an opened BlueHeader file
          * @returns the index of the new layer
          */
-        overlay_bluefile: function(hcb, layerOptions) {
+        overlay_bluefile: function (hcb, layerOptions) {
             m.log.debug("Overlay bluefile: " + hcb.file_name);
             var Mx = this._Mx;
             var Gx = this._Gx;
@@ -2724,7 +3001,7 @@
 
             layerOptions = layerOptions || {};
 
-            var basefiles = (Gx.HCB.length === 0);
+            var basefiles = Gx.HCB.length === 0;
 
             var lyr_uuid = hcb._uuid;
             if (lyr_uuid) {
@@ -2764,7 +3041,11 @@
                 } else if (layerOptions.layerType === "2DSDS") {
                     layers = Layer2DSDS.overlay(this, hcb, layerOptions);
                 } else {
-                    layers = layerOptions.layerType.overlay(this, hcb, layerOptions);
+                    layers = layerOptions.layerType.overlay(
+                        this,
+                        hcb,
+                        layerOptions
+                    );
                 }
             }
 
@@ -2775,7 +3056,7 @@
 
             // Allow the user to store aribitary data with the layer
             if (layerOptions.user_data) {
-                layers.forEach(function(layer) {
+                layers.forEach(function (layer) {
                     layer.user_data = layerOptions.user_data;
                 });
             }
@@ -2797,11 +3078,12 @@
             // this layers new range, then simply draw the new layer.
             if (!basefiles && !layerOptions.expand) {
                 var plot = this;
-                layers.forEach(function(layer) {
+                layers.forEach(function (layer) {
                     draw_layer(plot, layer);
                 });
             } else {
-                if (_.size(Gx.HCB_UUID) === 0) { // TODO dead code that cannot be reached
+                if (_.size(Gx.HCB_UUID) === 0) {
+                    // TODO dead code that cannot be reached
                     basefile(this, false);
                 } else {
                     Gx.basemode = Gx.cmode;
@@ -2813,9 +3095,14 @@
                     if ((Gx.autox & 2) === 0) {
                         xmax = Gx.xmax;
                     }
-                    scale_base(this, {
-                        get_data: true
-                    }, xmin, xmax);
+                    scale_base(
+                        this,
+                        {
+                            get_data: true,
+                        },
+                        xmin,
+                        xmax
+                    );
                     Mx.level = 0;
                     if ((Gx.autox & 1) !== 0) {
                         Gx.xmin = Mx.stk[0].xmin;
@@ -2849,9 +3136,9 @@
          * @param {File[]}
          *            a list of files to plot
          */
-        load_files: function(files, layerType) {
-            var onload = (function(plot) {
-                return function(hdr) {
+        load_files: function (files, layerType) {
+            var onload = (function (plot) {
+                return function (hdr) {
                     plot.overlay_bluefile(hdr, layerType);
                 };
             })(this);
@@ -2876,7 +3163,7 @@
          *
          */
 
-        deoverlay: function(index) {
+        deoverlay: function (index) {
             var Gx = this._Gx;
             var Mx = this._Mx;
 
@@ -2911,7 +3198,7 @@
          * @param index
          *            the layer to remove
          */
-        remove_layer: function(lyr_uuid) {
+        remove_layer: function (lyr_uuid) {
             var Gx = this._Gx;
 
             var HCB = Gx.HCB_UUID[lyr_uuid];
@@ -2928,7 +3215,7 @@
 
             var index = this.get_lyrn(lyr_uuid);
 
-            if ((index >= 0) && (index < Gx.HCB.length)) {
+            if (index >= 0 && index < Gx.HCB.length) {
                 // delete this UUID and shift the others down
                 Gx.HCB[index] = null;
                 for (var n = index; n < Gx.HCB.length - 1; n++) {
@@ -2949,8 +3236,8 @@
             this.refresh();
 
             // Notify listeners that a file has been deoverlayed
-            var evt = document.createEvent('Event');
-            evt.initEvent('file_deoverlayed', true, true);
+            var evt = document.createEvent("Event");
+            evt.initEvent("file_deoverlayed", true, true);
             if (fileName !== "") {
                 evt.fileName = fileName; // The fileName that was
             }
@@ -2961,14 +3248,14 @@
         /**
          * Zoom onto a given pixel range.
          */
-        pixel_zoom: function(x1, y1, x2, y2, continuous) {
+        pixel_zoom: function (x1, y1, x2, y2, continuous) {
             var r1 = pixel_to_real(this, x1, y1);
             var r2 = pixel_to_real(this, x2, y2);
 
             this.zoom(r1, r2, continuous);
         },
 
-        percent_zoom: function(xperc, yperc, continuous) {
+        percent_zoom: function (xperc, yperc, continuous) {
             var Mx = this._Mx;
             var Gx = this._Gx;
 
@@ -2986,12 +3273,12 @@
 
             var ul = {
                 x: Math.max(Mx.stk[Mx.level].xmin + xadj, Gx.panxmin),
-                y: Math.max(Mx.stk[Mx.level].ymin + yadj, Gx.panymin)
+                y: Math.max(Mx.stk[Mx.level].ymin + yadj, Gx.panymin),
             };
 
             var lr = {
                 x: Math.min(Mx.stk[Mx.level].xmax - xadj, Gx.panxmax),
-                y: Math.min(Mx.stk[Mx.level].ymax - yadj, Gx.panymax)
+                y: Math.min(Mx.stk[Mx.level].ymax - yadj, Gx.panymax),
             };
 
             this.zoom(ul, lr, continuous);
@@ -3019,11 +3306,12 @@
          *            new if you are on level 0, but stay on the same level
          *            otherwise
          */
-        zoom: function(ul, lr, continuous) {
+        zoom: function (ul, lr, continuous) {
             var Mx = this._Mx;
             var Gx = this._Gx;
 
-            if (Mx.level >= 9) { // currently only allow 10 zooms
+            if (Mx.level >= 9) {
+                // currently only allow 10 zooms
                 return;
             }
 
@@ -3070,7 +3358,7 @@
                 zstk.xmax = Math.min(zstk.xmax / Gx.xdelta);
             }
 
-            if (!continuous || (!Gx.inContinuousZoom)) {
+            if (!continuous || !Gx.inContinuousZoom) {
                 // We aren't yet in continuous zoom mode
                 // so create a new level
                 Mx.stk.push(zstk);
@@ -3082,8 +3370,8 @@
             Gx.inContinuousZoom = continuous;
 
             this.inZoom = true; // prevent recursive zooms
-            var evt = document.createEvent('Event');
-            evt.initEvent('zoom', true, true);
+            var evt = document.createEvent("Event");
+            evt.initEvent("zoom", true, true);
             evt.level = Mx.level;
             evt.inContinuousZoom = Gx.inContinuousZoom;
             evt.xmin = Mx.stk[Mx.level].xmin;
@@ -3103,7 +3391,7 @@
          *            the number of levels to unzoom, if not provided unzoom
          *            all.
          */
-        unzoom: function(levels) {
+        unzoom: function (levels) {
             var Mx = this._Mx;
             var Gx = this._Gx;
 
@@ -3136,8 +3424,8 @@
 
             this.inZoom = true; // prevent recursive zoom
             // Send the event to listeners
-            var evt = document.createEvent('Event');
-            evt.initEvent('unzoom', true, true);
+            var evt = document.createEvent("Event");
+            evt.initEvent("unzoom", true, true);
             evt.level = Mx.level;
             evt.xmin = Mx.stk[Mx.level].xmin;
             evt.ymin = Mx.stk[Mx.level].ymin;
@@ -3152,7 +3440,7 @@
         /**
          * Expand pan-bars to the full range
          */
-        expand_full: function(xpan, ypan) {
+        expand_full: function (xpan, ypan) {
             if (xpan) {
                 updateViewbox(this, this._Gx.panxmin, this._Gx.panxmax, "X");
                 // syncronous refresh is necessary, because expanding the xrange
@@ -3171,11 +3459,11 @@
         /**
          * Set the current view bounds, if any bounds are not defined
          * then they are kept as currently set.
-         * 
+         *
          * Will call an asyncronous refresh() after the new view box
          * values have been set.
-         * 
-         * @param {Object} ViewBounds 
+         *
+         * @param {Object} ViewBounds
          * @returns {number} ViewBounds.xmin
          *     the abscissa X minimum value of the view box
          * @returns {number} ViewBounds.xmax
@@ -3185,12 +3473,7 @@
          * @returns {number} ViewBounds.ymax
          *     the abscissa Y maximum value of the view box
          */
-        set_view: function({
-            xmin,
-            xmax,
-            ymin,
-            ymax
-        }) {
+        set_view: function ({ xmin, xmax, ymin, ymax }) {
             var Mx = this._Mx;
             var Gx = this._Gx;
             var k = Mx.level;
@@ -3212,7 +3495,7 @@
 
         /**
          * Get the current view bounds
-         * 
+         *
          * @returns {Object} ViewBounds
          *     the view bounds
          * @returns {number} ViewBounds.xmin
@@ -3224,7 +3507,7 @@
          * @returns {number} ViewBounds.ymax
          *     the abscissa Y maximum value of the view box
          */
-        get_view: function() {
+        get_view: function () {
             var Mx = this._Mx;
             var Gx = this._Gx;
             var k = Mx.level;
@@ -3233,7 +3516,7 @@
                 xmin: Mx.stk[k].xmin,
                 xmax: Mx.stk[k].xmax,
                 ymin: Mx.stk[k].ymin,
-                ymax: Mx.stk[k].ymax
+                ymax: Mx.stk[k].ymax,
             };
         },
 
@@ -3267,7 +3550,7 @@
          * @param mask.ypan
          *     if true, respond to pan events for the y-axis only
          */
-        mimic: function(other, mask) {
+        mimic: function (other, mask) {
             var self = this;
 
             if (!mask) {
@@ -3277,57 +3560,66 @@
             this.unmimic(other);
 
             if (mask.zoom) {
-                var f = function(event) {
+                var f = function (event) {
                     if (self.inZoom) {
                         return;
                     }
-                    self.zoom({
+                    self.zoom(
+                        {
                             x: event.xmin,
-                            y: event.ymin
-                        }, {
-                            x: event.xmax,
-                            y: event.ymax
+                            y: event.ymin,
                         },
-                        event.inContinuousZoom);
+                        {
+                            x: event.xmax,
+                            y: event.ymax,
+                        },
+                        event.inContinuousZoom
+                    );
                 };
                 other.addListener("zoom", f);
                 this.mimicListeners.listeners.zoom = f;
             } else if (mask.xzoom) {
-                var f = function(event) {
+                var f = function (event) {
                     if (self.inZoom) {
                         return;
                     }
-                    self.zoom({
+                    self.zoom(
+                        {
                             x: event.xmin,
-                            y: undefined
-                        }, {
-                            x: event.xmax,
-                            y: undefined
+                            y: undefined,
                         },
-                        event.inContinuousZoom);
+                        {
+                            x: event.xmax,
+                            y: undefined,
+                        },
+                        event.inContinuousZoom
+                    );
                 };
                 other.addListener("zoom", f);
                 this.mimicListeners.listeners.zoom = f;
             } else if (mask.yzoom) {
-                var f = function(event) {
+                var f = function (event) {
                     if (self.inZoom) {
                         return;
                     }
-                    self.zoom({
+                    self.zoom(
+                        {
                             x: undefined,
-                            y: event.ymin
-                        }, {
-                            x: undefined,
-                            y: event.ymax
+                            y: event.ymin,
                         },
-                        event.inContinuousZoom);
+                        {
+                            x: undefined,
+                            y: event.ymax,
+                        },
+                        event.inContinuousZoom
+                    );
                 };
                 other.addListener("zoom", f);
                 this.mimicListeners.listeners.zoom = f;
             }
 
             if (mask.unzoom) {
-                var f = function(event) {
+                var f = function (event) {
                     if (self.inZoom) {
                         return;
                     }
@@ -3340,7 +3632,7 @@
             }
 
             if (mask.pan || mask.xpan) {
-                var f = function(event) {
+                var f = function (event) {
                     if (self.inPan) {
                         return;
                     }
@@ -3351,7 +3643,7 @@
             }
 
             if (mask.pan || mask.ypan) {
-                var f = function(event) {
+                var f = function (event) {
                     if (self.inPan) {
                         return;
                     }
@@ -3364,17 +3656,21 @@
             this.mimicListeners.other = other;
         },
 
-
         /**
          * Unregister zoom/unzoom listeners added via previous call to unmimic.
          */
-        unmimic: function(other) {
+        unmimic: function (other) {
             var other = this.mimicListeners.other;
             if (other) {
                 var that = this;
-                Object.keys(this.mimicListeners.listeners).forEach(function(evt) {
+                Object.keys(this.mimicListeners.listeners).forEach(function (
+                    evt
+                ) {
                     if (that.mimicListeners.listeners[evt]) {
-                        other.removeListener(evt, that.mimicListeners.listeners[evt]);
+                        other.removeListener(
+                            evt,
+                            that.mimicListeners.listeners[evt]
+                        );
                     }
                 });
             }
@@ -3384,8 +3680,8 @@
                     zoom: null,
                     unzoom: null,
                     xpan: null,
-                    ypan: null
-                }
+                    ypan: null,
+                },
             };
         },
 
@@ -3394,25 +3690,30 @@
          *
          * @example plot.redraw();
          */
-        redraw: function() {
+        redraw: function () {
             var Gx = this._Gx;
             var Mx = this._Mx;
             var ctx = Mx.canvas.getContext("2d");
             if (!Gx.plotData.valid) {
                 this.refresh();
             } else {
-                ctx.drawImage(Gx.plotData,
+                ctx.drawImage(
+                    Gx.plotData,
                     Mx.l - 1,
-                    Mx.t - 1, (Mx.r - Mx.l) + 2, (Mx.b - Mx.t) + 2,
+                    Mx.t - 1,
+                    Mx.r - Mx.l + 2,
+                    Mx.b - Mx.t + 2,
                     Mx.l - 1,
-                    Mx.t - 1, (Mx.r - Mx.l) + 2, (Mx.b - Mx.t) + 2
+                    Mx.t - 1,
+                    Mx.r - Mx.l + 2,
+                    Mx.b - Mx.t + 2
                 );
 
                 draw_plugins(this);
 
                 Gx.cross_xpos = undefined;
                 Gx.cross_ypos = undefined;
-                if ((!Mx.warpbox) && (this.mouseOnCanvas)) {
+                if (!Mx.warpbox && this.mouseOnCanvas) {
                     draw_crosshairs(this);
                 }
 
@@ -3427,12 +3728,12 @@
          *
          * @example plot.refresh();
          */
-        refresh: function() {
+        refresh: function () {
             if (!this._Gx.initialized || this._Gx.refresh_after_ctr > 0) {
                 return;
             }
             var self = this;
-            mx.render(this._Mx, function() {
+            mx.render(this._Mx, function () {
                 self._refresh();
             });
         },
@@ -3460,13 +3761,15 @@
          *
          * @example plot.refresh_after((plot) => {plot.push(n, data)});
          */
-        refresh_after: function(cb) {
+        refresh_after: function (cb) {
             this._Gx.refresh_after_ctr += 1;
             try {
                 cb(this);
             } finally {
-                this._Gx.refresh_after_ctr =
-                    Math.max(this._Gx.refresh_after_ctr - 1, 0);
+                this._Gx.refresh_after_ctr = Math.max(
+                    this._Gx.refresh_after_ctr - 1,
+                    0
+                );
                 if (this._Gx.refresh_after_ctr === 0) {
                     this.refresh();
                 }
@@ -3477,18 +3780,31 @@
          * Enable listeners for events on plot
          */
 
-        enable_listeners: function() {
+        enable_listeners: function () {
             var Mx = this._Mx;
             mx.addEventListener(Mx, "mousedown", this.onmousedown, false);
-            mx.addEventListener(Mx, "mousemove", this.throttledOnMouseMove, false);
+            mx.addEventListener(
+                Mx,
+                "mousemove",
+                this.throttledOnMouseMove,
+                false
+            );
             window.addEventListener("mouseup", Mx.onmouseup, false);
             window.addEventListener("keydown", Mx.onkeydown, false);
             window.addEventListener("keyup", Mx.onkeyup, false);
             window.addEventListener("resize", this.onresize, false);
             document.addEventListener("mouseup", this.docMouseUp, false);
             mx.addEventListener(Mx, "mouseup", this.mouseup, false);
-            window.addEventListener("mousedown", this.dragMouseDownHandler, false);
-            window.addEventListener("mousemove", this.throttledDragOnMouseMove, false);
+            window.addEventListener(
+                "mousedown",
+                this.dragMouseDownHandler,
+                false
+            );
+            window.addEventListener(
+                "mousemove",
+                this.throttledDragOnMouseMove,
+                false
+            );
             window.addEventListener("mouseup", this.dragMouseUpHandler, false);
             window.addEventListener("wheel", this.wheelHandler, false);
             window.addEventListener("mousewheel", this.wheelHandler, false);
@@ -3500,45 +3816,61 @@
          * Enable listeners for events on plot
          */
 
-        disable_listeners: function() {
+        disable_listeners: function () {
             var Mx = this._Mx;
 
             mx.removeEventListener(Mx, "mousedown", this.onmousedown, false);
-            mx.removeEventListener(Mx, "mousemove", this.throttledOnMouseMove,
-                false);
+            mx.removeEventListener(
+                Mx,
+                "mousemove",
+                this.throttledOnMouseMove,
+                false
+            );
             mx.removeEventListener(Mx, "mouseup", this.mouseup, false);
             window.removeEventListener("mouseup", Mx.onmouseup, false);
             window.removeEventListener("keydown", Mx.onkeydown, false);
             window.removeEventListener("keyup", Mx.onkeyup, false);
             window.removeEventListener("resize", this.onresize, false);
             document.removeEventListener("mouseup", this.docMouseUp, false);
-            window.removeEventListener("mousedown", this.dragMouseDownHandler,
-                false);
-            window.removeEventListener("mousemove", this.throttledDragOnMouseMove,
-                false);
-            window.removeEventListener("mouseup", this.dragMouseUpHandler, false);
+            window.removeEventListener(
+                "mousedown",
+                this.dragMouseDownHandler,
+                false
+            );
+            window.removeEventListener(
+                "mousemove",
+                this.throttledDragOnMouseMove,
+                false
+            );
+            window.removeEventListener(
+                "mouseup",
+                this.dragMouseUpHandler,
+                false
+            );
             window.removeEventListener("wheel", this.wheelHandler, false);
             window.removeEventListener("mousewheel", this.wheelHandler, false);
-            window.removeEventListener("DOMMouseScroll", this.wheelHandler, false);
+            window.removeEventListener(
+                "DOMMouseScroll",
+                this.wheelHandler,
+                false
+            );
             window.removeEventListener("keypress", this.onkeypress, false);
         },
 
-        checkresize: function() {
+        checkresize: function () {
             if (mx.checkresize(this._Mx)) {
                 this.refresh();
             }
         },
-        addColorMaps: function(colormaps) {
-            colormaps.forEach(function(cmap) {
+        addColorMaps: function (colormaps) {
+            colormaps.forEach(function (cmap) {
                 if (cmap.hasOwnProperty("name")) {
                     m.Mc.colormap.push(cmap);
                 }
-
             });
-
         },
 
-        _refresh: function() {
+        _refresh: function () {
             var Mx = this._Mx;
             var Gx = this._Gx;
             var ctx = Mx.canvas.getContext("2d");
@@ -3556,7 +3888,8 @@
 
             if (Gx.specs) {
                 var ytimecode = false;
-                if (Gx.ylab === 4) { //time-based tics
+                if (Gx.ylab === 4) {
+                    //time-based tics
                     ytimecode = true;
                 }
                 // Set left and right edges
@@ -3565,8 +3898,9 @@
                     if (ytimecode) {
                         // If we are in ytimecode, determine if we need the extra
                         // space to hold the entire YYYY:MM:DD
-                        var need_full_ymd = ((Math.abs(Mx.stk[0].ymin) >= 31536000) ||
-                            (Math.abs(Mx.stk[0].ymax) >= 31536000));
+                        var need_full_ymd =
+                            Math.abs(Mx.stk[0].ymin) >= 31536000 ||
+                            Math.abs(Mx.stk[0].ymax) >= 31536000;
                         if (need_full_ymd) {
                             Mx.l = Mx.text_w * 11;
                         }
@@ -3635,7 +3969,10 @@
                 // set top scrollbar edge for X scrollbar
                 if (Gx.show_readout) {
                     if (Gx.show_x_axis) {
-                        Gx.pt = Mx.b + Mx.text_h + (Mx.height - Mx.b - Mx.text_h - Gx.pthk) / 2;
+                        Gx.pt =
+                            Mx.b +
+                            Mx.text_h +
+                            (Mx.height - Mx.b - Mx.text_h - Gx.pthk) / 2;
                     } else {
                         Gx.pt = Mx.b + (Mx.height - Mx.b - Gx.pthk) / 2;
                     }
@@ -3644,7 +3981,10 @@
                     // behaviour and renders at the top
                     if (Gx.x_scrollbar_location === "bottom") {
                         if (Gx.show_x_axis) {
-                            Gx.pt = Mx.b + Mx.text_h + (Mx.height - Mx.b - Mx.text_h - Gx.pthk) / 2;
+                            Gx.pt =
+                                Mx.b +
+                                Mx.text_h +
+                                (Mx.height - Mx.b - Mx.text_h - Gx.pthk) / 2;
                         } else {
                             Gx.pt = Mx.b + (Mx.height - Mx.b - Gx.pthk) / 2;
                         }
@@ -3672,14 +4012,17 @@
             // pan select ranges
             Gx.pyl = Mx.r + (Mx.width - Mx.r - Gx.pthk) / 2 + 1;
 
-            if (Gx.lg_colorbar && (Gx.lyr[0].hcb["class"] === 2)) {
+            if (Gx.lg_colorbar && Gx.lyr[0].hcb["class"] === 2) {
                 // Move the plot over to make room
                 var prev_Mx_r = Mx.r;
                 Mx.r = prev_Mx_r - 100;
-
             }
 
-            if (Gx.p_cuts && (Gx.lyr.length === 1) && (Gx.lyr[0].hcb["class"] === 2)) {
+            if (
+                Gx.p_cuts &&
+                Gx.lyr.length === 1 &&
+                Gx.lyr[0].hcb["class"] === 2
+            ) {
                 //turn cross hairs on
                 Gx.cross = true;
 
@@ -3710,7 +4053,7 @@
                 Mx.t = 0;
             }
 
-            if ((Gx.panymin === undefined) || (Gx.panymax === undefined)) {
+            if (Gx.panymin === undefined || Gx.panymax === undefined) {
                 scale_base(this, {});
             }
 
@@ -3733,7 +4076,8 @@
             // TODO
             //}
 
-            if (Gx.panning === 0 || Gx.panning !== 0) { // TODO Gx.panning !==
+            if (Gx.panning === 0 || Gx.panning !== 0) {
+                // TODO Gx.panning !==
                 // 0?? Does this work?
                 Gx.plotData.valid = false;
                 mx.clear_window(Mx);
@@ -3756,12 +4100,12 @@
             }
 
             if (ylab === undefined) {
-                var cx = ((Gx.lyr.length > 0) && Gx.lyr[0].cx);
+                var cx = Gx.lyr.length > 0 && Gx.lyr[0].cx;
                 if (Gx.cmode === 1) {
                     ylab = 28;
                 } else if (Gx.cmode === 2) {
                     ylab = Gx.plab;
-                } else if ((Gx.cmode === 3) && (cx)) {
+                } else if (Gx.cmode === 3 && cx) {
                     ylab = 21;
                 } else if (Gx.cmode === 4) {
                     ylab = 22;
@@ -3780,7 +4124,7 @@
             if (Gx.specs) {
                 if (Gx.sections === 0) {
                     var drawaxis_flags = {
-                        grid: Gx.grid
+                        grid: Gx.grid,
                     };
                     if (Gx.panning === 2) {
                         drawaxis_flags.noxtlab = true;
@@ -3811,10 +4155,12 @@
                     if (Gx.ymult) {
                         drawaxis_flags.ymult = Gx.ymult;
                     }
-                    if (xlab === 4) { //time-based tics
+                    if (xlab === 4) {
+                        //time-based tics
                         drawaxis_flags.xtimecode = true;
                     }
-                    if (ylab === 4) { //time-based tics
+                    if (ylab === 4) {
+                        //time-based tics
                         drawaxis_flags.ytimecode = true;
                     }
                     if (Gx.xlabel !== undefined) {
@@ -3823,7 +4169,15 @@
                     if (Gx.ylabel !== undefined) {
                         drawaxis_flags.ylabel = Gx.ylabel;
                     }
-                    mx.drawaxis(Gx, Mx, Gx.xdiv, Gx.ydiv, xlab, ylab, drawaxis_flags);
+                    mx.drawaxis(
+                        Gx,
+                        Mx,
+                        Gx.xdiv,
+                        Gx.ydiv,
+                        xlab,
+                        ylab,
+                        drawaxis_flags
+                    );
                 } //else {
                 // Not implemented yet
                 //}
@@ -3837,19 +4191,35 @@
                                 x: Mx.width - Gx.lbtn,
                                 y: 2,
                                 width: i,
-                                height: i
+                                height: i,
                             };
-                            mx.shadowbox(Mx, Mx.width - Gx.lbtn, 2, i, i, 1, -2,
-                                'L');
+                            mx.shadowbox(
+                                Mx,
+                                Mx.width - Gx.lbtn,
+                                2,
+                                i,
+                                i,
+                                1,
+                                -2,
+                                "L"
+                            );
                         } else {
                             Gx.legendBtnLocation = {
                                 x: Mx.width - Gx.lbtn,
                                 y: 2,
                                 width: i,
-                                height: i
+                                height: i,
                             };
-                            mx.shadowbox(Mx, Mx.width - Gx.lbtn, 2, i, i, 1,
-                                2, 'L');
+                            mx.shadowbox(
+                                Mx,
+                                Mx.width - Gx.lbtn,
+                                2,
+                                i,
+                                i,
+                                1,
+                                2,
+                                "L"
+                            );
                         }
                     }
                     display_specs(this);
@@ -3865,26 +4235,35 @@
                     noxplab: true,
                     noytics: true,
                     noytlab: true,
-                    noyplab: true
+                    noyplab: true,
                 };
-                mx.drawaxis(Gx, Mx, Gx.xdiv, Gx.ydiv, xlab, ylab,
-                    drawaxis_flags);
+                mx.drawaxis(
+                    Gx,
+                    Mx,
+                    Gx.xdiv,
+                    Gx.ydiv,
+                    xlab,
+                    ylab,
+                    drawaxis_flags
+                );
             }
 
             draw_layers(this);
 
             draw_accessories(this, 4);
 
-
-
             draw_plugins(this);
-
 
             Gx.cross_xpos = undefined;
             Gx.cross_ypos = undefined;
-            if ((!Mx.warpbox) && (this.mouseOnCanvas)) {
+            if (!Mx.warpbox && this.mouseOnCanvas) {
                 draw_crosshairs(this);
-                if (!Gx.y_cut_press_on && !Gx.x_cut_press_on && (Gx.lyr.length === 1) && (Gx.lyr[0].hcb["class"] === 2)) {
+                if (
+                    !Gx.y_cut_press_on &&
+                    !Gx.x_cut_press_on &&
+                    Gx.lyr.length === 1 &&
+                    Gx.lyr[0].hcb["class"] === 2
+                ) {
                     draw_p_cuts(this);
                 }
             }
@@ -3892,8 +4271,7 @@
             if (Gx.always_show_marker || Gx.show_marker) {
                 draw_marker(this);
             }
-        }
-
+        },
     };
 
     // /////////////////////////////////////////////////////////////////////////
@@ -3916,8 +4294,6 @@
      */
     var cam = ["(absc)", "(indx)", "(1/ab)", "(dydx)"];
 
-
-
     /**
      * This object holds the data associated with layers in the plot.
      *
@@ -3926,7 +4302,6 @@
      * @private
      */
     function SIGPLOTLAYER() {
-
         this.xbuf = undefined; // raw (ArrayBuffer) of ABSC data
         this.ybuf = undefined; // raw (ArrayBuffer) of ORD data
 
@@ -4165,7 +4540,7 @@
         if (Array.isArray(cmap)) {
             var custom_cmap = {
                 name: "Custom",
-                colors: cmap
+                colors: cmap,
             };
             if (m.Mc.colormap[m.Mc.colormap.length - 1].name === "Custom") {
                 m.Mc.colormap[m.Mc.colormap.length - 1].colors = cmap;
@@ -4189,7 +4564,7 @@
             Gx.ncolors = -1 * Gx.ncolors;
             Gx.cmap = Math.max(1, Gx.cmap);
         }
-        if ((Gx.cmap < 0) || (Gx.cmap > m.Mc.colormap.length)) {
+        if (Gx.cmap < 0 || Gx.cmap > m.Mc.colormap.length) {
             if (Gx.cmode === 2) {
                 Gx.cmap = 2; // wheel
             } else {
@@ -4233,16 +4608,29 @@
             //var hcb = Gx.HCB[Gx.lyr[0].hcb];
             var hcb = Gx.lyr[0].hcb; // mmm-TODO-needs investigation
             if (hcb) {
-                if ((hcb["class"] === 1) && ((hcb.xunits === 1) || (hcb.xunits === 4))) {
-                    mx.message(Mx, "Time = " + m.sec2tod(hcb.timecode + Gx.retx), true);
-                } else if ((hcb["class"] === 2) && ((hcb.yunits === 1) || (hcb.yunits === 4))) {
-                    mx.message(Mx, "Time = " + m.sec2tod(hcb.timecode + Gx.rety), true);
+                if (
+                    hcb["class"] === 1 &&
+                    (hcb.xunits === 1 || hcb.xunits === 4)
+                ) {
+                    mx.message(
+                        Mx,
+                        "Time = " + m.sec2tod(hcb.timecode + Gx.retx),
+                        true
+                    );
+                } else if (
+                    hcb["class"] === 2 &&
+                    (hcb.yunits === 1 || hcb.yunits === 4)
+                ) {
+                    mx.message(
+                        Mx,
+                        "Time = " + m.sec2tod(hcb.timecode + Gx.rety),
+                        true
+                    );
                 } else {
                     mx.message(Mx, "Time = UNK");
                 }
             }
         }
-
     }
 
     /**
@@ -4272,7 +4660,8 @@
         var Gx = plot._Gx;
         var Mx = plot._Mx;
 
-        if (Gx.zmin && Gx.zmax) { // at least one layer has a z dimension
+        if (Gx.zmin && Gx.zmax) {
+            // at least one layer has a z dimension
             var msg = "";
             if (Gx.lyr.length === 1) {
                 var msg = "Z = " + Gx.lyr[0].get_z(Gx.retx, Gx.rety).toString();
@@ -4300,33 +4689,41 @@
 
         mx.menu(Mx, {
             title: "SCROLLBAR",
-            refresh: function() {
+            refresh: function () {
                 plot.refresh();
             },
-            finalize: function() {
-                mx.addEventListener(Mx, "mousedown",
-                    plot.onmousedown, false);
+            finalize: function () {
+                mx.addEventListener(Mx, "mousedown", plot.onmousedown, false);
                 plot.refresh();
             },
-            items: [{
-                text: "Expand Range",
-                handler: function() {
-                    middleClickScrollMenuAction(plot,
-                        mx.SB_EXPAND, command);
-                }
-            }, {
-                text: "Shrink Range",
-                handler: function() {
-                    middleClickScrollMenuAction(plot,
-                        mx.SB_SHRINK, command);
-                }
-            }, {
-                text: "Expand Full",
-                handler: function() {
-                    middleClickScrollMenuAction(plot,
-                        mx.SB_FULL, command);
-                }
-            }]
+            items: [
+                {
+                    text: "Expand Range",
+                    handler: function () {
+                        middleClickScrollMenuAction(
+                            plot,
+                            mx.SB_EXPAND,
+                            command
+                        );
+                    },
+                },
+                {
+                    text: "Shrink Range",
+                    handler: function () {
+                        middleClickScrollMenuAction(
+                            plot,
+                            mx.SB_SHRINK,
+                            command
+                        );
+                    },
+                },
+                {
+                    text: "Expand Full",
+                    handler: function () {
+                        middleClickScrollMenuAction(plot, mx.SB_FULL, command);
+                    },
+                },
+            ],
         });
     }
 
@@ -4348,134 +4745,184 @@
             text: "Cntrls...",
             menu: {
                 title: "CONTROLS OPTIONS",
-                items: [{
-                    text: "Continuous (Disabled)",
-                    checked: Gx.cntrls === -2,
-                    handler: function() {
-                        plot.change_settings({
-                            xcnt: -2
-                        });
-                    }
-                }, {
-                    text: "LM Click (Disabled)",
-                    checked: Gx.cntrls === -1,
-                    handler: function() {
-                        plot.change_settings({
-                            xcnt: -1
-                        });
-                    }
-                }, {
-                    text: "Off",
-                    checked: Gx.cntrls === 0,
-                    handler: function() {
-                        plot.change_settings({
-                            xcnt: 0
-                        });
-                    }
-                }, {
-                    text: "LM Click",
-                    checked: Gx.cntrls === 1,
-                    handler: function() {
-                        plot.change_settings({
-                            xcnt: 1
-                        });
-                    }
-                }, {
-                    text: "Continuous",
-                    checked: Gx.cntrls === 2,
-                    handler: function() {
-                        plot.change_settings({
-                            xcnt: 2
-                        });
-                    }
-                }]
-            }
+                items: [
+                    {
+                        text: "Continuous (Disabled)",
+                        checked: Gx.cntrls === -2,
+                        handler: function () {
+                            plot.change_settings({
+                                xcnt: -2,
+                            });
+                        },
+                    },
+                    {
+                        text: "LM Click (Disabled)",
+                        checked: Gx.cntrls === -1,
+                        handler: function () {
+                            plot.change_settings({
+                                xcnt: -1,
+                            });
+                        },
+                    },
+                    {
+                        text: "Off",
+                        checked: Gx.cntrls === 0,
+                        handler: function () {
+                            plot.change_settings({
+                                xcnt: 0,
+                            });
+                        },
+                    },
+                    {
+                        text: "LM Click",
+                        checked: Gx.cntrls === 1,
+                        handler: function () {
+                            plot.change_settings({
+                                xcnt: 1,
+                            });
+                        },
+                    },
+                    {
+                        text: "Continuous",
+                        checked: Gx.cntrls === 2,
+                        handler: function () {
+                            plot.change_settings({
+                                xcnt: 2,
+                            });
+                        },
+                    },
+                ],
+            },
         };
 
         var CXMODE_MENU = {
             text: "CX Mode...",
             menu: {
                 title: "COMPLEX MODE",
-                items: [{
-                    text: "Magnitude",
-                    checked: Gx.cmode === 1,
-                    handler: function() {
-                        plot.change_settings({
-                            cmode: 1
-                        });
-                    }
-                }, {
-                    text: "Phase",
-                    checked: Gx.cmode === 2,
-                    handler: function() {
-                        plot.change_settings({
-                            cmode: 2
-                        });
-                    }
-                }, {
-                    text: "Real",
-                    checked: Gx.cmode === 3,
-                    handler: function() {
-                        plot.change_settings({
-                            cmode: 3
-                        });
-                    }
-                }, {
-                    text: "Imaginary",
-                    checked: Gx.cmode === 4,
-                    handler: function() {
-                        plot.change_settings({
-                            cmode: 4
-                        });
-                    }
-                }, {
-                    text: "IR: Imag/Real",
-                    checked: Gx.cmode === 5,
-                    handler: function() {
-                        plot.change_settings({
-                            cmode: 5
-                        });
-                    }
-                }, {
-                    text: "10*Log10",
-                    checked: Gx.cmode === 6,
-                    handler: function() {
-                        plot.change_settings({
-                            cmode: 6
-                        });
-                    }
-                }, {
-                    text: "20*Log10",
-                    checked: Gx.cmode === 7,
-                    handler: function() {
-                        plot.change_settings({
-                            cmode: 7
-                        });
-                    }
-                }]
-            }
+                items: [
+                    {
+                        text: "Magnitude",
+                        checked: Gx.cmode === 1,
+                        handler: function () {
+                            plot.change_settings({
+                                cmode: 1,
+                            });
+                        },
+                    },
+                    {
+                        text: "Phase",
+                        checked: Gx.cmode === 2,
+                        handler: function () {
+                            plot.change_settings({
+                                cmode: 2,
+                            });
+                        },
+                    },
+                    {
+                        text: "Real",
+                        checked: Gx.cmode === 3,
+                        handler: function () {
+                            plot.change_settings({
+                                cmode: 3,
+                            });
+                        },
+                    },
+                    {
+                        text: "Imaginary",
+                        checked: Gx.cmode === 4,
+                        handler: function () {
+                            plot.change_settings({
+                                cmode: 4,
+                            });
+                        },
+                    },
+                    {
+                        text: "IR: Imag/Real",
+                        checked: Gx.cmode === 5,
+                        handler: function () {
+                            plot.change_settings({
+                                cmode: 5,
+                            });
+                        },
+                    },
+                    {
+                        text: "10*Log10",
+                        checked: Gx.cmode === 6,
+                        handler: function () {
+                            plot.change_settings({
+                                cmode: 6,
+                            });
+                        },
+                    },
+                    {
+                        text: "20*Log10",
+                        checked: Gx.cmode === 7,
+                        handler: function () {
+                            plot.change_settings({
+                                cmode: 7,
+                            });
+                        },
+                    },
+                ],
+            },
         };
 
         var SCALING_MENU = {
             text: "Scaling...",
             menu: {
                 title: "SCALING",
-                items: [{
-                    text: "Y Axis",
-                    style: "separator"
-                }, {
-                    text: "Parameters...",
-                    checked: (Gx.autoy === 0),
-                    handler: function() {
-                        Gx.autoy = 0;
+                items: [
+                    {
+                        text: "Y Axis",
+                        style: "separator",
+                    },
+                    {
+                        text: "Parameters...",
+                        checked: Gx.autoy === 0,
+                        handler: function () {
+                            Gx.autoy = 0;
 
-                        var nextPrompt = function() {
+                            var nextPrompt = function () {
+                                setupPrompt(
+                                    plot,
+                                    "Y Axis Max:",
+                                    mx.floatValidator,
+                                    function (finalValue) {
+                                        if (
+                                            parseFloat(finalValue) !==
+                                            Mx.stk[Mx.level].ymax
+                                        ) {
+                                            // Only update if different
+                                            // value
+                                            if (finalValue === "") {
+                                                finalValue = 0;
+                                            }
+                                            updateViewbox(
+                                                plot,
+                                                Mx.stk[Mx.level].ymin,
+                                                parseFloat(finalValue),
+                                                "Y"
+                                            );
+                                        } else {
+                                            plot.refresh();
+                                        }
+                                    },
+                                    Mx.stk[Mx.level].ymax,
+                                    undefined,
+                                    undefined,
+                                    undefined
+                                );
+                            };
+
                             setupPrompt(
                                 plot,
-                                "Y Axis Max:",
+                                "Y Axis Min:",
                                 mx.floatValidator,
-                                function(finalValue) {
-                                    if (parseFloat(finalValue) !== Mx.stk[Mx.level].ymax) {
+                                function (finalValue) {
+                                    if (
+                                        parseFloat(finalValue) !==
+                                        Mx.stk[Mx.level].ymin
+                                    ) {
                                         // Only update if different
                                         // value
                                         if (finalValue === "") {
@@ -4483,72 +4930,93 @@
                                         }
                                         updateViewbox(
                                             plot,
-                                            Mx.stk[Mx.level].ymin,
                                             parseFloat(finalValue),
-                                            "Y");
+                                            Mx.stk[Mx.level].ymax,
+                                            "Y"
+                                        );
                                     } else {
                                         plot.refresh();
                                     }
-                                }, Mx.stk[Mx.level].ymax,
-                                undefined, undefined, undefined);
-                        };
+                                },
+                                Mx.stk[Mx.level].ymin,
+                                undefined,
+                                undefined,
+                                nextPrompt
+                            );
+                        },
+                    },
+                    {
+                        text: "Min Auto",
+                        checked: Gx.autoy === 1,
+                        handler: function () {
+                            Gx.autoy = 1;
+                        },
+                    },
+                    {
+                        text: "Max Auto",
+                        checked: Gx.autoy === 2,
+                        handler: function () {
+                            Gx.autoy = 2;
+                        },
+                    },
+                    {
+                        text: "Full Auto",
+                        checked: Gx.autoy === 3,
+                        handler: function () {
+                            Gx.autoy = 3;
+                        },
+                    },
+                    {
+                        text: "X Axis",
+                        style: "separator",
+                    },
+                    {
+                        text: "Parameters...",
+                        checked: Gx.autox === 0,
+                        handler: function () {
+                            Gx.autox = 0;
 
-                        setupPrompt(
-                            plot,
-                            "Y Axis Min:",
-                            mx.floatValidator,
-                            function(finalValue) {
-                                if (parseFloat(finalValue) !== Mx.stk[Mx.level].ymin) {
-                                    // Only update if different
-                                    // value
-                                    if (finalValue === "") {
-                                        finalValue = 0;
-                                    }
-                                    updateViewbox(plot,
-                                        parseFloat(finalValue),
-                                        Mx.stk[Mx.level].ymax,
-                                        "Y");
-                                } else {
-                                    plot.refresh();
-                                }
+                            var nextPrompt = function () {
+                                setupPrompt(
+                                    plot,
+                                    "X Axis Max:",
+                                    mx.floatValidator,
+                                    function (finalValue) {
+                                        if (
+                                            parseFloat(finalValue) !==
+                                            Mx.stk[Mx.level].xmax
+                                        ) {
+                                            // Only update if different
+                                            // value
+                                            if (finalValue === "") {
+                                                finalValue = 0;
+                                            }
+                                            updateViewbox(
+                                                plot,
+                                                Mx.stk[Mx.level].xmin,
+                                                parseFloat(finalValue),
+                                                "X"
+                                            );
+                                        } else {
+                                            plot.refresh();
+                                        }
+                                    },
+                                    Mx.stk[Mx.level].xmax,
+                                    undefined,
+                                    undefined,
+                                    undefined
+                                );
+                            };
 
-                            }, Mx.stk[Mx.level].ymin, undefined,
-                            undefined, nextPrompt);
-                    }
-                }, {
-                    text: "Min Auto",
-                    checked: (Gx.autoy === 1),
-                    handler: function() {
-                        Gx.autoy = 1;
-                    }
-                }, {
-                    text: "Max Auto",
-                    checked: (Gx.autoy === 2),
-                    handler: function() {
-                        Gx.autoy = 2;
-                    }
-                }, {
-                    text: "Full Auto",
-                    checked: (Gx.autoy === 3),
-                    handler: function() {
-                        Gx.autoy = 3;
-                    }
-                }, {
-                    text: "X Axis",
-                    style: "separator"
-                }, {
-                    text: "Parameters...",
-                    checked: (Gx.autox === 0),
-                    handler: function() {
-                        Gx.autox = 0;
-
-                        var nextPrompt = function() {
                             setupPrompt(
                                 plot,
-                                "X Axis Max:",
+                                "X Axis Min:",
                                 mx.floatValidator,
-                                function(finalValue) {
-                                    if (parseFloat(finalValue) !== Mx.stk[Mx.level].xmax) {
+                                function (finalValue) {
+                                    if (
+                                        parseFloat(finalValue) !==
+                                        Mx.stk[Mx.level].xmin
+                                    ) {
                                         // Only update if different
                                         // value
                                         if (finalValue === "") {
@@ -4556,593 +5024,688 @@
                                         }
                                         updateViewbox(
                                             plot,
-                                            Mx.stk[Mx.level].xmin,
                                             parseFloat(finalValue),
-                                            "X");
+                                            Mx.stk[Mx.level].xmax,
+                                            "X"
+                                        );
                                     } else {
                                         plot.refresh();
                                     }
-                                }, Mx.stk[Mx.level].xmax,
-                                undefined, undefined, undefined);
-                        };
+                                },
+                                Mx.stk[Mx.level].xmin,
+                                undefined,
+                                undefined,
+                                nextPrompt
+                            );
+                        },
+                    },
+                    {
+                        text: "Min Auto",
+                        checked: Gx.autox === 1,
+                        handler: function () {
+                            Gx.autox = 1;
+                        },
+                    },
+                    {
+                        text: "Max Auto",
+                        checked: Gx.autox === 2,
+                        handler: function () {
+                            Gx.autox = 2;
+                        },
+                    },
+                    {
+                        text: "Full Auto",
+                        checked: Gx.autox === 3,
+                        handler: function () {
+                            Gx.autox = 3;
+                        },
+                    },
+                    {
+                        text: "Z Axis",
+                        style: "separator",
+                    },
+                    {
+                        text: "Parameters...",
+                        checked: Gx.autoz === 0,
+                        handler: function () {
+                            Gx.autoz = 0;
 
-                        setupPrompt(
-                            plot,
-                            "X Axis Min:",
-                            mx.floatValidator,
-                            function(finalValue) {
-                                if (parseFloat(finalValue) !== Mx.stk[Mx.level].xmin) {
-                                    // Only update if different
-                                    // value
-                                    if (finalValue === "") {
-                                        finalValue = 0;
-                                    }
-                                    updateViewbox(plot,
-                                        parseFloat(finalValue),
-                                        Mx.stk[Mx.level].xmax,
-                                        "X");
-                                } else {
-                                    plot.refresh();
-                                }
-                            }, Mx.stk[Mx.level].xmin, undefined,
-                            undefined, nextPrompt);
-                    }
-                }, {
-                    text: "Min Auto",
-                    checked: (Gx.autox === 1),
-                    handler: function() {
-                        Gx.autox = 1;
-                    }
-                }, {
-                    text: "Max Auto",
-                    checked: (Gx.autox === 2),
-                    handler: function() {
-                        Gx.autox = 2;
-                    }
-                }, {
-                    text: "Full Auto",
-                    checked: (Gx.autox === 3),
-                    handler: function() {
-                        Gx.autox = 3;
-                    }
-                }, {
-                    text: "Z Axis",
-                    style: "separator"
-                }, {
-                    text: "Parameters...",
-                    checked: (Gx.autoz === 0),
-                    handler: function() {
-                        Gx.autoz = 0;
+                            var nextPrompt = function () {
+                                setupPrompt(
+                                    plot,
+                                    "Z Axis Max:",
+                                    mx.floatValidator,
+                                    function (finalValue) {
+                                        var floatFinalValue =
+                                            parseFloat(finalValue);
+                                        if (floatFinalValue !== Gx.zmax) {
+                                            // Only update if different
+                                            // value
+                                            if (finalValue === "") {
+                                                floatFinalValue = 0;
+                                            }
+                                            plot.change_settings({
+                                                zmax: floatFinalValue,
+                                            });
+                                        }
+                                    },
+                                    Gx.zmax,
+                                    undefined,
+                                    undefined,
+                                    undefined
+                                );
+                            };
 
-                        var nextPrompt = function() {
                             setupPrompt(
                                 plot,
-                                "Z Axis Max:",
+                                "Z Axis Min:",
                                 mx.floatValidator,
-                                function(finalValue) {
-                                    var floatFinalValue = parseFloat(finalValue);
-                                    if (floatFinalValue !== Gx.zmax) {
-                                        // Only update if different
-                                        // value
+                                function (finalValue) {
+                                    var floatFinalValue =
+                                        parseFloat(finalValue);
+                                    if (floatFinalValue !== Gx.zmin) {
                                         if (finalValue === "") {
                                             floatFinalValue = 0;
                                         }
                                         plot.change_settings({
-                                            zmax: floatFinalValue
+                                            zmin: floatFinalValue,
                                         });
                                     }
-                                }, Gx.zmax,
-                                undefined, undefined, undefined);
-                        };
-
-                        setupPrompt(
-                            plot,
-                            "Z Axis Min:",
-                            mx.floatValidator,
-                            function(finalValue) {
-                                var floatFinalValue = parseFloat(finalValue);
-                                if (floatFinalValue !== Gx.zmin) {
-                                    if (finalValue === "") {
-                                        floatFinalValue = 0;
-                                    }
-                                    plot.change_settings({
-                                        zmin: floatFinalValue
-                                    });
-                                }
-                            }, Gx.zmin, undefined,
-                            undefined, nextPrompt);
-                    }
-                }, {
-                    text: "Min Auto",
-                    checked: (Gx.autoz === 1),
-                    handler: function() {
-                        plot.change_settings({
-                            autoz: 1
-                        });
-                    }
-                }, {
-                    text: "Max Auto",
-                    checked: (Gx.autoz === 2),
-                    handler: function() {
-                        plot.change_settings({
-                            autoz: 2
-                        });
-                    }
-                }, {
-                    text: "Full Auto",
-                    checked: (Gx.autoz === 3),
-                    handler: function() {
-                        plot.change_settings({
-                            autoz: 3
-                        });
-                    }
-                }]
-            }
+                                },
+                                Gx.zmin,
+                                undefined,
+                                undefined,
+                                nextPrompt
+                            );
+                        },
+                    },
+                    {
+                        text: "Min Auto",
+                        checked: Gx.autoz === 1,
+                        handler: function () {
+                            plot.change_settings({
+                                autoz: 1,
+                            });
+                        },
+                    },
+                    {
+                        text: "Max Auto",
+                        checked: Gx.autoz === 2,
+                        handler: function () {
+                            plot.change_settings({
+                                autoz: 2,
+                            });
+                        },
+                    },
+                    {
+                        text: "Full Auto",
+                        checked: Gx.autoz === 3,
+                        handler: function () {
+                            plot.change_settings({
+                                autoz: 3,
+                            });
+                        },
+                    },
+                ],
+            },
         };
 
         var GRID_MENU = {
             text: "Grid",
-            handler: function() {
+            handler: function () {
                 plot.change_settings({
-                    grid: !Gx.grid
+                    grid: !Gx.grid,
                 });
-            }
+            },
         };
 
         var SETTINGS_MENU = {
             text: "Settings...",
             menu: {
                 title: "SETTINGS",
-                items: [{
-                    text: "ALL Mode",
-                    checked: Gx.all,
-                    style: "checkbox",
-                    handler: function() {
-                        plot.change_settings({
-                            all: !Gx.all
-                        });
-                    }
-                }, {
-                    text: "Controls...",
-                    menu: {
-                        title: "CONTROLS OPTIONS",
-                        items: [{
-                            text: "Continuous (Disabled)",
-                            checked: Gx.cntrls === -2,
-                            handler: function() {
-                                plot.change_settings({
-                                    xcnt: -2
-                                });
-                            }
-                        }, {
-                            text: "LM Click (Disabled)",
-                            checked: Gx.cntrls === -1,
-                            handler: function() {
-                                plot.change_settings({
-                                    xcnt: -1
-                                });
-                            }
-                        }, {
-                            text: "Off",
-                            checked: Gx.cntrls === 0,
-                            handler: function() {
-                                plot.change_settings({
-                                    xcnt: 0
-                                });
-                            }
-                        }, {
-                            text: "LM Click",
-                            checked: Gx.cntrls === 1,
-                            handler: function() {
-                                plot.change_settings({
-                                    xcnt: 1
-                                });
-                            }
-                        }, {
-                            text: "Continuous",
-                            checked: Gx.cntrls === 2,
-                            handler: function() {
-                                plot.change_settings({
-                                    xcnt: 2
-                                });
-                            }
-                        }]
-                    }
-                }, {
-                    text: "Mouse...",
-                    menu: {
-                        title: "MOUSE OPTIONS",
-                        items: [{
-                            text: "LM Drag (Zoom)",
-                            checked: Gx.default_rubberbox_action === "zoom",
-                            handler: function() {
-                                Gx.default_rubberbox_action = "zoom";
-                            }
-                        }, {
-                            text: "LM Drag (Select)",
-                            checked: Gx.default_rubberbox_action === "select",
-                            handler: function() {
-                                Gx.default_rubberbox_action = "select";
-                            }
-                        }, {
-                            text: "LM Drag (Disabled)",
-                            checked: Gx.default_rubberbox_action === null,
-                            handler: function() {
-                                Gx.default_rubberbox_action = null;
-                            }
-                        }, {
-                            text: "RM Drag (Zoom)",
-                            checked: Gx.default_rightclick_rubberbox_action === "zoom",
-                            handler: function() {
-                                Gx.default_rightclick_rubberbox_action = "zoom";
-                            }
-                        }, {
-                            text: "RM Drag (Select)",
-                            checked: Gx.default_rightclick_rubberbox_action === "select",
-                            handler: function() {
-                                Gx.default_rightclick_rubberbox_action = "select";
-                            }
-                        }, {
-                            text: "RM Drag (Disabled)",
-                            checked: Gx.default_rightclick_rubberbox_action === null,
-                            handler: function() {
-                                Gx.default_rightclick_rubberbox_action = null;
-                            }
-                        }, {
-                            text: "Mode...",
-                            menu: {
-                                title: "MOUSE Mode",
-                                items: [{
-                                    text: "Box",
-                                    checked: Gx.default_rubberbox_mode === "box",
-                                    handler: function() {
-                                        Gx.default_rubberbox_mode = "box";
-                                    }
-
-                                }, {
-                                    text: "Horizontal",
-                                    checked: Gx.default_rubberbox_mode === "horizontal",
-                                    handler: function() {
-                                        Gx.default_rubberbox_mode = "horizontal";
-                                    }
-                                }, {
-                                    text: "Vertical",
-                                    checked: Gx.default_rubberbox_mode === "vertical",
-                                    handler: function() {
-                                        Gx.default_rubberbox_mode = "vertical";
-                                    }
-                                }]
-                            }
-                        }, {
-                            text: "CROSShairs...",
-                            menu: {
-                                title: "Crosshairs Mode",
-                                items: [{
+                items: [
+                    {
+                        text: "ALL Mode",
+                        checked: Gx.all,
+                        style: "checkbox",
+                        handler: function () {
+                            plot.change_settings({
+                                all: !Gx.all,
+                            });
+                        },
+                    },
+                    {
+                        text: "Controls...",
+                        menu: {
+                            title: "CONTROLS OPTIONS",
+                            items: [
+                                {
+                                    text: "Continuous (Disabled)",
+                                    checked: Gx.cntrls === -2,
+                                    handler: function () {
+                                        plot.change_settings({
+                                            xcnt: -2,
+                                        });
+                                    },
+                                },
+                                {
+                                    text: "LM Click (Disabled)",
+                                    checked: Gx.cntrls === -1,
+                                    handler: function () {
+                                        plot.change_settings({
+                                            xcnt: -1,
+                                        });
+                                    },
+                                },
+                                {
                                     text: "Off",
-                                    checked: !Gx.cross,
-                                    handler: function() {
-                                        Gx.cross = false;
-                                    }
+                                    checked: Gx.cntrls === 0,
+                                    handler: function () {
+                                        plot.change_settings({
+                                            xcnt: 0,
+                                        });
+                                    },
+                                },
+                                {
+                                    text: "LM Click",
+                                    checked: Gx.cntrls === 1,
+                                    handler: function () {
+                                        plot.change_settings({
+                                            xcnt: 1,
+                                        });
+                                    },
+                                },
+                                {
+                                    text: "Continuous",
+                                    checked: Gx.cntrls === 2,
+                                    handler: function () {
+                                        plot.change_settings({
+                                            xcnt: 2,
+                                        });
+                                    },
+                                },
+                            ],
+                        },
+                    },
+                    {
+                        text: "Mouse...",
+                        menu: {
+                            title: "MOUSE OPTIONS",
+                            items: [
+                                {
+                                    text: "LM Drag (Zoom)",
+                                    checked:
+                                        Gx.default_rubberbox_action === "zoom",
+                                    handler: function () {
+                                        Gx.default_rubberbox_action = "zoom";
+                                    },
+                                },
+                                {
+                                    text: "LM Drag (Select)",
+                                    checked:
+                                        Gx.default_rubberbox_action ===
+                                        "select",
+                                    handler: function () {
+                                        Gx.default_rubberbox_action = "select";
+                                    },
+                                },
+                                {
+                                    text: "LM Drag (Disabled)",
+                                    checked:
+                                        Gx.default_rubberbox_action === null,
+                                    handler: function () {
+                                        Gx.default_rubberbox_action = null;
+                                    },
+                                },
+                                {
+                                    text: "RM Drag (Zoom)",
+                                    checked:
+                                        Gx.default_rightclick_rubberbox_action ===
+                                        "zoom",
+                                    handler: function () {
+                                        Gx.default_rightclick_rubberbox_action =
+                                            "zoom";
+                                    },
+                                },
+                                {
+                                    text: "RM Drag (Select)",
+                                    checked:
+                                        Gx.default_rightclick_rubberbox_action ===
+                                        "select",
+                                    handler: function () {
+                                        Gx.default_rightclick_rubberbox_action =
+                                            "select";
+                                    },
+                                },
+                                {
+                                    text: "RM Drag (Disabled)",
+                                    checked:
+                                        Gx.default_rightclick_rubberbox_action ===
+                                        null,
+                                    handler: function () {
+                                        Gx.default_rightclick_rubberbox_action =
+                                            null;
+                                    },
+                                },
+                                {
+                                    text: "Mode...",
+                                    menu: {
+                                        title: "MOUSE Mode",
+                                        items: [
+                                            {
+                                                text: "Box",
+                                                checked:
+                                                    Gx.default_rubberbox_mode ===
+                                                    "box",
+                                                handler: function () {
+                                                    Gx.default_rubberbox_mode =
+                                                        "box";
+                                                },
+                                            },
+                                            {
+                                                text: "Horizontal",
+                                                checked:
+                                                    Gx.default_rubberbox_mode ===
+                                                    "horizontal",
+                                                handler: function () {
+                                                    Gx.default_rubberbox_mode =
+                                                        "horizontal";
+                                                },
+                                            },
+                                            {
+                                                text: "Vertical",
+                                                checked:
+                                                    Gx.default_rubberbox_mode ===
+                                                    "vertical",
+                                                handler: function () {
+                                                    Gx.default_rubberbox_mode =
+                                                        "vertical";
+                                                },
+                                            },
+                                        ],
+                                    },
+                                },
+                                {
+                                    text: "CROSShairs...",
+                                    menu: {
+                                        title: "Crosshairs Mode",
+                                        items: [
+                                            {
+                                                text: "Off",
+                                                checked: !Gx.cross,
+                                                handler: function () {
+                                                    Gx.cross = false;
+                                                },
+                                            },
+                                            {
+                                                text: "On",
+                                                checked: Gx.cross === true,
+                                                handler: function () {
+                                                    Gx.cross = true;
+                                                },
+                                            },
+                                            {
+                                                text: "Horizontal",
+                                                checked:
+                                                    Gx.cross === "horizontal",
+                                                handler: function () {
+                                                    Gx.cross = "horizontal";
+                                                },
+                                            },
+                                            {
+                                                text: "Vertical",
+                                                checked:
+                                                    Gx.cross === "vertical",
+                                                handler: function () {
+                                                    Gx.cross = "vertical";
+                                                },
+                                            },
+                                        ],
+                                    },
+                                },
+                                {
+                                    text: "Mousewheel Natural Mode",
+                                    checked: Gx.wheelscroll_mode_natural,
+                                    style: "checkbox",
+                                    handler: function () {
+                                        plot.change_settings({
+                                            wheelscroll_mode_natural:
+                                                !Gx.wheelscroll_mode_natural,
+                                        });
+                                    },
+                                },
+                            ],
+                        },
+                    },
+                    {
+                        text: "CROSShairs",
+                        checked: Gx.cross,
+                        style: "checkbox",
+                        handler: function () {
+                            plot.change_settings({
+                                cross: !Gx.cross,
+                            });
+                        },
+                    },
+                    {
+                        text: "GRID",
+                        checked: Gx.grid,
+                        style: "checkbox",
+                        handler: function () {
+                            plot.change_settings({
+                                grid: !Gx.grid,
+                            });
+                        },
+                    },
+                    {
+                        text: "INDEX Mode",
+                        checked: Gx.index,
+                        style: "checkbox",
+                        handler: function () {
+                            plot.change_settings({
+                                index: !Gx.index,
+                            });
+                        },
+                    },
+                    {
+                        text: "LEGEND",
+                        checked: Gx.legend,
+                        style: "checkbox",
+                        handler: function () {
+                            plot.change_settings({
+                                legend: !Gx.legend,
+                            });
+                        },
+                    },
+                    {
+                        text: "PAN Scrollbars",
+                        checked: Gx.pan,
+                        style: "checkbox",
+                        handler: function () {
+                            plot.change_settings({
+                                pan: !Gx.pan,
+                            });
+                        },
+                    },
+                    {
+                        text: "PHase UNITS...",
+                        menu: {
+                            title: "PHASE UNITS",
+                            items: [
+                                {
+                                    text: "Radians",
+                                    checked: Gx.plab === 23,
+                                    handler: function () {
+                                        plot.change_settings({
+                                            phunits: "R",
+                                        });
+                                    },
+                                },
+                                {
+                                    text: "Degrees",
+                                    checked: Gx.plab === 24,
+                                    handler: function () {
+                                        plot.change_settings({
+                                            phunits: "D",
+                                        });
+                                    },
+                                },
+                                {
+                                    text: "Cycles",
+                                    checked: Gx.plab === 25,
+                                    handler: function () {
+                                        plot.change_settings({
+                                            phunits: "C",
+                                        });
+                                    },
+                                },
+                            ],
+                        },
+                    },
+                    {
+                        text: "SPECS",
+                        checked: Gx.specs,
+                        style: "checkbox",
+                        handler: function () {
+                            plot.change_settings({
+                                specs: !Gx.specs,
+                            });
+                        },
+                    },
+                    {
+                        text: "P-Cuts",
+                        checked: Gx.p_cuts,
+                        style: "checkbox",
+                        handler: function () {
+                            plot.change_settings({
+                                p_cuts: !Gx.p_cuts,
+                            });
+                        },
+                    },
+                    {
+                        text: "Large Colorbar",
+                        checked: Gx.lg_colorbar,
+                        style: "checkbox",
+                        handler: function () {
+                            plot.change_settings({
+                                lg_colorbar: !Gx.lg_colorbar,
+                            });
+                        },
+                    },
+                    {
+                        text: "XDIVisions...",
+                        handler: function () {
+                            var validator = function (value) {
+                                var isValid = mx.intValidator(value);
+                                var maxXDIV = m.trunc(Mx.width / 2); // TODO
+                                // Make value an option on the plot?
+                                // Maybe still a little too high
+                                // while dotted-line grids are
+                                // being drawn?
+                                if (isValid.valid && value > maxXDIV) {
+                                    return {
+                                        valid: false,
+                                        reason:
+                                            "Exceeds maximum number of divisions (" +
+                                            maxXDIV +
+                                            ").",
+                                    };
+                                } else {
+                                    return isValid;
+                                }
+                            };
 
-                                }, {
-                                    text: "On",
-                                    checked: Gx.cross === true,
-                                    handler: function() {
-                                        Gx.cross = true;
+                            setupPrompt(
+                                plot,
+                                "X Divisions:",
+                                validator,
+                                function (finalValue) {
+                                    if (parseFloat(finalValue) !== Gx.xdiv) {
+                                        // Only
+                                        // update if different value
+                                        if (finalValue === "") {
+                                            finalValue = 1;
+                                        }
+                                        Gx.xdiv = parseFloat(finalValue);
                                     }
-                                }, {
-                                    text: "Horizontal",
-                                    checked: Gx.cross === "horizontal",
-                                    handler: function() {
-                                        Gx.cross = "horizontal";
-                                    }
-                                }, {
-                                    text: "Vertical",
-                                    checked: Gx.cross === "vertical",
-                                    handler: function() {
-                                        Gx.cross = "vertical";
-                                    }
-                                }]
-                            }
-                        }, {
-                            text: "Mousewheel Natural Mode",
-                            checked: Gx.wheelscroll_mode_natural,
-                            style: "checkbox",
-                            handler: function() {
-                                plot
-                                    .change_settings({
-                                        wheelscroll_mode_natural: !Gx.wheelscroll_mode_natural
-                                    });
-                            }
-                        }]
-                    }
-                }, {
-                    text: "CROSShairs",
-                    checked: Gx.cross,
-                    style: "checkbox",
-                    handler: function() {
-                        plot.change_settings({
-                            cross: !Gx.cross
-                        });
-                    }
-                }, {
-                    text: "GRID",
-                    checked: Gx.grid,
-                    style: "checkbox",
-                    handler: function() {
-                        plot.change_settings({
-                            grid: !Gx.grid
-                        });
-                    }
-                }, {
-                    text: "INDEX Mode",
-                    checked: Gx.index,
-                    style: "checkbox",
-                    handler: function() {
-                        plot.change_settings({
-                            index: !Gx.index
-                        });
-                    }
-                }, {
-                    text: "LEGEND",
-                    checked: Gx.legend,
-                    style: "checkbox",
-                    handler: function() {
-                        plot.change_settings({
-                            legend: !Gx.legend
-                        });
-                    }
-                }, {
-                    text: "PAN Scrollbars",
-                    checked: Gx.pan,
-                    style: "checkbox",
-                    handler: function() {
-                        plot.change_settings({
-                            pan: !Gx.pan
-                        });
-                    }
-                }, {
-                    text: "PHase UNITS...",
-                    menu: {
-                        title: "PHASE UNITS",
-                        items: [{
-                            text: "Radians",
-                            checked: Gx.plab === 23,
-                            handler: function() {
-                                plot.change_settings({
-                                    phunits: 'R'
-                                });
-                            }
-
-                        }, {
-                            text: "Degrees",
-                            checked: Gx.plab === 24,
-                            handler: function() {
-                                plot.change_settings({
-                                    phunits: 'D'
-                                });
-                            }
-                        }, {
-                            text: "Cycles",
-                            checked: Gx.plab === 25,
-                            handler: function() {
-                                plot.change_settings({
-                                    phunits: 'C'
-                                });
-                            }
-                        }]
-                    }
-                }, {
-                    text: "SPECS",
-                    checked: Gx.specs,
-                    style: "checkbox",
-                    handler: function() {
-                        plot.change_settings({
-                            specs: !Gx.specs
-                        });
-                    }
-                }, {
-                    text: "P-Cuts",
-                    checked: Gx.p_cuts,
-                    style: "checkbox",
-                    handler: function() {
-                        plot.change_settings({
-                            p_cuts: !Gx.p_cuts
-                        });
-                    }
-                }, {
-                    text: "Large Colorbar",
-                    checked: Gx.lg_colorbar,
-                    style: "checkbox",
-                    handler: function() {
-                        plot.change_settings({
-                            lg_colorbar: !Gx.lg_colorbar
-                        });
-                    }
-                }, {
-                    text: "XDIVisions...",
-                    handler: function() {
-                        var validator = function(value) {
-                            var isValid = mx.intValidator(value);
-                            var maxXDIV = m.trunc(Mx.width / 2); // TODO
-                            // Make value an option on the plot?
-                            // Maybe still a little too high
-                            // while dotted-line grids are
-                            // being drawn?
-                            if (isValid.valid && value > maxXDIV) {
-                                return {
-                                    valid: false,
-                                    reason: "Exceeds maximum number of divisions (" + maxXDIV + ")."
-                                };
-                            } else {
+                                    plot.refresh();
+                                },
+                                Gx.xdiv,
+                                undefined,
+                                undefined,
+                                undefined
+                            );
+                        },
+                    },
+                    {
+                        text: "XLABel...",
+                        handler: function () {
+                            var validator = function (value) {
+                                console.log("The value is " + value);
+                                var isValid = mx.intValidator(value);
                                 return isValid;
-                            }
-                        };
+                            };
 
-                        setupPrompt(
-                            plot,
-                            "X Divisions:",
-                            validator,
-                            function(finalValue) {
-                                if (parseFloat(finalValue) !== Gx.xdiv) { // Only
-                                    // update if different value
-                                    if (finalValue === "") {
-                                        finalValue = 1;
+                            setupPrompt(
+                                plot,
+                                "X Units:",
+                                validator,
+                                function (finalValue) {
+                                    if (parseFloat(finalValue) !== Gx.xlab) {
+                                        // Only
+                                        // update if different value
+                                        if (finalValue < 0) {
+                                            finalValue = 0;
+                                        }
+                                        Gx.xlab = parseFloat(finalValue);
                                     }
-                                    Gx.xdiv = parseFloat(finalValue);
+                                    plot.refresh();
+                                },
+                                Gx.xlab,
+                                undefined,
+                                undefined,
+                                undefined
+                            );
+                        },
+                    },
+                    {
+                        text: "YDIVisions...",
+                        handler: function () {
+                            var validator = function (value) {
+                                var isValid = mx.intValidator(value);
+                                var maxYDIV = m.trunc(Mx.height / 2); // TODO
+                                // Make value an option on the plot?
+                                // Maybe still a little too high
+                                // while dotted-line grids are
+                                // being drawn?
+                                if (isValid.valid && value > maxYDIV) {
+                                    return {
+                                        valid: false,
+                                        reason:
+                                            "Exceeds maximum number of divisions (" +
+                                            maxYDIV +
+                                            ").",
+                                    };
+                                } else {
+                                    return isValid;
                                 }
-                                plot.refresh();
+                            };
 
-                            }, Gx.xdiv, undefined, undefined,
-                            undefined);
-                    }
-                }, {
-                    text: "XLABel...",
-                    handler: function() {
-                        var validator = function(value) {
-                            console.log("The value is " + value);
-                            var isValid = mx.intValidator(value);
-                            return isValid;
-                        };
-
-                        setupPrompt(
-                            plot,
-                            "X Units:",
-                            validator,
-                            function(finalValue) {
-                                if (parseFloat(finalValue) !== Gx.xlab) { // Only
-                                    // update if different value
-                                    if (finalValue < 0) {
-                                        finalValue = 0;
+                            setupPrompt(
+                                plot,
+                                "Y Divisions:",
+                                validator,
+                                function (finalValue) {
+                                    if (parseFloat(finalValue) !== Gx.ydiv) {
+                                        // Only update if different
+                                        // value
+                                        if (finalValue === "") {
+                                            finalValue = 1;
+                                        }
+                                        Gx.ydiv = parseFloat(finalValue);
                                     }
-                                    Gx.xlab = parseFloat(finalValue);
-                                }
-                                plot.refresh();
-
-                            }, Gx.xlab, undefined, undefined,
-                            undefined);
-                    }
-                }, {
-                    text: "YDIVisions...",
-                    handler: function() {
-                        var validator = function(value) {
-                            var isValid = mx.intValidator(value);
-                            var maxYDIV = m.trunc(Mx.height / 2); // TODO
-                            // Make value an option on the plot?
-                            // Maybe still a little too high
-                            // while dotted-line grids are
-                            // being drawn?
-                            if (isValid.valid && value > maxYDIV) {
-                                return {
-                                    valid: false,
-                                    reason: "Exceeds maximum number of divisions (" + maxYDIV + ")."
-                                };
-                            } else {
+                                    plot.refresh();
+                                },
+                                Gx.ydiv,
+                                undefined,
+                                undefined,
+                                undefined
+                            );
+                        },
+                    },
+                    {
+                        text: "YINVersion",
+                        checked: Mx.origin === 4,
+                        style: "checkbox",
+                        handler: function () {
+                            plot.change_settings({
+                                yinv: Mx.origin !== 4,
+                            });
+                        },
+                    },
+                    {
+                        text: "YLABel...",
+                        handler: function () {
+                            var validator = function (value) {
+                                var isValid = mx.intValidator(value);
                                 return isValid;
-                            }
-                        };
+                            };
 
-                        setupPrompt(
-                            plot,
-                            "Y Divisions:",
-                            validator,
-                            function(finalValue) {
-                                if (parseFloat(finalValue) !== Gx.ydiv) {
-                                    // Only update if different
-                                    // value
-                                    if (finalValue === "") {
-                                        finalValue = 1;
+                            setupPrompt(
+                                plot,
+                                "Y Units:",
+                                validator,
+                                function (finalValue) {
+                                    if (parseFloat(finalValue) !== Gx.ylab) {
+                                        // Only
+                                        // update if different value
+                                        if (finalValue < 0) {
+                                            finalValue = 0;
+                                        }
+                                        Gx.ylab = parseFloat(finalValue);
                                     }
-                                    Gx.ydiv = parseFloat(finalValue);
-                                }
-                                plot.refresh();
-
-                            }, Gx.ydiv, undefined, undefined,
-                            undefined);
-                    }
-                }, {
-                    text: "YINVersion",
-                    checked: (Mx.origin === 4),
-                    style: "checkbox",
-                    handler: function() {
-                        plot.change_settings({
-                            yinv: (Mx.origin !== 4)
-                        });
-                    }
-                }, {
-                    text: "YLABel...",
-                    handler: function() {
-                        var validator = function(value) {
-                            var isValid = mx.intValidator(value);
-                            return isValid;
-                        };
-
-                        setupPrompt(
-                            plot,
-                            "Y Units:",
-                            validator,
-                            function(finalValue) {
-                                if (parseFloat(finalValue) !== Gx.ylab) { // Only
-                                    // update if different value
-                                    if (finalValue < 0) {
-                                        finalValue = 0;
-                                    }
-                                    Gx.ylab = parseFloat(finalValue);
-                                }
-                                plot.refresh();
-
-                            }, Gx.ylab, undefined, undefined,
-                            undefined);
-                    }
-                }, {
-                    text: "X-axis",
-                    checked: Gx.show_x_axis,
-                    style: "checkbox",
-                    handler: function() {
-                        plot.change_settings({
-                            show_x_axis: !Gx.show_x_axis
-                        });
-                    }
-                }, {
-                    text: "Y-axis",
-                    checked: Gx.show_y_axis,
-                    style: "checkbox",
-                    handler: function() {
-                        plot.change_settings({
-                            show_y_axis: !Gx.show_y_axis
-                        });
-                    }
-                }, {
-                    text: "Readout",
-                    checked: Gx.show_readout,
-                    style: "checkbox",
-                    handler: function() {
-                        plot.change_settings({
-                            show_readout: !Gx.show_readout
-                        });
-                    }
-                }, {
-                    text: "Invert Colors",
-                    checked: Mx.xi,
-                    style: "checkbox",
-                    handler: function() {
-                        mx.invertbgfg(Mx);
-                    }
-                }]
-            }
+                                    plot.refresh();
+                                },
+                                Gx.ylab,
+                                undefined,
+                                undefined,
+                                undefined
+                            );
+                        },
+                    },
+                    {
+                        text: "X-axis",
+                        checked: Gx.show_x_axis,
+                        style: "checkbox",
+                        handler: function () {
+                            plot.change_settings({
+                                show_x_axis: !Gx.show_x_axis,
+                            });
+                        },
+                    },
+                    {
+                        text: "Y-axis",
+                        checked: Gx.show_y_axis,
+                        style: "checkbox",
+                        handler: function () {
+                            plot.change_settings({
+                                show_y_axis: !Gx.show_y_axis,
+                            });
+                        },
+                    },
+                    {
+                        text: "Readout",
+                        checked: Gx.show_readout,
+                        style: "checkbox",
+                        handler: function () {
+                            plot.change_settings({
+                                show_readout: !Gx.show_readout,
+                            });
+                        },
+                    },
+                    {
+                        text: "Invert Colors",
+                        checked: Mx.xi,
+                        style: "checkbox",
+                        handler: function () {
+                            mx.invertbgfg(Mx);
+                        },
+                    },
+                ],
+            },
         };
 
         var COLORMAP_MENU = {
             text: "Colormap...",
             menu: {
                 title: "COLORMAP",
-                items: []
-            }
+                items: [],
+            },
         };
 
-        var colormap_handler = function(item) {
+        var colormap_handler = function (item) {
             plot.change_settings({
-                cmap: this.cmap
+                cmap: this.cmap,
             });
         };
 
@@ -5150,669 +5713,1017 @@
             var menuitem = {
                 text: m.Mc.colormap[xc].name,
                 cmap: xc,
-                checked: (Gx.cmap === xc),
-                handler: colormap_handler
+                checked: Gx.cmap === xc,
+                handler: colormap_handler,
             };
             COLORMAP_MENU.menu.items.push(menuitem);
         }
 
-        var traceoptionsmenu = function(index) {
+        var traceoptionsmenu = function (index) {
             return {
                 title: "TRACE OPTIONS",
-                items: [{
-                    text: "Dashed...",
-                    handler: function() {
-                        // Figure out the current thickness
-                        var thk = 1;
-                        if (index !== undefined) {
-                            thk = Math.abs(plot._Gx.lyr[index].thick);
-                        } else {
-                            if (Gx.lyr.length === 0) {
-                                return;
-                            }
+                items: [
+                    {
+                        text: "Dashed...",
+                        handler: function () {
+                            // Figure out the current thickness
+                            var thk = 1;
+                            if (index !== undefined) {
+                                thk = Math.abs(plot._Gx.lyr[index].thick);
+                            } else {
+                                if (Gx.lyr.length === 0) {
+                                    return;
+                                }
 
-                            thk = Math.abs(plot._Gx.lyr[0].thick);
-                            for (var i = 0; i < Gx.lyr.length; i++) {
-                                if (thk !== Math.abs(plot._Gx.lyr[i].thick)) {
-                                    thk = 1;
-                                    break;
-                                }
-                            }
-                        }
-                        setupPrompt(
-                            plot,
-                            "Line thickness:",
-                            mx.intValidator,
-                            function(finalValue) {
-                                if (index !== undefined) {
-                                    plot._Gx.lyr[index].line = 3;
-                                    plot._Gx.lyr[index].thick = -1 * finalValue;
-                                    plot._Gx.lyr[index].symbol = 0;
-                                } else {
-                                    for (var ii = 0; ii < Gx.lyr.length; ii++) {
-                                        plot._Gx.lyr[ii].line = 3;
-                                        plot._Gx.lyr[ii].thick = -1 * finalValue;
-                                        plot._Gx.lyr[ii].symbol = 0;
-                                    }
-                                }
-                            }, thk);
-                    }
-                }, {
-                    text: "Colors...",
-                    menu: {
-                        title: "COLORS",
-                        items: [{
-                            text: "Retain Current"
-                        }, {
-                            text: "Red",
-                            checked: (index !== undefined) ? plot._Gx.lyr[index].color === "red" : undefined,
-                            handler: function() {
-                                if (index !== undefined) {
-                                    plot._Gx.lyr[index].color = "red";
-                                } else {
-                                    for (var i = 0; i < Gx.lyr.length; i++) {
-                                        plot._Gx.lyr[i].color = "red";
+                                thk = Math.abs(plot._Gx.lyr[0].thick);
+                                for (var i = 0; i < Gx.lyr.length; i++) {
+                                    if (
+                                        thk !== Math.abs(plot._Gx.lyr[i].thick)
+                                    ) {
+                                        thk = 1;
+                                        break;
                                     }
                                 }
                             }
-                        }, {
-                            text: "Pink",
-                            checked: (index !== undefined) ? plot._Gx.lyr[index].color === "pink" : undefined,
-                            handler: function() {
-                                if (index !== undefined) {
-                                    plot._Gx.lyr[index].color = "pink";
-                                } else {
-                                    for (var i = 0; i < Gx.lyr.length; i++) {
-                                        plot._Gx.lyr[i].color = "pink";
+                            setupPrompt(
+                                plot,
+                                "Line thickness:",
+                                mx.intValidator,
+                                function (finalValue) {
+                                    if (index !== undefined) {
+                                        plot._Gx.lyr[index].line = 3;
+                                        plot._Gx.lyr[index].thick =
+                                            -1 * finalValue;
+                                        plot._Gx.lyr[index].symbol = 0;
+                                    } else {
+                                        for (
+                                            var ii = 0;
+                                            ii < Gx.lyr.length;
+                                            ii++
+                                        ) {
+                                            plot._Gx.lyr[ii].line = 3;
+                                            plot._Gx.lyr[ii].thick =
+                                                -1 * finalValue;
+                                            plot._Gx.lyr[ii].symbol = 0;
+                                        }
                                     }
-                                }
-                            }
-                        }, {
-                            text: "Hot Pink",
-                            checked: (index !== undefined) ? plot._Gx.lyr[index].color === "#ff009e" : undefined,
-                            handler: function() {
-                                if (index !== undefined) {
-                                    plot._Gx.lyr[index].color = "#ff009e";
-                                } else {
-                                    for (var i = 0; i < Gx.lyr.length; i++) {
-                                        plot._Gx.lyr[i].color = "#ff009e";
-                                    }
-                                }
-                            }
-                        }, {
-                            text: "Orange",
-                            checked: (index !== undefined) ? plot._Gx.lyr[index].color === "orange" : undefined,
-                            handler: function() {
-                                if (index !== undefined) {
-                                    plot._Gx.lyr[index].color = "orange";
-                                } else {
-                                    for (var i = 0; i < Gx.lyr.length; i++) {
-                                        plot._Gx.lyr[i].color = "orange";
-                                    }
-                                }
-                            }
-                        }, {
-                            text: "Yellow",
-                            checked: (index !== undefined) ? plot._Gx.lyr[index].color === "yellow" : undefined,
-                            handler: function() {
-                                if (index !== undefined) {
-                                    plot._Gx.lyr[index].color = "yellow";
-                                } else {
-                                    for (var i = 0; i < Gx.lyr.length; i++) {
-                                        plot._Gx.lyr[i].color = "yellow";
-                                    }
-                                }
-                            }
-                        }, {
-                            text: "Lime Green",
-                            checked: (index !== undefined) ? plot._Gx.lyr[index].color === "#80f741" : undefined,
-                            handler: function() {
-                                if (index !== undefined) {
-                                    plot._Gx.lyr[index].color = "#80f741";
-                                } else {
-                                    for (var i = 0; i < Gx.lyr.length; i++) {
-                                        plot._Gx.lyr[i].color = "#80f741";
-                                    }
-                                }
-                            }
-                        }, {
-                            text: "Green",
-                            checked: (index !== undefined) ? plot._Gx.lyr[index].color === "green" : undefined,
-                            handler: function() {
-                                if (index !== undefined) {
-                                    plot._Gx.lyr[index].color = "green";
-                                } else {
-                                    for (var i = 0; i < Gx.lyr.length; i++) {
-                                        plot._Gx.lyr[i].color = "green";
-                                    }
-                                }
-                            }
-                        }, {
-                            text: "Blue",
-                            checked: (index !== undefined) ? plot._Gx.lyr[index].color === "blue" : undefined,
-                            handler: function() {
-                                if (index !== undefined) {
-                                    plot._Gx.lyr[index].color = "blue";
-                                } else {
-                                    for (var i = 0; i < Gx.lyr.length; i++) {
-                                        plot._Gx.lyr[i].color = "blue";
-                                    }
-                                }
-                            }
-                        }, {
-                            text: "Purple",
-                            checked: (index !== undefined) ? plot._Gx.lyr[index].color === "purple" : undefined,
-                            handler: function() {
-                                if (index !== undefined) {
-                                    plot._Gx.lyr[index].color = "purple";
-                                } else {
-                                    for (var i = 0; i < Gx.lyr.length; i++) {
-                                        plot._Gx.lyr[i].color = "purple";
-                                    }
-                                }
-                            }
-                        }, {
-                            text: "Custom Hexcode",
-                            handler: function() {
-                                setupPrompt(
-                                    plot,
-                                    "Color code (requires #):",
-                                    mx.hexValidator,
-                                    function(finalValue) {
+                                },
+                                thk
+                            );
+                        },
+                    },
+                    {
+                        text: "Colors...",
+                        menu: {
+                            title: "COLORS",
+                            items: [
+                                {
+                                    text: "Retain Current",
+                                },
+                                {
+                                    text: "Red",
+                                    checked:
+                                        index !== undefined
+                                            ? plot._Gx.lyr[index].color ===
+                                              "red"
+                                            : undefined,
+                                    handler: function () {
                                         if (index !== undefined) {
-                                            plot._Gx.lyr[index].color = finalValue;
+                                            plot._Gx.lyr[index].color = "red";
                                         } else {
-                                            for (var ii = 0; ii < Gx.lyr.length; index++) {
-                                                plot._Gx.lyr[ii].color = finalValue;
+                                            for (
+                                                var i = 0;
+                                                i < Gx.lyr.length;
+                                                i++
+                                            ) {
+                                                plot._Gx.lyr[i].color = "red";
                                             }
                                         }
-                                    }, undefined, undefined, undefined, undefined);
-                            }
-                        }]
-                    }
-                }, {
-                    text: "Dots...",
-                    handler: function() {
-                        // Figure out the current thickness
-                        var radius = 3;
-                        if (index !== undefined) {
-                            radius = Math.abs(plot._Gx.lyr[index].radius);
-                        } else {
-                            if (Gx.lyr.length === 0) {
-                                return;
-                            }
-                            var i;
-                            for (i = 0; i < Gx.lyr.length; i++) {
-                                if (radius !== Math.abs(plot._Gx.lyr[i].radius)) {
-                                    radius = 3;
-                                    break;
+                                    },
+                                },
+                                {
+                                    text: "Pink",
+                                    checked:
+                                        index !== undefined
+                                            ? plot._Gx.lyr[index].color ===
+                                              "pink"
+                                            : undefined,
+                                    handler: function () {
+                                        if (index !== undefined) {
+                                            plot._Gx.lyr[index].color = "pink";
+                                        } else {
+                                            for (
+                                                var i = 0;
+                                                i < Gx.lyr.length;
+                                                i++
+                                            ) {
+                                                plot._Gx.lyr[i].color = "pink";
+                                            }
+                                        }
+                                    },
+                                },
+                                {
+                                    text: "Hot Pink",
+                                    checked:
+                                        index !== undefined
+                                            ? plot._Gx.lyr[index].color ===
+                                              "#ff009e"
+                                            : undefined,
+                                    handler: function () {
+                                        if (index !== undefined) {
+                                            plot._Gx.lyr[index].color =
+                                                "#ff009e";
+                                        } else {
+                                            for (
+                                                var i = 0;
+                                                i < Gx.lyr.length;
+                                                i++
+                                            ) {
+                                                plot._Gx.lyr[i].color =
+                                                    "#ff009e";
+                                            }
+                                        }
+                                    },
+                                },
+                                {
+                                    text: "Orange",
+                                    checked:
+                                        index !== undefined
+                                            ? plot._Gx.lyr[index].color ===
+                                              "orange"
+                                            : undefined,
+                                    handler: function () {
+                                        if (index !== undefined) {
+                                            plot._Gx.lyr[index].color =
+                                                "orange";
+                                        } else {
+                                            for (
+                                                var i = 0;
+                                                i < Gx.lyr.length;
+                                                i++
+                                            ) {
+                                                plot._Gx.lyr[i].color =
+                                                    "orange";
+                                            }
+                                        }
+                                    },
+                                },
+                                {
+                                    text: "Yellow",
+                                    checked:
+                                        index !== undefined
+                                            ? plot._Gx.lyr[index].color ===
+                                              "yellow"
+                                            : undefined,
+                                    handler: function () {
+                                        if (index !== undefined) {
+                                            plot._Gx.lyr[index].color =
+                                                "yellow";
+                                        } else {
+                                            for (
+                                                var i = 0;
+                                                i < Gx.lyr.length;
+                                                i++
+                                            ) {
+                                                plot._Gx.lyr[i].color =
+                                                    "yellow";
+                                            }
+                                        }
+                                    },
+                                },
+                                {
+                                    text: "Lime Green",
+                                    checked:
+                                        index !== undefined
+                                            ? plot._Gx.lyr[index].color ===
+                                              "#80f741"
+                                            : undefined,
+                                    handler: function () {
+                                        if (index !== undefined) {
+                                            plot._Gx.lyr[index].color =
+                                                "#80f741";
+                                        } else {
+                                            for (
+                                                var i = 0;
+                                                i < Gx.lyr.length;
+                                                i++
+                                            ) {
+                                                plot._Gx.lyr[i].color =
+                                                    "#80f741";
+                                            }
+                                        }
+                                    },
+                                },
+                                {
+                                    text: "Green",
+                                    checked:
+                                        index !== undefined
+                                            ? plot._Gx.lyr[index].color ===
+                                              "green"
+                                            : undefined,
+                                    handler: function () {
+                                        if (index !== undefined) {
+                                            plot._Gx.lyr[index].color = "green";
+                                        } else {
+                                            for (
+                                                var i = 0;
+                                                i < Gx.lyr.length;
+                                                i++
+                                            ) {
+                                                plot._Gx.lyr[i].color = "green";
+                                            }
+                                        }
+                                    },
+                                },
+                                {
+                                    text: "Blue",
+                                    checked:
+                                        index !== undefined
+                                            ? plot._Gx.lyr[index].color ===
+                                              "blue"
+                                            : undefined,
+                                    handler: function () {
+                                        if (index !== undefined) {
+                                            plot._Gx.lyr[index].color = "blue";
+                                        } else {
+                                            for (
+                                                var i = 0;
+                                                i < Gx.lyr.length;
+                                                i++
+                                            ) {
+                                                plot._Gx.lyr[i].color = "blue";
+                                            }
+                                        }
+                                    },
+                                },
+                                {
+                                    text: "Purple",
+                                    checked:
+                                        index !== undefined
+                                            ? plot._Gx.lyr[index].color ===
+                                              "purple"
+                                            : undefined,
+                                    handler: function () {
+                                        if (index !== undefined) {
+                                            plot._Gx.lyr[index].color =
+                                                "purple";
+                                        } else {
+                                            for (
+                                                var i = 0;
+                                                i < Gx.lyr.length;
+                                                i++
+                                            ) {
+                                                plot._Gx.lyr[i].color =
+                                                    "purple";
+                                            }
+                                        }
+                                    },
+                                },
+                                {
+                                    text: "Custom Hexcode",
+                                    handler: function () {
+                                        setupPrompt(
+                                            plot,
+                                            "Color code (requires #):",
+                                            mx.hexValidator,
+                                            function (finalValue) {
+                                                if (index !== undefined) {
+                                                    plot._Gx.lyr[index].color =
+                                                        finalValue;
+                                                } else {
+                                                    for (
+                                                        var ii = 0;
+                                                        ii < Gx.lyr.length;
+                                                        index++
+                                                    ) {
+                                                        plot._Gx.lyr[ii].color =
+                                                            finalValue;
+                                                    }
+                                                }
+                                            },
+                                            undefined,
+                                            undefined,
+                                            undefined,
+                                            undefined
+                                        );
+                                    },
+                                },
+                            ],
+                        },
+                    },
+                    {
+                        text: "Dots...",
+                        handler: function () {
+                            // Figure out the current thickness
+                            var radius = 3;
+                            if (index !== undefined) {
+                                radius = Math.abs(plot._Gx.lyr[index].radius);
+                            } else {
+                                if (Gx.lyr.length === 0) {
+                                    return;
                                 }
-                            }
-                        }
-                        setupPrompt(
-                            plot,
-                            "Radius/Shape:",
-                            mx.intValidator,
-                            function(finalValue) {
-                                var sym;
-                                var rad;
-                                if (finalValue < 0) {
-                                    sym = 3; // square
-                                    rad = Math.abs(finalValue);
-                                } else if (finalValue > 0) {
-                                    sym = 2; // circle
-                                    rad = finalValue;
-                                } else {
-                                    sym = 1;
-                                    rad = 0;
-                                }
-                                if (index !== undefined) {
-                                    plot._Gx.lyr[index].line = 0;
-                                    plot._Gx.lyr[index].radius = rad;
-                                    plot._Gx.lyr[index].symbol = sym;
-                                } else {
-                                    var i;
-                                    for (i = 0; i < Gx.lyr.length; i++) {
-                                        plot._Gx.lyr[i].line = 0;
-                                        plot._Gx.lyr[i].radius = rad;
-                                        plot._Gx.lyr[i].symbol = sym;
+                                var i;
+                                for (i = 0; i < Gx.lyr.length; i++) {
+                                    if (
+                                        radius !==
+                                        Math.abs(plot._Gx.lyr[i].radius)
+                                    ) {
+                                        radius = 3;
+                                        break;
                                     }
                                 }
-                            }, radius);
-                    }
-                }, {
-                    text: "Radius...",
-                    handler: function() {
-                        // Figure out the current thickness
-                        var radius = 3;
-                        if (index !== undefined) {
-                            radius = Math.abs(plot._Gx.lyr[index].radius);
-                        } else {
-                            if (Gx.lyr.length === 0) {
-                                return;
                             }
-                            for (var i = 0; i < Gx.lyr.length; i++) {
-                                if (radius !== Math.abs(plot._Gx.lyr[i].radius)) {
-                                    radius = 3;
-                                    break;
+                            setupPrompt(
+                                plot,
+                                "Radius/Shape:",
+                                mx.intValidator,
+                                function (finalValue) {
+                                    var sym;
+                                    var rad;
+                                    if (finalValue < 0) {
+                                        sym = 3; // square
+                                        rad = Math.abs(finalValue);
+                                    } else if (finalValue > 0) {
+                                        sym = 2; // circle
+                                        rad = finalValue;
+                                    } else {
+                                        sym = 1;
+                                        rad = 0;
+                                    }
+                                    if (index !== undefined) {
+                                        plot._Gx.lyr[index].line = 0;
+                                        plot._Gx.lyr[index].radius = rad;
+                                        plot._Gx.lyr[index].symbol = sym;
+                                    } else {
+                                        var i;
+                                        for (i = 0; i < Gx.lyr.length; i++) {
+                                            plot._Gx.lyr[i].line = 0;
+                                            plot._Gx.lyr[i].radius = rad;
+                                            plot._Gx.lyr[i].symbol = sym;
+                                        }
+                                    }
+                                },
+                                radius
+                            );
+                        },
+                    },
+                    {
+                        text: "Radius...",
+                        handler: function () {
+                            // Figure out the current thickness
+                            var radius = 3;
+                            if (index !== undefined) {
+                                radius = Math.abs(plot._Gx.lyr[index].radius);
+                            } else {
+                                if (Gx.lyr.length === 0) {
+                                    return;
                                 }
-                            }
-                        }
-                        setupPrompt(
-                            plot,
-                            "Radius:",
-                            mx.intValidator,
-                            function(finalValue) {
-                                var sym;
-                                var rad;
-                                if (finalValue < 0) {
-                                    rad = Math.abs(finalValue);
-                                } else if (finalValue > 0) {
-                                    rad = finalValue;
-                                } else {
-                                    sym = 1;
-                                    rad = 0;
-                                }
-                                if (index !== undefined) {
-                                    plot._Gx.lyr[index].line = 0;
-                                    plot._Gx.lyr[index].radius = rad;
-                                } else {
-                                    for (var i = 0; i < Gx.lyr.length; i++) {
-                                        plot._Gx.lyr[i].line = 0;
-                                        plot._Gx.lyr[i].radius = rad;
+                                for (var i = 0; i < Gx.lyr.length; i++) {
+                                    if (
+                                        radius !==
+                                        Math.abs(plot._Gx.lyr[i].radius)
+                                    ) {
+                                        radius = 3;
+                                        break;
                                     }
                                 }
-                            }, radius);
-                    }
-                }, {
-                    text: "Solid...",
-                    handler: function() {
-                        // Figure out the current thickness
-                        var thk = 1;
-                        if (index !== undefined) {
-                            thk = Math.abs(plot._Gx.lyr[index].thick);
-                        } else {
-                            if (Gx.lyr.length === 0) {
-                                return;
                             }
+                            setupPrompt(
+                                plot,
+                                "Radius:",
+                                mx.intValidator,
+                                function (finalValue) {
+                                    var sym;
+                                    var rad;
+                                    if (finalValue < 0) {
+                                        rad = Math.abs(finalValue);
+                                    } else if (finalValue > 0) {
+                                        rad = finalValue;
+                                    } else {
+                                        sym = 1;
+                                        rad = 0;
+                                    }
+                                    if (index !== undefined) {
+                                        plot._Gx.lyr[index].line = 0;
+                                        plot._Gx.lyr[index].radius = rad;
+                                    } else {
+                                        for (
+                                            var i = 0;
+                                            i < Gx.lyr.length;
+                                            i++
+                                        ) {
+                                            plot._Gx.lyr[i].line = 0;
+                                            plot._Gx.lyr[i].radius = rad;
+                                        }
+                                    }
+                                },
+                                radius
+                            );
+                        },
+                    },
+                    {
+                        text: "Solid...",
+                        handler: function () {
+                            // Figure out the current thickness
+                            var thk = 1;
+                            if (index !== undefined) {
+                                thk = Math.abs(plot._Gx.lyr[index].thick);
+                            } else {
+                                if (Gx.lyr.length === 0) {
+                                    return;
+                                }
 
-                            thk = Math.abs(plot._Gx.lyr[0].thick);
-                            var i;
-                            for (i = 0; i < Gx.lyr.length; i++) {
-                                if (thk !== Math.abs(plot._Gx.lyr[i].thick)) {
-                                    thk = 1;
-                                    break;
-                                }
-                            }
-                        }
-                        setupPrompt(
-                            plot,
-                            "Line thickness:",
-                            mx.intValidator,
-                            function(finalValue) {
-                                if (index !== undefined) {
-                                    plot._Gx.lyr[index].line = 3;
-                                    plot._Gx.lyr[index].thick = finalValue;
-                                    plot._Gx.lyr[index].symbol = 0;
-                                } else {
-                                    var i;
-                                    for (i = 0; i < Gx.lyr.length; i++) {
-                                        plot._Gx.lyr[i].line = 3;
-                                        plot._Gx.lyr[i].thick = finalValue;
-                                        plot._Gx.lyr[i].symbol = 0;
-                                    }
-                                }
-                            }, thk);
-                    }
-                }, {
-                    text: "Toggle",
-                    style: (index !== undefined) ? "checkbox" : undefined,
-                    checked: (index !== undefined) ? plot._Gx.lyr[index].display : undefined,
-                    handler: function() {
-                        if (index !== undefined) {
-                            plot._Gx.lyr[index].display = !plot._Gx.lyr[index].display;
-                        } else {
-                            for (var i = 0; i < Gx.lyr.length; i++) {
-                                plot._Gx.lyr[i].display = !plot._Gx.lyr[i].display;
-                            }
-                        }
-                    }
-                }, {
-                    text: "Symbols...",
-                    menu: {
-                        title: "SYMBOLS",
-                        items: [{
-                            text: "Retain Current"
-                        }, {
-                            text: "None",
-                            checked: (index !== undefined) ? plot._Gx.lyr[index].symbol === 0 : undefined,
-                            handler: function() {
-                                if (index !== undefined) {
-                                    plot._Gx.lyr[index].radius = 0;
-                                    plot._Gx.lyr[index].symbol = 0;
-                                } else {
-                                    for (var i = 0; i < Gx.lyr.length; i++) {
-                                        plot._Gx.lyr[i].radius = 0;
-                                        plot._Gx.lyr[i].symbol = 0;
+                                thk = Math.abs(plot._Gx.lyr[0].thick);
+                                var i;
+                                for (i = 0; i < Gx.lyr.length; i++) {
+                                    if (
+                                        thk !== Math.abs(plot._Gx.lyr[i].thick)
+                                    ) {
+                                        thk = 1;
+                                        break;
                                     }
                                 }
                             }
-                        }, {
-                            text: "Pixels",
-                            checked: (index !== undefined) ? plot._Gx.lyr[index].symbol === 1 : undefined,
-                            handler: function() {
-                                if (index !== undefined) {
-                                    plot._Gx.lyr[index].radius = 1;
-                                    plot._Gx.lyr[index].symbol = 1;
-                                } else {
-                                    for (var i = 0; i < Gx.lyr.length; i++) {
-                                        plot._Gx.lyr[i].radius = 1;
-                                        plot._Gx.lyr[i].symbol = 1;
+                            setupPrompt(
+                                plot,
+                                "Line thickness:",
+                                mx.intValidator,
+                                function (finalValue) {
+                                    if (index !== undefined) {
+                                        plot._Gx.lyr[index].line = 3;
+                                        plot._Gx.lyr[index].thick = finalValue;
+                                        plot._Gx.lyr[index].symbol = 0;
+                                    } else {
+                                        var i;
+                                        for (i = 0; i < Gx.lyr.length; i++) {
+                                            plot._Gx.lyr[i].line = 3;
+                                            plot._Gx.lyr[i].thick = finalValue;
+                                            plot._Gx.lyr[i].symbol = 0;
+                                        }
                                     }
+                                },
+                                thk
+                            );
+                        },
+                    },
+                    {
+                        text: "Toggle",
+                        style: index !== undefined ? "checkbox" : undefined,
+                        checked:
+                            index !== undefined
+                                ? plot._Gx.lyr[index].display
+                                : undefined,
+                        handler: function () {
+                            if (index !== undefined) {
+                                plot._Gx.lyr[index].display =
+                                    !plot._Gx.lyr[index].display;
+                            } else {
+                                for (var i = 0; i < Gx.lyr.length; i++) {
+                                    plot._Gx.lyr[i].display =
+                                        !plot._Gx.lyr[i].display;
                                 }
                             }
-                        }, {
-                            text: "Circles",
-                            checked: (index !== undefined) ? plot._Gx.lyr[index].symbol === 2 : undefined,
-                            handler: function() {
-                                if (index !== undefined) {
-                                    plot._Gx.lyr[index].radius = 4;
-                                    plot._Gx.lyr[index].symbol = 2;
-                                } else {
-                                    for (var i = 0; i < Gx.lyr.length; i++) {
-                                        plot._Gx.lyr[i].radius = 4;
-                                        plot._Gx.lyr[i].symbol = 2;
-                                    }
-                                }
+                        },
+                    },
+                    {
+                        text: "Symbols...",
+                        menu: {
+                            title: "SYMBOLS",
+                            items: [
+                                {
+                                    text: "Retain Current",
+                                },
+                                {
+                                    text: "None",
+                                    checked:
+                                        index !== undefined
+                                            ? plot._Gx.lyr[index].symbol === 0
+                                            : undefined,
+                                    handler: function () {
+                                        if (index !== undefined) {
+                                            plot._Gx.lyr[index].radius = 0;
+                                            plot._Gx.lyr[index].symbol = 0;
+                                        } else {
+                                            for (
+                                                var i = 0;
+                                                i < Gx.lyr.length;
+                                                i++
+                                            ) {
+                                                plot._Gx.lyr[i].radius = 0;
+                                                plot._Gx.lyr[i].symbol = 0;
+                                            }
+                                        }
+                                    },
+                                },
+                                {
+                                    text: "Pixels",
+                                    checked:
+                                        index !== undefined
+                                            ? plot._Gx.lyr[index].symbol === 1
+                                            : undefined,
+                                    handler: function () {
+                                        if (index !== undefined) {
+                                            plot._Gx.lyr[index].radius = 1;
+                                            plot._Gx.lyr[index].symbol = 1;
+                                        } else {
+                                            for (
+                                                var i = 0;
+                                                i < Gx.lyr.length;
+                                                i++
+                                            ) {
+                                                plot._Gx.lyr[i].radius = 1;
+                                                plot._Gx.lyr[i].symbol = 1;
+                                            }
+                                        }
+                                    },
+                                },
+                                {
+                                    text: "Circles",
+                                    checked:
+                                        index !== undefined
+                                            ? plot._Gx.lyr[index].symbol === 2
+                                            : undefined,
+                                    handler: function () {
+                                        if (index !== undefined) {
+                                            plot._Gx.lyr[index].radius = 4;
+                                            plot._Gx.lyr[index].symbol = 2;
+                                        } else {
+                                            for (
+                                                var i = 0;
+                                                i < Gx.lyr.length;
+                                                i++
+                                            ) {
+                                                plot._Gx.lyr[i].radius = 4;
+                                                plot._Gx.lyr[i].symbol = 2;
+                                            }
+                                        }
+                                    },
+                                },
+                                {
+                                    text: "Squares",
+                                    checked:
+                                        index !== undefined
+                                            ? plot._Gx.lyr[index].symbol === 3
+                                            : undefined,
+                                    handler: function () {
+                                        if (index !== undefined) {
+                                            plot._Gx.lyr[index].radius = 4;
+                                            plot._Gx.lyr[index].symbol = 3;
+                                        } else {
+                                            for (
+                                                var i = 0;
+                                                i < Gx.lyr.length;
+                                                i++
+                                            ) {
+                                                plot._Gx.lyr[i].radius = 4;
+                                                plot._Gx.lyr[i].symbol = 3;
+                                            }
+                                        }
+                                    },
+                                },
+                                {
+                                    text: "Plusses",
+                                    checked:
+                                        index !== undefined
+                                            ? plot._Gx.lyr[index].symbol === 4
+                                            : undefined,
+                                    handler: function () {
+                                        if (index !== undefined) {
+                                            plot._Gx.lyr[index].radius = 4;
+                                            plot._Gx.lyr[index].symbol = 4;
+                                        } else {
+                                            for (
+                                                var i = 0;
+                                                i < Gx.lyr.length;
+                                                i++
+                                            ) {
+                                                plot._Gx.lyr[i].radius = 4;
+                                                plot._Gx.lyr[i].symbol = 4;
+                                            }
+                                        }
+                                    },
+                                },
+                                {
+                                    text: "X's",
+                                    checked:
+                                        index !== undefined
+                                            ? plot._Gx.lyr[index].symbol === 5
+                                            : undefined,
+                                    handler: function () {
+                                        if (index !== undefined) {
+                                            plot._Gx.lyr[index].radius = 4;
+                                            plot._Gx.lyr[index].symbol = 5;
+                                        } else {
+                                            for (
+                                                var i = 0;
+                                                i < Gx.lyr.length;
+                                                i++
+                                            ) {
+                                                plot._Gx.lyr[i].radius = 4;
+                                                plot._Gx.lyr[i].symbol = 5;
+                                            }
+                                        }
+                                    },
+                                },
+                                {
+                                    text: "Triangles",
+                                    checked:
+                                        index !== undefined
+                                            ? plot._Gx.lyr[index].symbol === 6
+                                            : undefined,
+                                    handler: function () {
+                                        if (index !== undefined) {
+                                            plot._Gx.lyr[index].radius = 6;
+                                            plot._Gx.lyr[index].symbol = 6;
+                                        } else {
+                                            for (
+                                                var i = 0;
+                                                i < Gx.lyr.length;
+                                                i++
+                                            ) {
+                                                plot._Gx.lyr[i].radius = 6;
+                                                plot._Gx.lyr[i].symbol = 6;
+                                            }
+                                        }
+                                    },
+                                },
+                                {
+                                    text: "Downward Triangles",
+                                    checked:
+                                        index !== undefined
+                                            ? plot._Gx.lyr[index].symbol === 7
+                                            : undefined,
+                                    handler: function () {
+                                        if (index !== undefined) {
+                                            plot._Gx.lyr[index].radius = 6;
+                                            plot._Gx.lyr[index].symbol = 7;
+                                        } else {
+                                            for (
+                                                var i = 0;
+                                                i < Gx.lyr.length;
+                                                i++
+                                            ) {
+                                                plot._Gx.lyr[i].radius = 6;
+                                                plot._Gx.lyr[i].symbol = 7;
+                                            }
+                                        }
+                                    },
+                                },
+                            ],
+                        },
+                    },
+                    {
+                        text: "Line Type...",
+                        menu: {
+                            title: "LINE TYPE",
+                            items: [
+                                {
+                                    text: "Retain Current",
+                                },
+                                {
+                                    text: "None",
+                                    checked:
+                                        index !== undefined
+                                            ? plot._Gx.lyr[index].line === 0
+                                            : undefined,
+                                    handler: function () {
+                                        if (index !== undefined) {
+                                            plot._Gx.lyr[index].line = 0;
+                                        } else {
+                                            for (
+                                                var i = 0;
+                                                i < Gx.lyr.length;
+                                                i++
+                                            ) {
+                                                plot._Gx.lyr[i].line = 0;
+                                            }
+                                        }
+                                    },
+                                },
+                                {
+                                    text: "Verticals",
+                                    checked:
+                                        index !== undefined
+                                            ? plot._Gx.lyr[index].line === 1
+                                            : undefined,
+                                    handler: function () {
+                                        if (index !== undefined) {
+                                            plot._Gx.lyr[index].line = 1;
+                                        } else {
+                                            for (
+                                                var i = 0;
+                                                i < Gx.lyr.length;
+                                                i++
+                                            ) {
+                                                plot._Gx.lyr[i].line = 1;
+                                            }
+                                        }
+                                    },
+                                },
+                                {
+                                    text: "Horizontals",
+                                    checked:
+                                        index !== undefined
+                                            ? plot._Gx.lyr[index].line === 2
+                                            : undefined,
+                                    handler: function () {
+                                        if (index !== undefined) {
+                                            plot._Gx.lyr[index].line = 2;
+                                        } else {
+                                            for (
+                                                var i = 0;
+                                                i < Gx.lyr.length;
+                                                i++
+                                            ) {
+                                                plot._Gx.lyr[i].line = 2;
+                                            }
+                                        }
+                                    },
+                                },
+                                {
+                                    text: "Connecting",
+                                    checked:
+                                        index !== undefined
+                                            ? plot._Gx.lyr[index].line === 3
+                                            : undefined,
+                                    handler: function () {
+                                        if (index !== undefined) {
+                                            plot._Gx.lyr[index].line = 3;
+                                        } else {
+                                            for (
+                                                var i = 0;
+                                                i < Gx.lyr.length;
+                                                i++
+                                            ) {
+                                                plot._Gx.lyr[i].line = 3;
+                                            }
+                                        }
+                                    },
+                                },
+                            ],
+                        },
+                    },
+                    {
+                        text: "Thickness...",
+                        handler: function () {
+                            var thickness = 1;
+                            if (index !== undefined) {
+                                thickness = plot._Gx.lyr[index].thick;
                             }
-                        }, {
-                            text: "Squares",
-                            checked: (index !== undefined) ? plot._Gx.lyr[index].symbol === 3 : undefined,
-                            handler: function() {
-                                if (index !== undefined) {
-                                    plot._Gx.lyr[index].radius = 4;
-                                    plot._Gx.lyr[index].symbol = 3;
-                                } else {
-                                    for (var i = 0; i < Gx.lyr.length; i++) {
-                                        plot._Gx.lyr[i].radius = 4;
-                                        plot._Gx.lyr[i].symbol = 3;
+                            setupPrompt(
+                                plot,
+                                "Thickness",
+                                mx.intValidator,
+                                function (finalValue) {
+                                    if (finalValue === "") {
+                                        finalValue = 1;
                                     }
-                                }
-                            }
-                        }, {
-                            text: "Plusses",
-                            checked: (index !== undefined) ? plot._Gx.lyr[index].symbol === 4 : undefined,
-                            handler: function() {
-                                if (index !== undefined) {
-                                    plot._Gx.lyr[index].radius = 4;
-                                    plot._Gx.lyr[index].symbol = 4;
-                                } else {
-                                    for (var i = 0; i < Gx.lyr.length; i++) {
-                                        plot._Gx.lyr[i].radius = 4;
-                                        plot._Gx.lyr[i].symbol = 4;
-                                    }
-                                }
-                            }
-                        }, {
-                            text: "X's",
-                            checked: (index !== undefined) ? plot._Gx.lyr[index].symbol === 5 : undefined,
-                            handler: function() {
-                                if (index !== undefined) {
-                                    plot._Gx.lyr[index].radius = 4;
-                                    plot._Gx.lyr[index].symbol = 5;
-                                } else {
-                                    for (var i = 0; i < Gx.lyr.length; i++) {
-                                        plot._Gx.lyr[i].radius = 4;
-                                        plot._Gx.lyr[i].symbol = 5;
-                                    }
-                                }
-                            }
-                        }, {
-                            text: "Triangles",
-                            checked: (index !== undefined) ? plot._Gx.lyr[index].symbol === 6 : undefined,
-                            handler: function() {
-                                if (index !== undefined) {
-                                    plot._Gx.lyr[index].radius = 6;
-                                    plot._Gx.lyr[index].symbol = 6;
-                                } else {
-                                    for (var i = 0; i < Gx.lyr.length; i++) {
-                                        plot._Gx.lyr[i].radius = 6;
-                                        plot._Gx.lyr[i].symbol = 6;
-                                    }
-                                }
-                            }
-                        }, {
-                            text: "Downward Triangles",
-                            checked: (index !== undefined) ? plot._Gx.lyr[index].symbol === 7 : undefined,
-                            handler: function() {
-                                if (index !== undefined) {
-                                    plot._Gx.lyr[index].radius = 6;
-                                    plot._Gx.lyr[index].symbol = 7;
-                                } else {
-                                    for (var i = 0; i < Gx.lyr.length; i++) {
-                                        plot._Gx.lyr[i].radius = 6;
-                                        plot._Gx.lyr[i].symbol = 7;
-                                    }
-                                }
-                            }
-                        }]
-                    }
-                }, {
-                    text: "Line Type...",
-                    menu: {
-                        title: "LINE TYPE",
-                        items: [{
-                            text: "Retain Current"
-                        }, {
-                            text: "None",
-                            checked: (index !== undefined) ? plot._Gx.lyr[index].line === 0 : undefined,
-                            handler: function() {
-                                if (index !== undefined) {
-                                    plot._Gx.lyr[index].line = 0;
-                                } else {
-                                    for (var i = 0; i < Gx.lyr.length; i++) {
-                                        plot._Gx.lyr[i].line = 0;
-                                    }
-                                }
-                            }
-                        }, {
-                            text: "Verticals",
-                            checked: (index !== undefined) ? plot._Gx.lyr[index].line === 1 : undefined,
-                            handler: function() {
-                                if (index !== undefined) {
-                                    plot._Gx.lyr[index].line = 1;
-                                } else {
-                                    for (var i = 0; i < Gx.lyr.length; i++) {
-                                        plot._Gx.lyr[i].line = 1;
-                                    }
-                                }
-                            }
-                        }, {
-                            text: "Horizontals",
-                            checked: (index !== undefined) ? plot._Gx.lyr[index].line === 2 : undefined,
-                            handler: function() {
-                                if (index !== undefined) {
-                                    plot._Gx.lyr[index].line = 2;
-                                } else {
-                                    for (var i = 0; i < Gx.lyr.length; i++) {
-                                        plot._Gx.lyr[i].line = 2;
-                                    }
-                                }
-                            }
-                        }, {
-                            text: "Connecting",
-                            checked: (index !== undefined) ? plot._Gx.lyr[index].line === 3 : undefined,
-                            handler: function() {
-                                if (index !== undefined) {
-                                    plot._Gx.lyr[index].line = 3;
-                                } else {
-                                    for (var i = 0; i < Gx.lyr.length; i++) {
-                                        plot._Gx.lyr[i].line = 3;
-                                    }
-                                }
-                            }
-                        }]
-                    }
-                }, {
-                    text: "Thickness...",
-                    handler: function() {
-                        var thickness = 1;
-                        if (index !== undefined) {
-                            thickness = plot._Gx.lyr[index].thick;
-                        }
-                        setupPrompt(
-                            plot,
-                            "Thickness",
-                            mx.intValidator,
-                            function(finalValue) {
-                                if (finalValue === "") {
-                                    finalValue = 1;
-                                }
-                                finalValue = Math.max(0, finalValue);
+                                    finalValue = Math.max(0, finalValue);
 
-                                if (index !== undefined) {
-                                    plot._Gx.lyr[index].thick = finalValue;
-                                } else {
-                                    for (var i = 0; i < Gx.lyr.length; i++) {
-                                        plot._Gx.lyr[i].thick = finalValue;
+                                    if (index !== undefined) {
+                                        plot._Gx.lyr[index].thick = finalValue;
+                                    } else {
+                                        for (
+                                            var i = 0;
+                                            i < Gx.lyr.length;
+                                            i++
+                                        ) {
+                                            plot._Gx.lyr[i].thick = finalValue;
+                                        }
                                     }
-                                }
-                            }, thickness, undefined,
-                            undefined, undefined);
-                    }
-                }, {
-                    text: "Opacity...",
-                    handler: function() {
-                        var opacity = 1.0;
-                        if (index !== undefined) {
-                            opacity = plot._Gx.lyr[index].opacity;
-                        }
-                        setupPrompt(
-                            plot,
-                            "Opacity:",
-                            mx.floatValidator,
-                            function(finalValue) {
-                                if (finalValue === "") {
-                                    finalValue = 1.0;
-                                }
-                                finalValue = Math.max(0, finalValue);
-                                finalValue = Math.min(1, finalValue);
+                                },
+                                thickness,
+                                undefined,
+                                undefined,
+                                undefined
+                            );
+                        },
+                    },
+                    {
+                        text: "Opacity...",
+                        handler: function () {
+                            var opacity = 1.0;
+                            if (index !== undefined) {
+                                opacity = plot._Gx.lyr[index].opacity;
+                            }
+                            setupPrompt(
+                                plot,
+                                "Opacity:",
+                                mx.floatValidator,
+                                function (finalValue) {
+                                    if (finalValue === "") {
+                                        finalValue = 1.0;
+                                    }
+                                    finalValue = Math.max(0, finalValue);
+                                    finalValue = Math.min(1, finalValue);
 
-                                if (index !== undefined) {
-                                    plot._Gx.lyr[index].opacity = finalValue;
-                                } else {
-                                    for (var i = 0; i < Gx.lyr.length; i++) {
-                                        plot._Gx.lyr[i].opacity = finalValue;
+                                    if (index !== undefined) {
+                                        plot._Gx.lyr[index].opacity =
+                                            finalValue;
+                                    } else {
+                                        for (
+                                            var i = 0;
+                                            i < Gx.lyr.length;
+                                            i++
+                                        ) {
+                                            plot._Gx.lyr[i].opacity =
+                                                finalValue;
+                                        }
                                     }
-                                }
-                            }, opacity, undefined,
-                            undefined, undefined);
-                    }
-                }, {
-                    text: "XCompression...",
-                    menu: {
-                        title: "XCOMPRESSION",
-                        items: [{
-                            text: "Retain Current"
-                        }, {
-                            text: "Smoothing",
-                            checked: (index !== undefined) ? plot._Gx.lyr[index].xcompression === 0 : undefined,
-                            handler: function() {
-                                if (index !== undefined) {
-                                    plot._Gx.lyr[index].change_settings({
-                                        xcmp: 0
-                                    });
-                                } else {
-                                    for (var i = 0; i < Gx.lyr.length; i++) {
-                                        plot._Gx.lyr[index].change_settings({
-                                            xcmp: 0
-                                        });
-                                    }
-                                }
-                            }
-                        }, {
-                            text: "Average",
-                            checked: (index !== undefined) ? plot._Gx.lyr[index].xcompression === 1 : undefined,
-                            handler: function() {
-                                if (index !== undefined) {
-                                    plot._Gx.lyr[index].change_settings({
-                                        xcmp: 1
-                                    });
-                                } else {
-                                    for (var i = 0; i < Gx.lyr.length; i++) {
-                                        plot._Gx.lyr[index].change_settings({
-                                            xcmp: 1
-                                        });
-                                    }
-                                }
-                            }
-                        }, {
-                            text: "Minimum",
-                            checked: (index !== undefined) ? plot._Gx.lyr[index].xcompression === 2 : undefined,
-                            handler: function() {
-                                if (index !== undefined) {
-                                    plot._Gx.lyr[index].change_settings({
-                                        xcmp: 2
-                                    });
-                                } else {
-                                    for (var i = 0; i < Gx.lyr.length; i++) {
-                                        plot._Gx.lyr[index].change_settings({
-                                            xcmp: 2
-                                        });
-                                    }
-                                }
-                            }
-                        }, {
-                            text: "Maximum",
-                            checked: (index !== undefined) ? plot._Gx.lyr[index].xcompression === 3 : undefined,
-                            handler: function() {
-                                if (index !== undefined) {
-                                    plot._Gx.lyr[index].change_settings({
-                                        xcmp: 3
-                                    });
-                                } else {
-                                    for (var i = 0; i < Gx.lyr.length; i++) {
-                                        plot._Gx.lyr[index].change_settings({
-                                            xcmp: 3
-                                        });
-                                    }
-                                }
-                            }
-                        }, {
-                            text: "First",
-                            checked: (index !== undefined) ? plot._Gx.lyr[index].xcompression === 4 : undefined,
-                            handler: function() {
-                                if (index !== undefined) {
-                                    plot._Gx.lyr[index].change_settings({
-                                        xcmp: 4
-                                    });
-                                } else {
-                                    for (var i = 0; i < Gx.lyr.length; i++) {
-                                        plot._Gx.lyr[index].change_settings({
-                                            xcmp: 4
-                                        });
-                                    }
-                                }
-                            }
-                        }, {
-                            text: "Max (Abs)",
-                            checked: (index !== undefined) ? plot._Gx.lyr[index].xcompression === 5 : undefined,
-                            handler: function() {
-                                if (index !== undefined) {
-                                    plot._Gx.lyr[index].change_settings({
-                                        xcmp: 5
-                                    });
-                                } else {
-                                    for (var i = 0; i < Gx.lyr.length; i++) {
-                                        plot._Gx.lyr[index].change_settings({
-                                            xcmp: 5
-                                        });
-                                    }
-                                }
-                            }
-                        }]
-                    }
-                }]
+                                },
+                                opacity,
+                                undefined,
+                                undefined,
+                                undefined
+                            );
+                        },
+                    },
+                    {
+                        text: "XCompression...",
+                        menu: {
+                            title: "XCOMPRESSION",
+                            items: [
+                                {
+                                    text: "Retain Current",
+                                },
+                                {
+                                    text: "Smoothing",
+                                    checked:
+                                        index !== undefined
+                                            ? plot._Gx.lyr[index]
+                                                  .xcompression === 0
+                                            : undefined,
+                                    handler: function () {
+                                        if (index !== undefined) {
+                                            plot._Gx.lyr[index].change_settings(
+                                                {
+                                                    xcmp: 0,
+                                                }
+                                            );
+                                        } else {
+                                            for (
+                                                var i = 0;
+                                                i < Gx.lyr.length;
+                                                i++
+                                            ) {
+                                                plot._Gx.lyr[
+                                                    index
+                                                ].change_settings({
+                                                    xcmp: 0,
+                                                });
+                                            }
+                                        }
+                                    },
+                                },
+                                {
+                                    text: "Average",
+                                    checked:
+                                        index !== undefined
+                                            ? plot._Gx.lyr[index]
+                                                  .xcompression === 1
+                                            : undefined,
+                                    handler: function () {
+                                        if (index !== undefined) {
+                                            plot._Gx.lyr[index].change_settings(
+                                                {
+                                                    xcmp: 1,
+                                                }
+                                            );
+                                        } else {
+                                            for (
+                                                var i = 0;
+                                                i < Gx.lyr.length;
+                                                i++
+                                            ) {
+                                                plot._Gx.lyr[
+                                                    index
+                                                ].change_settings({
+                                                    xcmp: 1,
+                                                });
+                                            }
+                                        }
+                                    },
+                                },
+                                {
+                                    text: "Minimum",
+                                    checked:
+                                        index !== undefined
+                                            ? plot._Gx.lyr[index]
+                                                  .xcompression === 2
+                                            : undefined,
+                                    handler: function () {
+                                        if (index !== undefined) {
+                                            plot._Gx.lyr[index].change_settings(
+                                                {
+                                                    xcmp: 2,
+                                                }
+                                            );
+                                        } else {
+                                            for (
+                                                var i = 0;
+                                                i < Gx.lyr.length;
+                                                i++
+                                            ) {
+                                                plot._Gx.lyr[
+                                                    index
+                                                ].change_settings({
+                                                    xcmp: 2,
+                                                });
+                                            }
+                                        }
+                                    },
+                                },
+                                {
+                                    text: "Maximum",
+                                    checked:
+                                        index !== undefined
+                                            ? plot._Gx.lyr[index]
+                                                  .xcompression === 3
+                                            : undefined,
+                                    handler: function () {
+                                        if (index !== undefined) {
+                                            plot._Gx.lyr[index].change_settings(
+                                                {
+                                                    xcmp: 3,
+                                                }
+                                            );
+                                        } else {
+                                            for (
+                                                var i = 0;
+                                                i < Gx.lyr.length;
+                                                i++
+                                            ) {
+                                                plot._Gx.lyr[
+                                                    index
+                                                ].change_settings({
+                                                    xcmp: 3,
+                                                });
+                                            }
+                                        }
+                                    },
+                                },
+                                {
+                                    text: "First",
+                                    checked:
+                                        index !== undefined
+                                            ? plot._Gx.lyr[index]
+                                                  .xcompression === 4
+                                            : undefined,
+                                    handler: function () {
+                                        if (index !== undefined) {
+                                            plot._Gx.lyr[index].change_settings(
+                                                {
+                                                    xcmp: 4,
+                                                }
+                                            );
+                                        } else {
+                                            for (
+                                                var i = 0;
+                                                i < Gx.lyr.length;
+                                                i++
+                                            ) {
+                                                plot._Gx.lyr[
+                                                    index
+                                                ].change_settings({
+                                                    xcmp: 4,
+                                                });
+                                            }
+                                        }
+                                    },
+                                },
+                                {
+                                    text: "Max (Abs)",
+                                    checked:
+                                        index !== undefined
+                                            ? plot._Gx.lyr[index]
+                                                  .xcompression === 5
+                                            : undefined,
+                                    handler: function () {
+                                        if (index !== undefined) {
+                                            plot._Gx.lyr[index].change_settings(
+                                                {
+                                                    xcmp: 5,
+                                                }
+                                            );
+                                        } else {
+                                            for (
+                                                var i = 0;
+                                                i < Gx.lyr.length;
+                                                i++
+                                            ) {
+                                                plot._Gx.lyr[
+                                                    index
+                                                ].change_settings({
+                                                    xcmp: 5,
+                                                });
+                                            }
+                                        }
+                                    },
+                                },
+                            ],
+                        },
+                    },
+                ],
             };
         };
 
@@ -5820,79 +6731,107 @@
             text: "View...",
             menu: {
                 title: "VIEW",
-                items: [{
-                    text: "Reset",
-                    handler: function() {
-                        plot.unzoom();
-                    }
-                }, {
-                    text: "Y Axis",
-                    style: "separator"
-                }, {
-                    text: "Expand Range",
-                    handler: function() {
-                        middleClickScrollMenuAction(plot,
-                            mx.SB_EXPAND, "YPAN");
-                    }
-                }, {
-                    text: "Shrink Range",
-                    handler: function() {
-                        middleClickScrollMenuAction(plot,
-                            mx.SB_SHRINK, "YPAN");
-                    }
-                }, {
-                    text: "Expand Full",
-                    handler: function() {
-                        middleClickScrollMenuAction(plot,
-                            mx.SB_FULL, "YPAN");
-                    }
-                }, {
-                    text: "X Axis",
-                    style: "separator"
-                }, {
-                    text: "Expand Range",
-                    handler: function() {
-                        middleClickScrollMenuAction(plot,
-                            mx.SB_EXPAND, "XPAN");
-                    }
-                }, {
-                    text: "Shrink Range",
-                    handler: function() {
-                        middleClickScrollMenuAction(plot,
-                            mx.SB_SHRINK, "XPAN");
-                    }
-                }, {
-                    text: "Expand Full",
-                    handler: function() {
-                        middleClickScrollMenuAction(plot,
-                            mx.SB_FULL, "XPAN");
-                    }
-                }]
-            }
+                items: [
+                    {
+                        text: "Reset",
+                        handler: function () {
+                            plot.unzoom();
+                        },
+                    },
+                    {
+                        text: "Y Axis",
+                        style: "separator",
+                    },
+                    {
+                        text: "Expand Range",
+                        handler: function () {
+                            middleClickScrollMenuAction(
+                                plot,
+                                mx.SB_EXPAND,
+                                "YPAN"
+                            );
+                        },
+                    },
+                    {
+                        text: "Shrink Range",
+                        handler: function () {
+                            middleClickScrollMenuAction(
+                                plot,
+                                mx.SB_SHRINK,
+                                "YPAN"
+                            );
+                        },
+                    },
+                    {
+                        text: "Expand Full",
+                        handler: function () {
+                            middleClickScrollMenuAction(
+                                plot,
+                                mx.SB_FULL,
+                                "YPAN"
+                            );
+                        },
+                    },
+                    {
+                        text: "X Axis",
+                        style: "separator",
+                    },
+                    {
+                        text: "Expand Range",
+                        handler: function () {
+                            middleClickScrollMenuAction(
+                                plot,
+                                mx.SB_EXPAND,
+                                "XPAN"
+                            );
+                        },
+                    },
+                    {
+                        text: "Shrink Range",
+                        handler: function () {
+                            middleClickScrollMenuAction(
+                                plot,
+                                mx.SB_SHRINK,
+                                "XPAN"
+                            );
+                        },
+                    },
+                    {
+                        text: "Expand Full",
+                        handler: function () {
+                            middleClickScrollMenuAction(
+                                plot,
+                                mx.SB_FULL,
+                                "XPAN"
+                            );
+                        },
+                    },
+                ],
+            },
         };
 
         var TRACES_MENU = {
             text: "Traces...",
-            menu: function() {
+            menu: function () {
                 var Gx = plot._Gx;
                 var tracemenu = {
                     title: "TRACE",
-                    items: []
+                    items: [],
                 };
                 // Add the ALL option
                 tracemenu.items.push({
                     text: "All",
-                    menu: traceoptionsmenu()
+                    menu: traceoptionsmenu(),
                 });
                 // Add all the active layers
                 for (var i = 0; i < Gx.lyr.length; i++) {
                     tracemenu.items.push({
                         text: Gx.lyr[i].name,
-                        menu: traceoptionsmenu(i)
+                        menu: traceoptionsmenu(i),
                     });
                 }
                 return tracemenu;
-            }
+            },
         };
 
         var FILES_MENU = {
@@ -5910,52 +6849,53 @@
                      */
                     {
                         text: "Deoverlay File...",
-                        menu: function() {
+                        menu: function () {
                             var Gx = plot._Gx;
                             var deoverlaymenu = {
                                 title: "DEOVERLAY",
-                                items: []
+                                items: [],
                             };
                             deoverlaymenu.items.push({
                                 text: "Deoverlay All",
-                                handler: function() {
+                                handler: function () {
                                     plot.deoverlay();
-                                }
+                                },
                             });
                             /* jshint -W083 */
                             /* TODO figure out how to not create functions within a loop */
                             for (var i = 0; i < Gx.lyr.length; i++) {
-                                var handler = (function(index) {
-                                    return function() {
+                                var handler = (function (index) {
+                                    return function () {
                                         plot.deoverlay(index);
                                     };
-                                }(i));
+                                })(i);
 
                                 deoverlaymenu.items.push({
                                     text: Gx.lyr[i].name,
-                                    handler: handler
+                                    handler: handler,
                                 });
                             }
                             /* jshint +W083 */
                             return deoverlaymenu;
-                        }
-                    }
-                ]
-            }
+                        },
+                    },
+                ],
+            },
         };
 
         var PLUGINS_MENU = {
             text: "Plugins...",
             menu: {
                 title: "PLUGINS",
-                items: (function() { // Immediately
+                items: (function () {
+                    // Immediately
                     // Invoked
                     // Function
                     var result = [];
                     for (var i = 0; i < Gx.plugins.length; i++) {
                         var plugin = Gx.plugins[i];
                         if (plugin.impl.menu) {
-                            if (typeof plugin.impl.menu === 'function') {
+                            if (typeof plugin.impl.menu === "function") {
                                 result.push(plugin.impl.menu());
                             } else {
                                 result.push(plugin.impl.menu);
@@ -5963,93 +6903,119 @@
                         }
                     }
                     return result;
-                }())
-            }
+                })(),
+            },
         };
 
         var SAVE_MENU = {
             text: "Save as...",
             menu: {
                 title: "SAVE AS",
-                items: [{
-                    text: "PNG",
-                    handler: function() {
-                        var img = plot._Mx.active_canvas.toDataURL("image/png");
-                        var link = document.createElement("a");
-                        link.href = img;
-                        link.download = "SigPlot." + (new Date()).getTime() + ".png";
-                        link.display = "none";
-                        document.body.appendChild(link);
-                        link.click();
-                        document.body.removeChild(link);
-                    }
-                }, {
-                    text: "JPG",
-                    handler: function() {
-                        var img = plot._Mx.active_canvas.toDataURL("image/jpg");
-                        var link = document.createElement("a");
-                        link.href = img;
-                        link.download = "SigPlot." + (new Date()).getTime() + ".jpg";
-                        link.display = "none";
-                        document.body.appendChild(link);
-                        link.click();
-                        document.body.removeChild(link);
-                    }
-                }, {
-                    text: "SVG",
-                    handler: function() {
-                        var img = plot._Mx.active_canvas.toDataURL("image/svg");
-                        var link = document.createElement("a");
-                        link.href = img;
-                        link.download = "SigPlot." + (new Date()).getTime() + ".svg";
-                        link.display = "none";
-                        document.body.appendChild(link);
-                        link.click();
-                        document.body.removeChild(link);
-                    }
-                }]
-            }
+                items: [
+                    {
+                        text: "PNG",
+                        handler: function () {
+                            var img =
+                                plot._Mx.active_canvas.toDataURL("image/png");
+                            var link = document.createElement("a");
+                            link.href = img;
+                            link.download =
+                                "SigPlot." + new Date().getTime() + ".png";
+                            link.display = "none";
+                            document.body.appendChild(link);
+                            link.click();
+                            document.body.removeChild(link);
+                        },
+                    },
+                    {
+                        text: "JPG",
+                        handler: function () {
+                            var img =
+                                plot._Mx.active_canvas.toDataURL("image/jpg");
+                            var link = document.createElement("a");
+                            link.href = img;
+                            link.download =
+                                "SigPlot." + new Date().getTime() + ".jpg";
+                            link.display = "none";
+                            document.body.appendChild(link);
+                            link.click();
+                            document.body.removeChild(link);
+                        },
+                    },
+                    {
+                        text: "SVG",
+                        handler: function () {
+                            var img =
+                                plot._Mx.active_canvas.toDataURL("image/svg");
+                            var link = document.createElement("a");
+                            link.href = img;
+                            link.download =
+                                "SigPlot." + new Date().getTime() + ".svg";
+                            link.display = "none";
+                            document.body.appendChild(link);
+                            link.click();
+                            document.body.removeChild(link);
+                        },
+                    },
+                ],
+            },
         };
 
         var REFRESH_ITEM = {
-            text: "Refresh"
+            text: "Refresh",
             // no handler, just let the finalizer deal with it
         };
 
         var KEYPRESSINFO_ITEM = {
             text: "Keypress Info",
-            handler: function() {
+            handler: function () {
                 mx.message(Mx, KEYPRESS_HELP);
-            }
+            },
         };
 
         var EXIT_ITEM = {
             text: "Exit",
-            handler: function() {
-                var evt = document.createEvent('Event');
-                evt.initEvent('sigplotexit', true, true);
+            handler: function () {
+                var evt = document.createEvent("Event");
+                evt.initEvent("sigplotexit", true, true);
                 mx.dispatchEvent(Mx, evt);
-            }
+            },
         };
 
         // Main Menu
         var MAINMENU = {
             title: "SIG-PLOT",
-            finalize: function() {
+            finalize: function () {
                 if (!Mx.prompt) {
                     // A prompt may have been
                     // created by a menu handler
                     // - let it deal with
                     // eventListener re-setting
-                    mx.addEventListener(Mx, "mousedown", plot.onmousedown,
-                        false);
+                    mx.addEventListener(
+                        Mx,
+                        "mousedown",
+                        plot.onmousedown,
+                        false
+                    );
                 }
                 plot.refresh();
             },
-            items: [REFRESH_ITEM, CONTROLS_MENU, CXMODE_MENU, SCALING_MENU, VIEW_MENU,
-                GRID_MENU, SETTINGS_MENU, COLORMAP_MENU, TRACES_MENU, FILES_MENU,
-                PLUGINS_MENU, KEYPRESSINFO_ITEM, SAVE_MENU, EXIT_ITEM
-            ]
+            items: [
+                REFRESH_ITEM,
+                CONTROLS_MENU,
+                CXMODE_MENU,
+                SCALING_MENU,
+                VIEW_MENU,
+                GRID_MENU,
+                SETTINGS_MENU,
+                COLORMAP_MENU,
+                TRACES_MENU,
+                FILES_MENU,
+                PLUGINS_MENU,
+                KEYPRESSINFO_ITEM,
+                SAVE_MENU,
+                EXIT_ITEM,
+            ],
         };
 
         mx.menu(Mx, MAINMENU);
@@ -6067,7 +7033,7 @@
 
         var DASHED = {
             text: "Dashed...",
-            handler: function() {
+            handler: function () {
                 // Figure out the current thickness
                 var thk = 1;
                 if (index !== undefined) {
@@ -6089,7 +7055,7 @@
                     plot,
                     "Line thickness:",
                     mx.intValidator,
-                    function(finalValue) {
+                    function (finalValue) {
                         if (index !== undefined) {
                             plot._Gx.lyr[index].line = 3;
                             plot._Gx.lyr[index].thick = -1 * finalValue;
@@ -6101,149 +7067,198 @@
                                 plot._Gx.lyr[ii].symbol = 0;
                             }
                         }
-                    }, thk);
-            }
-
+                    },
+                    thk
+                );
+            },
         };
 
         var COLORS = {
             text: "Colors...",
             menu: {
                 title: "COLORS",
-                items: [{
-                    text: "Retain Current"
-                }, {
-                    text: "Red",
-                    checked: (index !== undefined) ? plot._Gx.lyr[index].color === "red" : undefined,
-                    handler: function() {
-                        if (index !== undefined) {
-                            plot._Gx.lyr[index].color = "red";
-                        } else {
-                            for (var i = 0; i < Gx.lyr.length; i++) {
-                                plot._Gx.lyr[i].color = "red";
-                            }
-                        }
-                    }
-                }, {
-                    text: "Pink",
-                    checked: (index !== undefined) ? plot._Gx.lyr[index].color === "pink" : undefined,
-                    handler: function() {
-                        if (index !== undefined) {
-                            plot._Gx.lyr[index].color = "pink";
-                        } else {
-                            for (var i = 0; i < Gx.lyr.length; i++) {
-                                plot._Gx.lyr[i].color = "pink";
-                            }
-                        }
-                    }
-                }, {
-                    text: "Hot Pink",
-                    checked: (index !== undefined) ? plot._Gx.lyr[index].color === "#ff009e" : undefined,
-                    handler: function() {
-                        if (index !== undefined) {
-                            plot._Gx.lyr[index].color = "#ff009e";
-                        } else {
-                            for (var i = 0; i < Gx.lyr.length; i++) {
-                                plot._Gx.lyr[i].color = "#ff009e";
-                            }
-                        }
-                    }
-                }, {
-                    text: "Orange",
-                    checked: (index !== undefined) ? plot._Gx.lyr[index].color === "orange" : undefined,
-                    handler: function() {
-                        if (index !== undefined) {
-                            plot._Gx.lyr[index].color = "orange";
-                        } else {
-                            for (var i = 0; i < Gx.lyr.length; i++) {
-                                plot._Gx.lyr[i].color = "orange";
-                            }
-                        }
-                    }
-                }, {
-                    text: "Yellow",
-                    checked: (index !== undefined) ? plot._Gx.lyr[index].color === "yellow" : undefined,
-                    handler: function() {
-                        if (index !== undefined) {
-                            plot._Gx.lyr[index].color = "yellow";
-                        } else {
-                            for (var i = 0; i < Gx.lyr.length; i++) {
-                                plot._Gx.lyr[i].color = "yellow";
-                            }
-                        }
-                    }
-                }, {
-                    text: "Lime Green",
-                    checked: (index !== undefined) ? plot._Gx.lyr[index].color === "#80f741" : undefined,
-                    handler: function() {
-                        if (index !== undefined) {
-                            plot._Gx.lyr[index].color = "#80f741";
-                        } else {
-                            for (var i = 0; i < Gx.lyr.length; i++) {
-                                plot._Gx.lyr[i].color = "#80f741";
-                            }
-                        }
-                    }
-                }, {
-                    text: "Green",
-                    checked: (index !== undefined) ? plot._Gx.lyr[index].color === "green" : undefined,
-                    handler: function() {
-                        if (index !== undefined) {
-                            plot._Gx.lyr[index].color = "green";
-                        } else {
-                            for (var i = 0; i < Gx.lyr.length; i++) {
-                                plot._Gx.lyr[i].color = "green";
-                            }
-                        }
-                    }
-                }, {
-                    text: "Blue",
-                    checked: (index !== undefined) ? plot._Gx.lyr[index].color === "blue" : undefined,
-                    handler: function() {
-                        if (index !== undefined) {
-                            plot._Gx.lyr[index].color = "blue";
-                        } else {
-                            for (var i = 0; i < Gx.lyr.length; i++) {
-                                plot._Gx.lyr[i].color = "blue";
-                            }
-                        }
-                    }
-                }, {
-                    text: "Purple",
-                    checked: (index !== undefined) ? plot._Gx.lyr[index].color === "purple" : undefined,
-                    handler: function() {
-                        if (index !== undefined) {
-                            plot._Gx.lyr[index].color = "purple";
-                        } else {
-                            for (var i = 0; i < Gx.lyr.length; i++) {
-                                plot._Gx.lyr[i].color = "purple";
-                            }
-                        }
-                    }
-                }, {
-                    text: "Custom Hexcode",
-                    handler: function() {
-                        setupPrompt(
-                            plot,
-                            "Color code (requires #):",
-                            mx.hexValidator,
-                            function(finalValue) {
-                                if (index !== undefined) {
-                                    plot._Gx.lyr[index].color = finalValue;
-                                } else {
-                                    for (var ii = 0; ii < Gx.lyr.length; ii++) {
-                                        plot._Gx.lyr[ii].color = finalValue;
-                                    }
+                items: [
+                    {
+                        text: "Retain Current",
+                    },
+                    {
+                        text: "Red",
+                        checked:
+                            index !== undefined
+                                ? plot._Gx.lyr[index].color === "red"
+                                : undefined,
+                        handler: function () {
+                            if (index !== undefined) {
+                                plot._Gx.lyr[index].color = "red";
+                            } else {
+                                for (var i = 0; i < Gx.lyr.length; i++) {
+                                    plot._Gx.lyr[i].color = "red";
                                 }
-                            }, undefined, undefined, undefined, undefined);
-                    }
-                }]
-            }
+                            }
+                        },
+                    },
+                    {
+                        text: "Pink",
+                        checked:
+                            index !== undefined
+                                ? plot._Gx.lyr[index].color === "pink"
+                                : undefined,
+                        handler: function () {
+                            if (index !== undefined) {
+                                plot._Gx.lyr[index].color = "pink";
+                            } else {
+                                for (var i = 0; i < Gx.lyr.length; i++) {
+                                    plot._Gx.lyr[i].color = "pink";
+                                }
+                            }
+                        },
+                    },
+                    {
+                        text: "Hot Pink",
+                        checked:
+                            index !== undefined
+                                ? plot._Gx.lyr[index].color === "#ff009e"
+                                : undefined,
+                        handler: function () {
+                            if (index !== undefined) {
+                                plot._Gx.lyr[index].color = "#ff009e";
+                            } else {
+                                for (var i = 0; i < Gx.lyr.length; i++) {
+                                    plot._Gx.lyr[i].color = "#ff009e";
+                                }
+                            }
+                        },
+                    },
+                    {
+                        text: "Orange",
+                        checked:
+                            index !== undefined
+                                ? plot._Gx.lyr[index].color === "orange"
+                                : undefined,
+                        handler: function () {
+                            if (index !== undefined) {
+                                plot._Gx.lyr[index].color = "orange";
+                            } else {
+                                for (var i = 0; i < Gx.lyr.length; i++) {
+                                    plot._Gx.lyr[i].color = "orange";
+                                }
+                            }
+                        },
+                    },
+                    {
+                        text: "Yellow",
+                        checked:
+                            index !== undefined
+                                ? plot._Gx.lyr[index].color === "yellow"
+                                : undefined,
+                        handler: function () {
+                            if (index !== undefined) {
+                                plot._Gx.lyr[index].color = "yellow";
+                            } else {
+                                for (var i = 0; i < Gx.lyr.length; i++) {
+                                    plot._Gx.lyr[i].color = "yellow";
+                                }
+                            }
+                        },
+                    },
+                    {
+                        text: "Lime Green",
+                        checked:
+                            index !== undefined
+                                ? plot._Gx.lyr[index].color === "#80f741"
+                                : undefined,
+                        handler: function () {
+                            if (index !== undefined) {
+                                plot._Gx.lyr[index].color = "#80f741";
+                            } else {
+                                for (var i = 0; i < Gx.lyr.length; i++) {
+                                    plot._Gx.lyr[i].color = "#80f741";
+                                }
+                            }
+                        },
+                    },
+                    {
+                        text: "Green",
+                        checked:
+                            index !== undefined
+                                ? plot._Gx.lyr[index].color === "green"
+                                : undefined,
+                        handler: function () {
+                            if (index !== undefined) {
+                                plot._Gx.lyr[index].color = "green";
+                            } else {
+                                for (var i = 0; i < Gx.lyr.length; i++) {
+                                    plot._Gx.lyr[i].color = "green";
+                                }
+                            }
+                        },
+                    },
+                    {
+                        text: "Blue",
+                        checked:
+                            index !== undefined
+                                ? plot._Gx.lyr[index].color === "blue"
+                                : undefined,
+                        handler: function () {
+                            if (index !== undefined) {
+                                plot._Gx.lyr[index].color = "blue";
+                            } else {
+                                for (var i = 0; i < Gx.lyr.length; i++) {
+                                    plot._Gx.lyr[i].color = "blue";
+                                }
+                            }
+                        },
+                    },
+                    {
+                        text: "Purple",
+                        checked:
+                            index !== undefined
+                                ? plot._Gx.lyr[index].color === "purple"
+                                : undefined,
+                        handler: function () {
+                            if (index !== undefined) {
+                                plot._Gx.lyr[index].color = "purple";
+                            } else {
+                                for (var i = 0; i < Gx.lyr.length; i++) {
+                                    plot._Gx.lyr[i].color = "purple";
+                                }
+                            }
+                        },
+                    },
+                    {
+                        text: "Custom Hexcode",
+                        handler: function () {
+                            setupPrompt(
+                                plot,
+                                "Color code (requires #):",
+                                mx.hexValidator,
+                                function (finalValue) {
+                                    if (index !== undefined) {
+                                        plot._Gx.lyr[index].color = finalValue;
+                                    } else {
+                                        for (
+                                            var ii = 0;
+                                            ii < Gx.lyr.length;
+                                            ii++
+                                        ) {
+                                            plot._Gx.lyr[ii].color = finalValue;
+                                        }
+                                    }
+                                },
+                                undefined,
+                                undefined,
+                                undefined,
+                                undefined
+                            );
+                        },
+                    },
+                ],
+            },
         };
 
         var SOLID = {
             text: "Solid...",
-            handler: function() {
+            handler: function () {
                 // Figure out the current thickness
                 var thk = 1;
                 if (index !== undefined) {
@@ -6266,7 +7281,7 @@
                     plot,
                     "Line thickness:",
                     mx.intValidator,
-                    function(finalValue) {
+                    function (finalValue) {
                         if (index !== undefined) {
                             plot._Gx.lyr[index].line = 3;
                             plot._Gx.lyr[index].thick = finalValue;
@@ -6279,15 +7294,18 @@
                                 plot._Gx.lyr[i].symbol = 0;
                             }
                         }
-                    }, thk);
-            }
+                    },
+                    thk
+                );
+            },
         };
 
         var TOGGLE = {
             text: "Toggle",
-            style: (index !== undefined) ? "checkbox" : undefined,
-            checked: (index !== undefined) ? plot._Gx.lyr[index].display : undefined,
-            handler: function() {
+            style: index !== undefined ? "checkbox" : undefined,
+            checked:
+                index !== undefined ? plot._Gx.lyr[index].display : undefined,
+            handler: function () {
                 if (index !== undefined) {
                     plot._Gx.lyr[index].display = !plot._Gx.lyr[index].display;
                 } else {
@@ -6295,192 +7313,244 @@
                         plot._Gx.lyr[i].display = !plot._Gx.lyr[i].display;
                     }
                 }
-            }
+            },
         };
 
         var SYMBOLS = {
             text: "Symbols...",
             menu: {
                 title: "SYMBOLS",
-                items: [{
-                    text: "Retain Current"
-                }, {
-                    text: "None",
-                    checked: (index !== undefined) ? plot._Gx.lyr[index].symbol === 0 : undefined,
-                    handler: function() {
-                        if (index !== undefined) {
-                            plot._Gx.lyr[index].radius = 0;
-                            plot._Gx.lyr[index].symbol = 0;
-                        } else {
-                            for (var i = 0; i < Gx.lyr.length; i++) {
-                                plot._Gx.lyr[i].radius = 0;
-                                plot._Gx.lyr[i].symbol = 0;
+                items: [
+                    {
+                        text: "Retain Current",
+                    },
+                    {
+                        text: "None",
+                        checked:
+                            index !== undefined
+                                ? plot._Gx.lyr[index].symbol === 0
+                                : undefined,
+                        handler: function () {
+                            if (index !== undefined) {
+                                plot._Gx.lyr[index].radius = 0;
+                                plot._Gx.lyr[index].symbol = 0;
+                            } else {
+                                for (var i = 0; i < Gx.lyr.length; i++) {
+                                    plot._Gx.lyr[i].radius = 0;
+                                    plot._Gx.lyr[i].symbol = 0;
+                                }
                             }
-                        }
-                    }
-                }, {
-                    text: "Pixels",
-                    checked: (index !== undefined) ? plot._Gx.lyr[index].symbol === 1 : undefined,
-                    handler: function() {
-                        if (index !== undefined) {
-                            plot._Gx.lyr[index].radius = 1;
-                            plot._Gx.lyr[index].symbol = 1;
-                        } else {
-                            for (var i = 0; i < Gx.lyr.length; i++) {
-                                plot._Gx.lyr[i].radius = 1;
-                                plot._Gx.lyr[i].symbol = 1;
+                        },
+                    },
+                    {
+                        text: "Pixels",
+                        checked:
+                            index !== undefined
+                                ? plot._Gx.lyr[index].symbol === 1
+                                : undefined,
+                        handler: function () {
+                            if (index !== undefined) {
+                                plot._Gx.lyr[index].radius = 1;
+                                plot._Gx.lyr[index].symbol = 1;
+                            } else {
+                                for (var i = 0; i < Gx.lyr.length; i++) {
+                                    plot._Gx.lyr[i].radius = 1;
+                                    plot._Gx.lyr[i].symbol = 1;
+                                }
                             }
-                        }
-                    }
-                }, {
-                    text: "Circles",
-                    checked: (index !== undefined) ? plot._Gx.lyr[index].symbol === 2 : undefined,
-                    handler: function() {
-                        if (index !== undefined) {
-                            plot._Gx.lyr[index].radius = 4;
-                            plot._Gx.lyr[index].symbol = 2;
-                        } else {
-                            for (var i = 0; i < Gx.lyr.length; i++) {
-                                plot._Gx.lyr[i].radius = 4;
-                                plot._Gx.lyr[i].symbol = 2;
+                        },
+                    },
+                    {
+                        text: "Circles",
+                        checked:
+                            index !== undefined
+                                ? plot._Gx.lyr[index].symbol === 2
+                                : undefined,
+                        handler: function () {
+                            if (index !== undefined) {
+                                plot._Gx.lyr[index].radius = 4;
+                                plot._Gx.lyr[index].symbol = 2;
+                            } else {
+                                for (var i = 0; i < Gx.lyr.length; i++) {
+                                    plot._Gx.lyr[i].radius = 4;
+                                    plot._Gx.lyr[i].symbol = 2;
+                                }
                             }
-                        }
-                    }
-                }, {
-                    text: "Squares",
-                    checked: (index !== undefined) ? plot._Gx.lyr[index].symbol === 3 : undefined,
-                    handler: function() {
-                        if (index !== undefined) {
-                            plot._Gx.lyr[index].radius = 4;
-                            plot._Gx.lyr[index].symbol = 3;
-                        } else {
-                            for (var i = 0; i < Gx.lyr.length; i++) {
-                                plot._Gx.lyr[i].radius = 4;
-                                plot._Gx.lyr[i].symbol = 3;
+                        },
+                    },
+                    {
+                        text: "Squares",
+                        checked:
+                            index !== undefined
+                                ? plot._Gx.lyr[index].symbol === 3
+                                : undefined,
+                        handler: function () {
+                            if (index !== undefined) {
+                                plot._Gx.lyr[index].radius = 4;
+                                plot._Gx.lyr[index].symbol = 3;
+                            } else {
+                                for (var i = 0; i < Gx.lyr.length; i++) {
+                                    plot._Gx.lyr[i].radius = 4;
+                                    plot._Gx.lyr[i].symbol = 3;
+                                }
                             }
-                        }
-                    }
-                }, {
-                    text: "Plusses",
-                    checked: (index !== undefined) ? plot._Gx.lyr[index].symbol === 4 : undefined,
-                    handler: function() {
-                        if (index !== undefined) {
-                            plot._Gx.lyr[index].radius = 4;
-                            plot._Gx.lyr[index].symbol = 4;
-                        } else {
-                            for (var i = 0; i < Gx.lyr.length; i++) {
-                                plot._Gx.lyr[i].radius = 4;
-                                plot._Gx.lyr[i].symbol = 4;
+                        },
+                    },
+                    {
+                        text: "Plusses",
+                        checked:
+                            index !== undefined
+                                ? plot._Gx.lyr[index].symbol === 4
+                                : undefined,
+                        handler: function () {
+                            if (index !== undefined) {
+                                plot._Gx.lyr[index].radius = 4;
+                                plot._Gx.lyr[index].symbol = 4;
+                            } else {
+                                for (var i = 0; i < Gx.lyr.length; i++) {
+                                    plot._Gx.lyr[i].radius = 4;
+                                    plot._Gx.lyr[i].symbol = 4;
+                                }
                             }
-                        }
-                    }
-                }, {
-                    text: "X's",
-                    checked: (index !== undefined) ? plot._Gx.lyr[index].symbol === 5 : undefined,
-                    handler: function() {
-                        if (index !== undefined) {
-                            plot._Gx.lyr[index].radius = 4;
-                            plot._Gx.lyr[index].symbol = 5;
-                        } else {
-                            for (var i = 0; i < Gx.lyr.length; i++) {
-                                plot._Gx.lyr[i].radius = 4;
-                                plot._Gx.lyr[i].symbol = 5;
+                        },
+                    },
+                    {
+                        text: "X's",
+                        checked:
+                            index !== undefined
+                                ? plot._Gx.lyr[index].symbol === 5
+                                : undefined,
+                        handler: function () {
+                            if (index !== undefined) {
+                                plot._Gx.lyr[index].radius = 4;
+                                plot._Gx.lyr[index].symbol = 5;
+                            } else {
+                                for (var i = 0; i < Gx.lyr.length; i++) {
+                                    plot._Gx.lyr[i].radius = 4;
+                                    plot._Gx.lyr[i].symbol = 5;
+                                }
                             }
-                        }
-                    }
-                }, {
-                    text: "Triangles",
-                    checked: (index !== undefined) ? plot._Gx.lyr[index].symbol === 6 : undefined,
-                    handler: function() {
-                        if (index !== undefined) {
-                            plot._Gx.lyr[index].radius = 6;
-                            plot._Gx.lyr[index].symbol = 6;
-                        } else {
-                            for (var i = 0; i < Gx.lyr.length; i++) {
-                                plot._Gx.lyr[i].radius = 6;
-                                plot._Gx.lyr[i].symbol = 6;
+                        },
+                    },
+                    {
+                        text: "Triangles",
+                        checked:
+                            index !== undefined
+                                ? plot._Gx.lyr[index].symbol === 6
+                                : undefined,
+                        handler: function () {
+                            if (index !== undefined) {
+                                plot._Gx.lyr[index].radius = 6;
+                                plot._Gx.lyr[index].symbol = 6;
+                            } else {
+                                for (var i = 0; i < Gx.lyr.length; i++) {
+                                    plot._Gx.lyr[i].radius = 6;
+                                    plot._Gx.lyr[i].symbol = 6;
+                                }
                             }
-                        }
-                    }
-                }, {
-                    text: "Downward Triangles",
-                    checked: (index !== undefined) ? plot._Gx.lyr[index].symbol === 7 : undefined,
-                    handler: function() {
-                        if (index !== undefined) {
-                            plot._Gx.lyr[index].radius = 6;
-                            plot._Gx.lyr[index].symbol = 7;
-                        } else {
-                            for (var i = 0; i < Gx.lyr.length; i++) {
-                                plot._Gx.lyr[i].radius = 6;
-                                plot._Gx.lyr[i].symbol = 7;
+                        },
+                    },
+                    {
+                        text: "Downward Triangles",
+                        checked:
+                            index !== undefined
+                                ? plot._Gx.lyr[index].symbol === 7
+                                : undefined,
+                        handler: function () {
+                            if (index !== undefined) {
+                                plot._Gx.lyr[index].radius = 6;
+                                plot._Gx.lyr[index].symbol = 7;
+                            } else {
+                                for (var i = 0; i < Gx.lyr.length; i++) {
+                                    plot._Gx.lyr[i].radius = 6;
+                                    plot._Gx.lyr[i].symbol = 7;
+                                }
                             }
-                        }
-                    }
-                }]
-            }
+                        },
+                    },
+                ],
+            },
         };
 
         var LINE_TYPE = {
             text: "Line Type...",
             menu: {
                 title: "LINE TYPE",
-                items: [{
-                    text: "Retain Current"
-                }, {
-                    text: "None",
-                    checked: (index !== undefined) ? plot._Gx.lyr[index].line === 0 : undefined,
-                    handler: function() {
-                        if (index !== undefined) {
-                            plot._Gx.lyr[index].line = 0;
-                        } else {
-                            for (var i = 0; i < Gx.lyr.length; i++) {
-                                plot._Gx.lyr[i].line = 0;
+                items: [
+                    {
+                        text: "Retain Current",
+                    },
+                    {
+                        text: "None",
+                        checked:
+                            index !== undefined
+                                ? plot._Gx.lyr[index].line === 0
+                                : undefined,
+                        handler: function () {
+                            if (index !== undefined) {
+                                plot._Gx.lyr[index].line = 0;
+                            } else {
+                                for (var i = 0; i < Gx.lyr.length; i++) {
+                                    plot._Gx.lyr[i].line = 0;
+                                }
                             }
-                        }
-                    }
-                }, {
-                    text: "Verticals",
-                    checked: (index !== undefined) ? plot._Gx.lyr[index].line === 1 : undefined,
-                    handler: function() {
-                        if (index !== undefined) {
-                            plot._Gx.lyr[index].line = 1;
-                        } else {
-                            for (var i = 0; i < Gx.lyr.length; i++) {
-                                plot._Gx.lyr[i].line = 1;
+                        },
+                    },
+                    {
+                        text: "Verticals",
+                        checked:
+                            index !== undefined
+                                ? plot._Gx.lyr[index].line === 1
+                                : undefined,
+                        handler: function () {
+                            if (index !== undefined) {
+                                plot._Gx.lyr[index].line = 1;
+                            } else {
+                                for (var i = 0; i < Gx.lyr.length; i++) {
+                                    plot._Gx.lyr[i].line = 1;
+                                }
                             }
-                        }
-                    }
-                }, {
-                    text: "Horizontals",
-                    checked: (index !== undefined) ? plot._Gx.lyr[index].line === 2 : undefined,
-                    handler: function() {
-                        if (index !== undefined) {
-                            plot._Gx.lyr[index].line = 2;
-                        } else {
-                            for (var i = 0; i < Gx.lyr.length; i++) {
-                                plot._Gx.lyr[i].line = 2;
+                        },
+                    },
+                    {
+                        text: "Horizontals",
+                        checked:
+                            index !== undefined
+                                ? plot._Gx.lyr[index].line === 2
+                                : undefined,
+                        handler: function () {
+                            if (index !== undefined) {
+                                plot._Gx.lyr[index].line = 2;
+                            } else {
+                                for (var i = 0; i < Gx.lyr.length; i++) {
+                                    plot._Gx.lyr[i].line = 2;
+                                }
                             }
-                        }
-                    }
-                }, {
-                    text: "Connecting",
-                    checked: (index !== undefined) ? plot._Gx.lyr[index].line === 3 : undefined,
-                    handler: function() {
-                        if (index !== undefined) {
-                            plot._Gx.lyr[index].line = 3;
-                        } else {
-                            for (var i = 0; i < Gx.lyr.length; i++) {
-                                plot._Gx.lyr[i].line = 3;
+                        },
+                    },
+                    {
+                        text: "Connecting",
+                        checked:
+                            index !== undefined
+                                ? plot._Gx.lyr[index].line === 3
+                                : undefined,
+                        handler: function () {
+                            if (index !== undefined) {
+                                plot._Gx.lyr[index].line = 3;
+                            } else {
+                                for (var i = 0; i < Gx.lyr.length; i++) {
+                                    plot._Gx.lyr[i].line = 3;
+                                }
                             }
-                        }
-                    }
-                }]
-            }
+                        },
+                    },
+                ],
+            },
         };
 
         var THICKNESS = {
             text: "Thickness...",
-            handler: function() {
+            handler: function () {
                 var thickness = 1;
                 if (index !== undefined) {
                     thickness = plot._Gx.lyr[index].thick;
@@ -6489,7 +7559,7 @@
                     plot,
                     "Thickness",
                     mx.intValidator,
-                    function(finalValue) {
+                    function (finalValue) {
                         if (finalValue === "") {
                             finalValue = 1;
                         }
@@ -6502,14 +7572,18 @@
                                 plot._Gx.lyr[i].thick = finalValue;
                             }
                         }
-                    }, thickness, undefined,
-                    undefined, undefined);
-            }
+                    },
+                    thickness,
+                    undefined,
+                    undefined,
+                    undefined
+                );
+            },
         };
 
         var OPACITY = {
             text: "Opacity...",
-            handler: function() {
+            handler: function () {
                 var opacity = 1.0;
                 if (index !== undefined) {
                     opacity = plot._Gx.lyr[index].opacity;
@@ -6518,7 +7592,7 @@
                     plot,
                     "Opacity:",
                     mx.floatValidator,
-                    function(finalValue) {
+                    function (finalValue) {
                         if (finalValue === "") {
                             finalValue = 1.0;
                         }
@@ -6532,37 +7606,53 @@
                                 plot._Gx.lyr[i].opacity = finalValue;
                             }
                         }
-                    }, opacity, undefined,
-                    undefined, undefined);
-            }
+                    },
+                    opacity,
+                    undefined,
+                    undefined,
+                    undefined
+                );
+            },
         };
 
         var LEGEND_TRACE = {
             title: Gx.lyr[index].name,
-            finalize: function() {
+            finalize: function () {
                 if (!Mx.prompt) {
                     // A prompt may have been
                     // created by a menu handler
                     // - let it deal with
                     // eventListener re-setting
-                    mx.addEventListener(Mx, "mousedown", plot.onmousedown,
-                        false);
+                    mx.addEventListener(
+                        Mx,
+                        "mousedown",
+                        plot.onmousedown,
+                        false
+                    );
                 }
                 plot.refresh();
             },
-            items: [DASHED, COLORS, SOLID, TOGGLE, SYMBOLS, LINE_TYPE, THICKNESS, OPACITY]
+            items: [
+                DASHED,
+                COLORS,
+                SOLID,
+                TOGGLE,
+                SYMBOLS,
+                LINE_TYPE,
+                THICKNESS,
+                OPACITY,
+            ],
         };
 
         mx.menu(Mx, LEGEND_TRACE);
     }
-
 
     /**
      * @memberOf sigplot
      * @private
      */
     function rubberbox_cb(plot, triggerEvent) {
-        return function(event, xo, yo, xl, yl, action, mode) {
+        return function (event, xo, yo, xl, yl, action, mode) {
             var Gx = plot._Gx;
             var Mx = plot._Mx;
 
@@ -6578,11 +7668,11 @@
                 // don't make insanely small zooms...instead treat them as a
                 // click
                 if (mode === "horizontal") {
-                    takeAction = (w > 2);
+                    takeAction = w > 2;
                 } else if (mode === "vertical") {
-                    takeAction = (h > 2);
+                    takeAction = h > 2;
                 } else {
-                    takeAction = ((w > 2) && (h > 2));
+                    takeAction = w > 2 && h > 2;
                 }
             }
 
@@ -6592,12 +7682,12 @@
                 plot.mouseup(event);
             } else {
                 // action === null is disabled, but undefined is default
-                if ((action === undefined) || (action === "zoom")) {
+                if (action === undefined || action === "zoom") {
                     plot.pixel_zoom(xo, yo, xl, yl);
                     plot.refresh();
                 } else if (action === "select") {
-                    var evt = document.createEvent('Event');
-                    evt.initEvent('mtag', true, true);
+                    var evt = document.createEvent("Event");
+                    evt.initEvent("mtag", true, true);
                     evt.originalEvent = event;
                     var re = pixel_to_real(plot, x, y);
                     var rwh = pixel_to_real(plot, x + w, y + h);
@@ -6641,8 +7731,8 @@
         // Equivalent to reading cmd line args
         Gx.xmin = o.xmin === undefined ? 0.0 : o.xmin;
         Gx.xmax = o.xmax === undefined ? 0.0 : o.xmax;
-        var havexmin = (o.xmin !== undefined);
-        var havexmax = (o.xmax !== undefined);
+        var havexmin = o.xmin !== undefined;
+        var havexmax = o.xmax !== undefined;
         var address;
         if (typeof o.cmode === "number") {
             switch (o.cmode) {
@@ -6678,12 +7768,12 @@
         Gx.ylabel = o.ylabel;
         Gx.ymin = o.ymin === undefined ? 0.0 : o.ymin;
         Gx.ymax = o.ymax === undefined ? 0.0 : o.ymax;
-        var haveymin = (o.ymin !== undefined);
-        var haveymax = (o.ymax !== undefined);
+        var haveymin = o.ymin !== undefined;
+        var haveymax = o.ymax !== undefined;
         Gx.zmin = o.zmin;
         Gx.zmax = o.zmax;
-        var havezmin = (o.zmin !== undefined);
-        var havezmax = (o.zmax !== undefined);
+        var havezmin = o.zmin !== undefined;
+        var havezmax = o.zmax !== undefined;
 
         if (o.colors !== undefined) {
             mx.setbgfg(Mx, o.colors.bg, o.colors.fg, Mx.xi);
@@ -6708,10 +7798,10 @@
         Gx.segment = o.segment === undefined ? false : o.segment;
         Gx.plab = 24;
 
-        var phunits = (o.phunits === undefined) ? 'D' : o.phunits;
-        if (phunits[0] === 'R') {
+        var phunits = o.phunits === undefined ? "D" : o.phunits;
+        if (phunits[0] === "R") {
             Gx.plab = 23;
-        } else if (phunits[0] === 'C') {
+        } else if (phunits[0] === "C") {
             Gx.plab = 25;
         }
         Gx.xdiv = o.xdiv === undefined ? 5 : o.xdiv;
@@ -6737,12 +7827,12 @@
         // Gx.xf.msgmask = max (0, M$GET_SWITCH ('MASK'))
 
         Gx.index = o.index === undefined ? false : o.index;
-        var imode = (Gx.index || (address.slice(0, 2) === "IN"));
+        var imode = Gx.index || address.slice(0, 2) === "IN";
         if (imode) {
-            if (havexmin && (Gx.xmin === 1.0)) {
+            if (havexmin && Gx.xmin === 1.0) {
                 havexmin = false;
             }
-            if (havexmax && (Gx.xmin === 1.0)) {
+            if (havexmax && Gx.xmin === 1.0) {
                 havexmax = false;
             }
         }
@@ -6752,7 +7842,7 @@
         Gx.hold = 0;
         Gx.always_show_marker = o.always_show_marker || false;
 
-        m.vstype('D');
+        m.vstype("D");
 
         if (!o.inputs) {
             basefile(plot, false);
@@ -6762,41 +7852,86 @@
 
         var cmode = address;
 
-        if ((Gx.lyr.length > 0) && (Gx.lyr[0].cx)) {
+        if (Gx.lyr.length > 0 && Gx.lyr[0].cx) {
             Gx.cmode = 1;
         } else {
             Gx.cmode = 3;
         }
 
-        if ((cmode === "MA") || (cmode === "INMA") || (cmode === "ABMA") ||
-            (cmode === "__MA") || (cmode === "MAGNITUDE")) {
+        if (
+            cmode === "MA" ||
+            cmode === "INMA" ||
+            cmode === "ABMA" ||
+            cmode === "__MA" ||
+            cmode === "MAGNITUDE"
+        ) {
             Gx.cmode = 1;
         }
-        if ((cmode === "PH") || (cmode === "INPH") || (cmode === "ABPH") ||
-            (cmode === "__PH") || (cmode === "PHASE")) {
+        if (
+            cmode === "PH" ||
+            cmode === "INPH" ||
+            cmode === "ABPH" ||
+            cmode === "__PH" ||
+            cmode === "PHASE"
+        ) {
             Gx.cmode = 2;
         }
-        if ((cmode === "RE") || (cmode === "INRE") || (cmode === "ABRE") ||
-            (cmode === "__RE") || (cmode === "REAL")) {
+        if (
+            cmode === "RE" ||
+            cmode === "INRE" ||
+            cmode === "ABRE" ||
+            cmode === "__RE" ||
+            cmode === "REAL"
+        ) {
             Gx.cmode = 3;
         }
-        if ((cmode === "IM") || (cmode === "INIM") || (cmode === "ABIM") ||
-            (cmode === "__IM") || (cmode === "IMAGINARY")) {
+        if (
+            cmode === "IM" ||
+            cmode === "INIM" ||
+            cmode === "ABIM" ||
+            cmode === "__IM" ||
+            cmode === "IMAGINARY"
+        ) {
             Gx.cmode = 4;
         }
-        if ((cmode === "LO") || (cmode === "D1") || (cmode === "INLO") || (cmode === "IND1") ||
-            (cmode === "ABIM") || (cmode === "ABD1") || (cmode === "__LO") ||
-            (cmode === "__D1") || (cmode === "10*LOG10")) {
+        if (
+            cmode === "LO" ||
+            cmode === "D1" ||
+            cmode === "INLO" ||
+            cmode === "IND1" ||
+            cmode === "ABIM" ||
+            cmode === "ABD1" ||
+            cmode === "__LO" ||
+            cmode === "__D1" ||
+            cmode === "10*LOG10"
+        ) {
             Gx.cmode = 6;
         }
-        if ((cmode === "L2") || (cmode === "D2") || (cmode === "INL2") || (cmode === "IND2") ||
-            (cmode === "ABLO") || (cmode === "ABD2") || (cmode === "__L2") ||
-            (cmode === "__D2") || (cmode === "20*LOG10")) {
+        if (
+            cmode === "L2" ||
+            cmode === "D2" ||
+            cmode === "INL2" ||
+            cmode === "IND2" ||
+            cmode === "ABLO" ||
+            cmode === "ABD2" ||
+            cmode === "__L2" ||
+            cmode === "__D2" ||
+            cmode === "20*LOG10"
+        ) {
             Gx.cmode = 7;
         }
-        if ((cmode === "RI") || (cmode === "IR") || (cmode === "INRI") || (cmode === "INIR") ||
-            (cmode === "ABRI") || (cmode === "ABIR") || (cmode === "__RI") ||
-            (cmode === "__IR") || (cmode === "IMAG/REAL") || (cmode === "REAL/IMAG")) {
+        if (
+            cmode === "RI" ||
+            cmode === "IR" ||
+            cmode === "INRI" ||
+            cmode === "INIR" ||
+            cmode === "ABRI" ||
+            cmode === "ABIR" ||
+            cmode === "__RI" ||
+            cmode === "__IR" ||
+            cmode === "IMAG/REAL" ||
+            cmode === "REAL/IMAG"
+        ) {
             if (Gx.index) {
                 m.log.error("Imag/Real mode not permitted in INDEX mode");
             } else {
@@ -6807,7 +7942,7 @@
         Gx.basemode = Gx.cmode;
 
         plot.change_settings({
-            cmode: Gx.cmode
+            cmode: Gx.cmode,
         });
 
         // if ( (Gx.forcelab) .and. (Gx.xlab .le. 0) .and.
@@ -6823,8 +7958,8 @@
             if (Gx.cmode === 7) {
                 dbscale = 20.0;
             }
-            if ((cmode[0] === "L") || (cmode[0] === "1") || (cmode[0] === "2")) {
-                if ((Gx.lyr.length > 0) && (Gx.lyr[0].cx)) {
+            if (cmode[0] === "L" || cmode[0] === "1" || cmode[0] === "2") {
+                if (Gx.lyr.length > 0 && Gx.lyr[0].cx) {
                     Gx.ymin = Math.max(Gx.ymin, 1e-10);
                     Gx.ymax = Math.max(Gx.ymax, 1e-10);
                 } else {
@@ -6833,7 +7968,7 @@
                 }
                 Gx.ymin = m.log10(Gx.ymin) * dbscale;
                 Gx.ymax = m.log10(Gx.ymax) * dbscale;
-            } else if ((Gx.lyr.length > 0) && (Gx.lyr[0].cx)) {
+            } else if (Gx.lyr.length > 0 && Gx.lyr[0].cx) {
                 Gx.ymin = Math.max(-18.0 * dbscale, Gx.ymin);
                 Gx.ymax = Math.max(-18.0 * dbscale, Gx.ymax);
                 Gx.dbmin = 1e-37;
@@ -6947,9 +8082,16 @@
             Gx.xmax = undefined;
         }
 
-        scale_base(plot, {
-            get_data: true
-        }, Gx.xmin, Gx.xmax, Gx.xlab, Gx.ylab);
+        scale_base(
+            plot,
+            {
+                get_data: true,
+            },
+            Gx.xmin,
+            Gx.xmax,
+            Gx.xlab,
+            Gx.ylab
+        );
 
         if (!havexmin) {
             Gx.xmin = Mx.stk[0].xmin;
@@ -6987,8 +8129,8 @@
         Gx.panxpad = o.panxpad;
         Gx.panypad = o.panypad;
 
-        var xran = (Gx.panxmax - Gx.panxmin);
-        var yran = (Gx.panymax - Gx.panymin);
+        var xran = Gx.panxmax - Gx.panxmin;
+        var yran = Gx.panymax - Gx.panymin;
 
         Gx.panxmin -= m.pad(xran, Gx.panxpad);
         Gx.panxmax += m.pad(xran, Gx.panxpad);
@@ -7036,10 +8178,18 @@
             Gx.cntrls = o.xcnt === undefined ? 1 : o.xcnt;
         }
 
-        Gx.default_rubberbox_mode = o.rubberbox_mode === undefined ? "box" : o.rubberbox_mode;
-        Gx.default_rubberbox_action = o.rubberbox_action === undefined ? "zoom" : o.rubberbox_action;
-        Gx.default_rightclick_rubberbox_mode = o.rightclick_rubberbox_mode === undefined ? "box" : o.rightclick_rubberbox_mode;
-        Gx.default_rightclick_rubberbox_action = o.rightclick_rubberbox_action === undefined ? null : o.rightclick_rubberbox_action;
+        Gx.default_rubberbox_mode =
+            o.rubberbox_mode === undefined ? "box" : o.rubberbox_mode;
+        Gx.default_rubberbox_action =
+            o.rubberbox_action === undefined ? "zoom" : o.rubberbox_action;
+        Gx.default_rightclick_rubberbox_mode =
+            o.rightclick_rubberbox_mode === undefined
+                ? "box"
+                : o.rightclick_rubberbox_mode;
+        Gx.default_rightclick_rubberbox_action =
+            o.rightclick_rubberbox_action === undefined
+                ? null
+                : o.rightclick_rubberbox_action;
 
         Gx.cross = o.cross === undefined ? false : o.cross;
         Gx.grid = o.nogrid === undefined ? true : !o.nogrid;
@@ -7049,7 +8199,8 @@
         Gx.wheelZoom = o.wheelZoom;
         Gx.wheelZoomPercent = o.wheelZoomPercent;
         Gx.legend = o.legend === undefined ? false : o.legend;
-        Gx.no_legend_button = o.no_legend_button === undefined ? false : o.no_legend_button;
+        Gx.no_legend_button =
+            o.no_legend_button === undefined ? false : o.no_legend_button;
         Gx.legendBtnLocation = null;
         Gx.pan = o.nopan === undefined ? true : !o.nopan;
         Gx.nomenu = o.nomenu === undefined ? false : o.nomenu;
@@ -7058,7 +8209,7 @@
         Gx.modmode = 0;
         Gx.modlayer = -1; // 0-based indexing instead of 1
         Gx.modsource = 0;
-        Gx.modified = (o.mod && Gx.lyr.length > 0);
+        Gx.modified = o.mod && Gx.lyr.length > 0;
         // TODO Gx.marks(5) = 5
         Gx.nmark = 0;
         Gx.iabsc = 0;
@@ -7068,7 +8219,10 @@
         // TODO if (o.specs > 0) Gx.iabsc = M$SEARCH('IRS',c(1:1))
         Gx.specs = !o.nospecs;
 
-        Gx.scroll_time_interval = o.scroll_time_interval === undefined ? Gx.scroll_time_interval : o.scroll_time_interval;
+        Gx.scroll_time_interval =
+            o.scroll_time_interval === undefined
+                ? Gx.scroll_time_interval
+                : o.scroll_time_interval;
 
         Gx.autohide_readout = o.autohide_readout;
         Gx.autohide_panbars = o.autohide_panbars;
@@ -7093,19 +8247,29 @@
         Gx.ymrk = 0.0;
 
         if (!o.nodragdrop) {
-            mx.addEventListener(Mx, "dragover", function(evt) {
-                evt.preventDefault();
-            }, false);
+            mx.addEventListener(
+                Mx,
+                "dragover",
+                function (evt) {
+                    evt.preventDefault();
+                },
+                false
+            );
 
-            mx.addEventListener(Mx, "drop", (function(plot) {
-                return function(evt) {
-                    var files = evt.dataTransfer.files;
-                    if (files.length > 0) {
-                        evt.preventDefault();
-                        plot.load_files(files);
-                    }
-                };
-            }(plot)), false);
+            mx.addEventListener(
+                Mx,
+                "drop",
+                (function (plot) {
+                    return function (evt) {
+                        var files = evt.dataTransfer.files;
+                        if (files.length > 0) {
+                            evt.preventDefault();
+                            plot.load_files(files);
+                        }
+                    };
+                })(plot),
+                false
+            );
         }
 
         Gx.initialized = true;
@@ -7167,15 +8331,19 @@
         var Mx = plot._Mx;
         var Gx = plot._Gx;
         if (mode > 0) {
-            if ((mode >= 4) && (Gx.show_readout) && (!Gx.hide_note)) {
+            if (mode >= 4 && Gx.show_readout && !Gx.hide_note) {
                 var ln = Gx.note.length;
-                mx.text(Mx, Mx.width - Gx.lbtn - (ln + 1) * Mx.text_w,
-                    Mx.text_h, Gx.note);
+                mx.text(
+                    Mx,
+                    Mx.width - Gx.lbtn - (ln + 1) * Mx.text_w,
+                    Mx.text_h,
+                    Gx.note
+                );
             }
             if (mode >= 4) {
                 draw_panbars(plot);
             }
-            if ((mode >= 1) && (Gx.legend)) {
+            if (mode >= 1 && Gx.legend) {
                 draw_legend(plot);
             }
         }
@@ -7212,7 +8380,9 @@
                     if (canvas.height !== plot._Mx.canvas.height) {
                         canvas.height = plot._Mx.canvas.height;
                     }
-                    canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height);
+                    canvas
+                        .getContext("2d")
+                        .clearRect(0, 0, canvas.width, canvas.height);
                     Gx.plugins[plugin_index].impl.refresh(canvas);
                     ctx.drawImage(canvas, 0, 0);
                 }
@@ -7235,7 +8405,7 @@
             x: xc + 2,
             y: yc + 2,
             width: xs - 5,
-            height: ys - 5
+            height: ys - 5,
         }; // default legend size
 
         return legendPos;
@@ -7276,7 +8446,8 @@
         var defLabelWidth = 98; // a magic number - default width of pixels
         var maxLabelWidth = 0;
         var labelOffset = 0;
-        for (n = 0; n < Gx.lyr.length; n++) { // figure out maximum label
+        for (n = 0; n < Gx.lyr.length; n++) {
+            // figure out maximum label
             // length
             var labelLength = ctx.measureText(Gx.lyr[n].name).width;
             if (labelLength > maxLabelWidth) {
@@ -7284,18 +8455,26 @@
             }
         }
         if (maxLabelWidth > defLabelWidth) {
-            labelOffset = (maxLabelWidth - defLabelWidth);
+            labelOffset = maxLabelWidth - defLabelWidth;
             legendPos.width += labelOffset;
             legendPos.x -= labelOffset;
         }
 
         ctx.strokeStyle = Mx.fg; // Mx.xwfg swapped in for FGColor
         ctx.fillStyle = Mx.bg;
-        ctx.fillRect(legendPos.x, legendPos.y, legendPos.width,
-            legendPos.height); // Creating a filled box instead of using
+        ctx.fillRect(
+            legendPos.x,
+            legendPos.y,
+            legendPos.width,
+            legendPos.height
+        ); // Creating a filled box instead of using
         // clear_area
-        ctx.strokeRect(legendPos.x, legendPos.y, legendPos.width,
-            legendPos.height);
+        ctx.strokeRect(
+            legendPos.x,
+            legendPos.y,
+            legendPos.width,
+            legendPos.height
+        );
 
         for (n = 0; n < Gx.lyr.length; n++) {
             ix = Math.floor(xc + 4 * tw);
@@ -7303,7 +8482,12 @@
             // account for 0-based
             // indexing
             if (n === Gx.modlayer) {
-                mx.text(Mx, xc + tw - labelOffset, iy + Math.floor(Mx.text_w / 2), '**'); // Added text_w/2
+                mx.text(
+                    Mx,
+                    xc + tw - labelOffset,
+                    iy + Math.floor(Mx.text_w / 2),
+                    "**"
+                ); // Added text_w/2
                 // offset
             }
             if (Gx.lyr[n].display) {
@@ -7313,18 +8497,37 @@
                 if (Gx.lyr[n] instanceof Layer1D) {
                     ic = Gx.lyr[n].color;
                     if (Gx.lyr[n].line > 0) {
-                        thk = m.sign(Math.min(tw, Math.abs(Gx.lyr[n].thick)),
-                            Gx.lyr[n].thick);
+                        thk = m.sign(
+                            Math.min(tw, Math.abs(Gx.lyr[n].thick)),
+                            Gx.lyr[n].thick
+                        );
                         // added magic -3 offset to y coordinates to center lines
                         // with text
                         if (thk < 0 || thk === mx.L_dashed) {
-                            mx.draw_line(Mx, ic, ix - labelOffset, iy - 3, (ix + tw * 2) - labelOffset, iy - 3, Math.abs(thk), {
-                                mode: "dashed",
-                                on: 4,
-                                off: 4
-                            });
+                            mx.draw_line(
+                                Mx,
+                                ic,
+                                ix - labelOffset,
+                                iy - 3,
+                                ix + tw * 2 - labelOffset,
+                                iy - 3,
+                                Math.abs(thk),
+                                {
+                                    mode: "dashed",
+                                    on: 4,
+                                    off: 4,
+                                }
+                            );
                         } else {
-                            mx.draw_line(Mx, ic, ix - labelOffset, iy - 3, (ix + tw * 2) - labelOffset, iy - 3, Math.abs(thk));
+                            mx.draw_line(
+                                Mx,
+                                ic,
+                                ix - labelOffset,
+                                iy - 3,
+                                ix + tw * 2 - labelOffset,
+                                iy - 3,
+                                Math.abs(thk)
+                            );
                         }
                     }
                     if (Gx.lyr[n].symbol > 0) {
@@ -7336,21 +8539,31 @@
                             thk = Math.min(Gx.lyr[n].radius, m.trunc(0.6 * tw));
                         }
 
-                        mx.draw_symbol(Mx, ic, ix + tw - labelOffset, iy - 3,
-                            Gx.lyr[n].symbol, thk);
+                        mx.draw_symbol(
+                            Mx,
+                            ic,
+                            ix + tw - labelOffset,
+                            iy - 3,
+                            Gx.lyr[n].symbol,
+                            thk
+                        );
                     }
                 } else if (Gx.lyr[n] instanceof Layer2D) {
                     //draw colorbar for 2D layers.  The bar needs to leave space for the modlayer
                     // icon which occupies the first text-width
-                    mx.legend_colorbar(Mx, xc + (2 * tw) - labelOffset, iy - (Mx.text_h / 2),
-                        (tw * 4), (Mx.text_h / 2));
+                    mx.legend_colorbar(
+                        Mx,
+                        xc + 2 * tw - labelOffset,
+                        iy - Mx.text_h / 2,
+                        tw * 4,
+                        Mx.text_h / 2
+                    );
                 }
             }
             ix = ix + tw * 3;
             iy = iy + Mx.text_h * 0.3;
             mx.text(Mx, ix - labelOffset, iy, Gx.lyr[n].name);
         }
-
     }
 
     /**
@@ -7383,7 +8596,7 @@
         var Mx = plot._Mx;
         var Gx = plot._Gx;
 
-        if ((Gx.zmin === undefined) || (Gx.zmax === undefined)) {
+        if (Gx.zmin === undefined || Gx.zmax === undefined) {
             return;
         }
 
@@ -7393,9 +8606,18 @@
         Gx.x_box_x = Math.floor(Mx.l - 2) + 0.5;
         Gx.x_box_y = Math.floor(Mx.b + 25) + 0.5;
         Gx.x_box_w = Math.floor(plot_width + 4);
-        Gx.x_box_h = Math.floor((5 * Mx.text_h) + 20);
+        Gx.x_box_h = Math.floor(5 * Mx.text_h + 20);
 
-        mx.draw_box(Mx, Mx.fg, Gx.x_box_x, Gx.x_box_y, Gx.x_box_w, Gx.x_box_h, 1, Mx.bg);
+        mx.draw_box(
+            Mx,
+            Mx.fg,
+            Gx.x_box_x,
+            Gx.x_box_y,
+            Gx.x_box_w,
+            Gx.x_box_h,
+            1,
+            Mx.bg
+        );
 
         var ctx = Mx.active_canvas.getContext("2d");
         ctx.beginPath();
@@ -7415,11 +8637,11 @@
             var xpx = Math.round(ii * xrt);
 
             var xnew = plot._Gx.x_box_x + xpx;
-            var ynew = (plot._Gx.x_box_y + plot._Gx.x_box_h - zpx);
+            var ynew = plot._Gx.x_box_y + plot._Gx.x_box_h - zpx;
 
             if (ii === 0) {
                 ctx.moveTo(xnew, ynew);
-            } else if ((xnew !== x) || (ynew !== y)) {
+            } else if (xnew !== x || ynew !== y) {
                 // only draw the line if we are moving to a new point
                 ctx.lineTo(xnew, ynew);
                 x = xnew;
@@ -7433,7 +8655,7 @@
         var Mx = plot._Mx;
         var Gx = plot._Gx;
 
-        if ((Gx.zmin === undefined) || (Gx.zmax === undefined)) {
+        if (Gx.zmin === undefined || Gx.zmax === undefined) {
             return;
         }
 
@@ -7443,15 +8665,25 @@
         // one-pixel lines need to be draw on half-pixel boundaries
         Gx.y_box_x = Math.floor(Mx.r + 25) + 0.5;
         Gx.y_box_y = Math.floor(Mx.t - 2) + 0.5;
-        Gx.y_box_w = Math.floor((5 * Mx.text_w) + 20);
+        Gx.y_box_w = Math.floor(5 * Mx.text_w + 20);
         Gx.y_box_h = Math.floor(plot_height + 2);
 
-        if (Gx.lg_colorbar) { //move over box if large colorbar displayed
+        if (Gx.lg_colorbar) {
+            //move over box if large colorbar displayed
             Gx.y_box_x += 100;
         }
 
         //draw y-cut box
-        mx.draw_box(Mx, Mx.fg, Gx.y_box_x, Gx.y_box_y, Gx.y_box_w, Gx.y_box_h, 1, Mx.bg);
+        mx.draw_box(
+            Mx,
+            Mx.fg,
+            Gx.y_box_x,
+            Gx.y_box_y,
+            Gx.y_box_w,
+            Gx.y_box_h,
+            1,
+            Mx.bg
+        );
 
         var ctx = Mx.active_canvas.getContext("2d");
         ctx.beginPath();
@@ -7470,12 +8702,12 @@
             var yrt = plot._Gx.y_box_h / plot._Gx.y_cut_data.length;
             var ypx = Math.round(ii * yrt);
 
-            var xnew = (plot._Gx.y_box_x + zpx);
+            var xnew = plot._Gx.y_box_x + zpx;
             var ynew = plot._Gx.y_box_y + ypx;
 
             if (ii === 0) {
                 ctx.moveTo(xnew, ynew);
-            } else if ((xnew !== x) || (ynew !== y)) {
+            } else if (xnew !== x || ynew !== y) {
                 // only draw the line if we are moving to a new point
                 ctx.lineTo(xnew, ynew);
                 x = xnew;
@@ -7498,16 +8730,20 @@
         }
 
         // if we are allowing auto-scaling on y
-        if ((Gx.autol > 1) && (Gx.panymin !== undefined) && (Gx.panymax !== undefined)) {
-            var fac = 1.0 / (Math.max(Gx.autol, 1));
+        if (
+            Gx.autol > 1 &&
+            Gx.panymin !== undefined &&
+            Gx.panymax !== undefined
+        ) {
+            var fac = 1.0 / Math.max(Gx.autol, 1);
 
             Gx.panymin = Gx.panymin * fac + Mx.stk[0].ymin * (1.0 - fac);
             Gx.panymax = Gx.panymax * fac + Mx.stk[0].ymax * (1.0 - fac);
 
-            if (((Gx.autoy & 1) !== 0)) {
+            if ((Gx.autoy & 1) !== 0) {
                 Mx.stk[0].ymin = Gx.panymin;
             }
-            if (((Gx.autoy & 2) !== 0)) {
+            if ((Gx.autoy & 2) !== 0) {
                 Mx.stk[0].ymax = Gx.panymax;
             }
         }
@@ -7529,7 +8765,7 @@
         var Mx = plot._Mx;
         var Gx = plot._Gx;
 
-        if ((!layer.display) || (Gx.hold !== 0)) {
+        if (!layer.display || Gx.hold !== 0) {
             return;
         }
 
@@ -7540,8 +8776,8 @@
 
         // TODO consider if this is a source of performance
         // issues on streaming plots
-        var evt = document.createEvent('Event');
-        evt.initEvent('lyrdraw', true, true);
+        var evt = document.createEvent("Event");
+        evt.initEvent("lyrdraw", true, true);
         evt.index = layer.index;
         evt.name = layer.name; // the name of the layer
         evt.layer = layer;
@@ -7559,8 +8795,8 @@
         //if (n < Gx.modsource) Gx.modsource = Gx.modsource - 1;
 
         // Notify listeners that a layer is about to be deleted
-        var evt = document.createEvent('Event');
-        evt.initEvent('lyrdel', true, true);
+        var evt = document.createEvent("Event");
+        evt.initEvent("lyrdel", true, true);
         evt.index = n;
         evt.name = Gx.lyr[n].name; // the name of the layer
         evt.layer = Gx.lyr[n];
@@ -7605,20 +8841,28 @@
 
         if (Gx.p_cuts) {
             if (!Gx.lyr[0].hcb.pipe) {
-                if (((Mx.xpos >= Mx.l) && (Mx.xpos <= Mx.r) && (Gx.p_cuts_xpos !== Mx.xpos))) {
+                if (
+                    Mx.xpos >= Mx.l &&
+                    Mx.xpos <= Mx.r &&
+                    Gx.p_cuts_xpos !== Mx.xpos
+                ) {
                     var line = 0;
                     var i = 0;
 
                     //fill data for y_cut for this mouse xpos
                     Gx.y_cut_data = [];
                     line = Math.floor((width * (Mx.xpos - Mx.l)) / plot_width);
-                    for (i = line; i < (width * height); i += width) {
+                    for (i = line; i < width * height; i += width) {
                         Gx.y_cut_data.push(Gx.lyr[0].zbuf[i]);
                     }
                     draw_pcut_y(plot);
                     Gx.p_cuts_xpos = Mx.xpos;
                 }
-                if (((Mx.ypos >= Mx.t) && (Mx.ypos <= Mx.b) && (Gx.p_cuts_ypos !== Mx.ypos))) {
+                if (
+                    Mx.ypos >= Mx.t &&
+                    Mx.ypos <= Mx.b &&
+                    Gx.p_cuts_ypos !== Mx.ypos
+                ) {
                     var row = 0;
                     var start = 0;
                     var finish = 0;
@@ -7634,20 +8878,20 @@
                     Gx.p_cuts_ypos = Mx.ypos;
                 }
             } else {
-                if ((Mx.xpos >= Mx.l) && (Mx.xpos <= Mx.r)) {
+                if (Mx.xpos >= Mx.l && Mx.xpos <= Mx.r) {
                     var line = 0;
                     var i = 0;
                     height = Gx.lyr[0].lps;
                     //fill data for y_cut for this mouse xpos
                     Gx.y_cut_data = [];
                     line = Math.floor((width * (Mx.xpos - Mx.l)) / plot_width);
-                    for (i = line; i < (width * height); i += width) {
+                    for (i = line; i < width * height; i += width) {
                         Gx.y_cut_data.push(Gx.lyr[0].zbuf[i]);
                     }
                     draw_pcut_y(plot);
                 }
 
-                if ((Mx.ypos >= Mx.t) && (Mx.ypos <= Mx.b)) {
+                if (Mx.ypos >= Mx.t && Mx.ypos <= Mx.b) {
                     var row = 0;
                     var start = 0;
                     var finish = 0;
@@ -7672,19 +8916,39 @@
         var Mx = plot._Mx;
 
         if (Gx.cross) {
-            if ((Gx.cross === "vertical") || (Gx.cross === true)) {
-                if ((Mx.xpos >= Mx.l) && (Mx.xpos <= Mx.r) && (Gx.cross_xpos !== Mx.xpos)) {
+            if (Gx.cross === "vertical" || Gx.cross === true) {
+                if (
+                    Mx.xpos >= Mx.l &&
+                    Mx.xpos <= Mx.r &&
+                    Gx.cross_xpos !== Mx.xpos
+                ) {
                     if (Gx.cross_xpos !== undefined) {
-                        mx.rubberline(Mx, Gx.cross_xpos, Mx.t, Gx.cross_xpos, Mx.b);
+                        mx.rubberline(
+                            Mx,
+                            Gx.cross_xpos,
+                            Mx.t,
+                            Gx.cross_xpos,
+                            Mx.b
+                        );
                     }
                     mx.rubberline(Mx, Mx.xpos, Mx.t, Mx.xpos, Mx.b);
                     Gx.cross_xpos = Mx.xpos;
                 }
             }
-            if ((Gx.cross === "horizontal") || (Gx.cross === true)) {
-                if ((Mx.ypos >= Mx.t) && (Mx.ypos <= Mx.b) && (Gx.cross_ypos !== Mx.ypos)) {
+            if (Gx.cross === "horizontal" || Gx.cross === true) {
+                if (
+                    Mx.ypos >= Mx.t &&
+                    Mx.ypos <= Mx.b &&
+                    Gx.cross_ypos !== Mx.ypos
+                ) {
                     if (Gx.cross_ypos !== undefined) {
-                        mx.rubberline(Mx, Mx.l, Gx.cross_ypos, Mx.r, Gx.cross_ypos);
+                        mx.rubberline(
+                            Mx,
+                            Mx.l,
+                            Gx.cross_ypos,
+                            Mx.r,
+                            Gx.cross_ypos
+                        );
                     }
 
                     mx.rubberline(Mx, Mx.l, Mx.ypos, Mx.r, Mx.ypos);
@@ -7704,11 +8968,11 @@
 
         if (Gx.xmrk !== null && Gx.ymrk !== null) {
             var pix = mx.real_to_pixel(Mx, Gx.xmrk, Gx.ymrk);
-            if ((Gx.lyr.length > 0) && (Gx.lyr[0].hcb["class"] === 1)) {
+            if (Gx.lyr.length > 0 && Gx.lyr[0].hcb["class"] === 1) {
                 if (pix.clipped) {
                     return;
                 }
-            } else if ((Gx.lyr.length > 0) && (Gx.lyr[0].hcb["class"] === 2)) {
+            } else if (Gx.lyr.length > 0 && Gx.lyr[0].hcb["class"] === 2) {
                 if (pix.clipped_x || !pix.clipped_y) {
                     return;
                 }
@@ -7741,12 +9005,12 @@
         var Gx = plot._Gx;
         var Mx = plot._Mx;
         var newplab = Gx.plab;
-        if (newphunits === 'R') {
+        if (newphunits === "R") {
             newplab = 23;
-        } else if (newphunits === 'D') {
+        } else if (newphunits === "D") {
             newplab = 24;
         }
-        if (newphunits === 'C') {
+        if (newphunits === "C") {
             newplab = 25;
         }
         if (newplab !== Gx.plab) {
@@ -7807,7 +9071,7 @@
             Gx.autox = 3;
             Gx.autoy = 3;
 
-            if ((newmode === 5) || (oldmode === 5)) {
+            if (newmode === 5 || oldmode === 5) {
                 Gx.panxmin = 1.0;
                 Gx.panxmax = -1.0;
                 Gx.panymin = 1.0;
@@ -7819,26 +9083,35 @@
                     Mx.stk[0].xmax = Gx.xmax;
                     Mx.stk[0].ymin = Gx.ymin;
                     Mx.stk[0].ymax = Gx.ymax;
-                } else if ((newmode === 5) || (Gx.basemode === 5)) {
+                } else if (newmode === 5 || Gx.basemode === 5) {
                     scale_base(plot, {
-                        get_data: true
+                        get_data: true,
                     });
                 } else {
                     Mx.stk[0].xmin = Gx.xmin;
                     Mx.stk[0].xmax = Gx.xmax;
-                    scale_base(plot, {
-                        get_data: true
-                    }, Gx.xmin, Gx.xmax);
+                    scale_base(
+                        plot,
+                        {
+                            get_data: true,
+                        },
+                        Gx.xmin,
+                        Gx.xmax
+                    );
                 }
             } else {
-                if ((_.size(Gx.HCB_UUID) === 0) && (newmode === Gx.basemode)) {
+                if (_.size(Gx.HCB_UUID) === 0 && newmode === Gx.basemode) {
                     Gx.panymin = 1.0;
                     Gx.panymax = -1.0;
                     Mx.stk[0].ymin = Gx.ymin;
                     Mx.stk[0].ymax = Gx.ymax;
                 } else {
-                    scale_base(plot, {}, Mx.stk[Mx.level].xmin,
-                        Mx.stk[Mx.level].xmax);
+                    scale_base(
+                        plot,
+                        {},
+                        Mx.stk[Mx.level].xmin,
+                        Mx.stk[Mx.level].xmax
+                    );
                 }
                 for (var n = 1; n <= Mx.level; n++) {
                     Mx.stk[n].ymin = Mx.stk[0].ymin;
@@ -7863,7 +9136,7 @@
         var Mx = plot._Mx;
         var Gx = plot._Gx;
 
-        if ((!Gx.pan) || (Mx.widget)) {
+        if (!Gx.pan || Mx.widget) {
             return;
         }
 
@@ -7871,37 +9144,69 @@
 
         var out = {
             ps: Mx.stk[k].ymin,
-            pe: Mx.stk[k].ymax
+            pe: Mx.stk[k].ymax,
         };
-        var need_y_scrollbar = ((out.ps !== Gx.panymin) || (out.pe !== Gx.panymax));
-        need_y_scrollbar = need_y_scrollbar && (Mx.level > 0);
+        var need_y_scrollbar = out.ps !== Gx.panymin || out.pe !== Gx.panymax;
+        need_y_scrollbar = need_y_scrollbar && Mx.level > 0;
 
-        if (Gx.autohide_panbars && (!need_y_scrollbar || !plot.mouseOnCanvas) && !Gx.panning) {
+        if (
+            Gx.autohide_panbars &&
+            (!need_y_scrollbar || !plot.mouseOnCanvas) &&
+            !Gx.panning
+        ) {
             var ctx = Mx.canvas.getContext("2d");
             ctx.fillStyle = Mx.bg;
             ctx.fillRect(Gx.pyl, Mx.t, Gx.pyl + Gx.pthk, Mx.b - Mx.t);
         } else {
-            var i1 = mx.scrollbar(Mx, 0, Gx.pyl, Gx.pyl + Gx.pthk, Mx.t, Mx.b, out,
-                Gx.panymin, Gx.panymax, undefined, Mx.scrollbar_y);
+            var i1 = mx.scrollbar(
+                Mx,
+                0,
+                Gx.pyl,
+                Gx.pyl + Gx.pthk,
+                Mx.t,
+                Mx.b,
+                out,
+                Gx.panymin,
+                Gx.panymax,
+                undefined,
+                Mx.scrollbar_y
+            );
             Mx.stk[k].ymin = out.ps;
             Mx.stk[k].ymax = out.pe;
         }
 
-        if (Gx.pl < Mx.width) { // X scrollbar
+        if (Gx.pl < Mx.width) {
+            // X scrollbar
             out = {
                 ps: Mx.stk[k].xmin,
-                pe: Mx.stk[k].xmax
+                pe: Mx.stk[k].xmax,
             };
-            var need_x_scrollbar = ((out.ps !== Gx.panxmin) || (out.pe !== Gx.panxmax));
-            need_x_scrollbar = need_x_scrollbar && (!Gx.all || (Mx.level > 0));
+            var need_x_scrollbar =
+                out.ps !== Gx.panxmin || out.pe !== Gx.panxmax;
+            need_x_scrollbar = need_x_scrollbar && (!Gx.all || Mx.level > 0);
 
-            if (Gx.autohide_panbars && (!need_x_scrollbar || !plot.mouseOnCanvas) && !Gx.panning) {
+            if (
+                Gx.autohide_panbars &&
+                (!need_x_scrollbar || !plot.mouseOnCanvas) &&
+                !Gx.panning
+            ) {
                 var ctx = Mx.canvas.getContext("2d");
                 ctx.fillStyle = Mx.bg;
                 ctx.fillRect(Gx.pl, Gx.pt - 1, Gx.pr - Gx.pl, Gx.pthk + 4);
             } else {
-                var i1 = mx.scrollbar(Mx, 0, Gx.pl, Gx.pr, Gx.pt, Gx.pt + Gx.pthk, out,
-                    Gx.panxmin, Gx.panxmax, undefined, Mx.scrollbar_x);
+                var i1 = mx.scrollbar(
+                    Mx,
+                    0,
+                    Gx.pl,
+                    Gx.pr,
+                    Gx.pt,
+                    Gx.pt + Gx.pthk,
+                    out,
+                    Gx.panxmin,
+                    Gx.panxmax,
+                    undefined,
+                    Mx.scrollbar_x
+                );
                 Mx.stk[k].xmin = out.ps;
                 Mx.stk[k].xmax = out.pe;
             }
@@ -7953,34 +9258,50 @@
         }
 
         warn = true;
-        if (action.substring(0, 1) === 'Y') {
+        if (action.substring(0, 1) === "Y") {
             ymin = Mx.stk[k].ymin;
             ymax = Mx.stk[k].ymax;
             yran = ymax - ymin;
-            if (action === 'YPAN') {
+            if (action === "YPAN") {
                 scrollbarState = Mx.scrollbar_y;
 
                 var out = {
                     ps: ymin,
-                    pe: ymax
+                    pe: ymax,
                 };
-                i = mx
-                    .scrollbar(Mx, sby, Gx.pyl, Gx.pyl + Gx.pthk, Mx.t,
-                        Mx.b, out, Gx.panymin, Gx.panymax, mouseEvent,
-                        scrollbarState);
+                i = mx.scrollbar(
+                    Mx,
+                    sby,
+                    Gx.pyl,
+                    Gx.pyl + Gx.pthk,
+                    Mx.t,
+                    Mx.b,
+                    out,
+                    Gx.panymin,
+                    Gx.panymax,
+                    mouseEvent,
+                    scrollbarState
+                );
                 ymin = out.ps;
                 ymax = out.pe;
                 // TODO: Warn only if Scrollbar arrow is pressed and no
                 // movement.
                 if (sby.action !== 0) {
-                    j = mx.scroll(Mx, sby, mx.XW_UPDATE, undefined,
-                        scrollbarState);
+                    j = mx.scroll(
+                        Mx,
+                        sby,
+                        mx.XW_UPDATE,
+                        undefined,
+                        scrollbarState
+                    );
                 }
                 warn = false;
-            } else if (action === 'YCENTER') {
+            } else if (action === "YCENTER") {
                 // Orig code : ymin = ymin - yran * (Mx.ypos - (Mx.t + Mx.b) /
                 // 2) / (Mx.b - Mx.t) // TODO Worry about any int division here?
-                ymin = ymin - yran * (Mx.ypos - (Mx.t + Mx.b) / 2) / (Mx.b - Mx.t);
+                ymin =
+                    ymin -
+                    (yran * (Mx.ypos - (Mx.t + Mx.b) / 2)) / (Mx.b - Mx.t);
                 ymax = ymin + yran;
                 warn = false;
             }
@@ -7994,8 +9315,8 @@
                 }
 
                 plot.inPan = true; // prevent recursive pans
-                var evt = document.createEvent('Event');
-                evt.initEvent('ypan', true, true);
+                var evt = document.createEvent("Event");
+                evt.initEvent("ypan", true, true);
                 evt.level = Mx.level;
                 evt.xmin = Mx.stk[Mx.level].xmin;
                 evt.ymin = Mx.stk[Mx.level].ymin;
@@ -8017,30 +9338,47 @@
             xmin = Mx.stk[k].xmin;
             xmax = Mx.stk[k].xmax;
             xran = xmax - xmin;
-            if (action === 'XPAN') {
+            if (action === "XPAN") {
                 scrollbarState = Mx.scrollbar_x;
 
                 var out = {
                     ps: xmin,
-                    pe: xmax
+                    pe: xmax,
                 };
-                i = mx
-                    .scrollbar(Mx, sbx, Gx.pl, Gx.pr, Gx.pt, Gx.pt + Gx.pthk, out, Gx.panxmin, Gx.panxmax,
-                        mouseEvent, scrollbarState);
+                i = mx.scrollbar(
+                    Mx,
+                    sbx,
+                    Gx.pl,
+                    Gx.pr,
+                    Gx.pt,
+                    Gx.pt + Gx.pthk,
+                    out,
+                    Gx.panxmin,
+                    Gx.panxmax,
+                    mouseEvent,
+                    scrollbarState
+                );
                 xmin = out.ps;
                 xmax = out.pe;
                 // TODO: Warn only if Scrollbox arrow is pressed and no
                 // movement.
                 if (sbx.action !== 0) {
-                    j = mx.scroll(Mx, sbx, mx.XW_UPDATE, undefined,
-                        scrollbarState);
+                    j = mx.scroll(
+                        Mx,
+                        sbx,
+                        mx.XW_UPDATE,
+                        undefined,
+                        scrollbarState
+                    );
                 }
                 warn = false;
-            } else if (action === 'XCENTER') {
+            } else if (action === "XCENTER") {
                 // Original code : xmin = xmin + xran * (Mx.xpos - (Mx.l + Gx.r)
                 // / 2) / (Mx.r - Mx.l) // TODO Worry about any int division
                 // here?
-                xmin = xmin + xran * (Mx.xpos - (Mx.l + Mx.r) / 2) / (Mx.r - Mx.l);
+                xmin =
+                    xmin +
+                    (xran * (Mx.xpos - (Mx.l + Mx.r) / 2)) / (Mx.r - Mx.l);
                 if (xmin !== Mx.stk[k].xmin) {
                     xmax = xmin + xran;
                 }
@@ -8056,8 +9394,8 @@
                 }
 
                 plot.inPan = true; // prevent recursive pans
-                var evt = document.createEvent('Event');
-                evt.initEvent('xpan', true, true);
+                var evt = document.createEvent("Event");
+                evt.initEvent("xpan", true, true);
                 evt.level = Mx.level;
                 evt.xmin = Mx.stk[Mx.level].xmin;
                 evt.ymin = Mx.stk[Mx.level].ymin;
@@ -8125,8 +9463,8 @@
 
         // ----- MX.SCROLLBAR Logic -----
         var rangeOut = {
-            "min": min,
-            "max": max
+            min: min,
+            max: max,
         };
         drag_updateRange(Mx, Gx, scrollbar, scrollAction, rangeOut, event);
         min = rangeOut.min;
@@ -8138,15 +9476,19 @@
         mx.redrawScrollbar(scrollbar, Mx, undefined);
 
         // ----- Update the viewbox -----
-        updateViewbox(plot, scrollbar.smin, scrollbar.smin + scrollbar.srange,
-            scrollAction.slice(0, 1));
+        updateViewbox(
+            plot,
+            scrollbar.smin,
+            scrollbar.smin + scrollbar.srange,
+            scrollAction.slice(0, 1)
+        );
 
         plot.inPan = true; // prevent recursive pans
-        var evt = document.createEvent('Event');
+        var evt = document.createEvent("Event");
         if (scrollAction === "XPAN") {
-            evt.initEvent('xpan', true, true);
+            evt.initEvent("xpan", true, true);
         } else if (scrollAction === "YPAN") {
-            evt.initEvent('ypan', true, true);
+            evt.initEvent("ypan", true, true);
         }
         evt.level = Mx.level;
         evt.xmin = Mx.stk[Mx.level].xmin;
@@ -8185,17 +9527,20 @@
 
         if (scrollAction === "YPAN") {
             var scaleFactor = Mx.scrollbar_y.trange / Mx.scrollbar_y.h;
-            if (scrollbar.origin === 4) { // inverted y
+            if (scrollbar.origin === 4) {
+                // inverted y
                 scaleFactor *= -1;
             }
             var mouseOffset = event.screenY - Gx.panning.ypos;
             var realOffset = mouseOffset * scaleFactor;
 
-            if ((Gx.panning.ymin - realOffset) < Gx.panymin) { // At the left
+            if (Gx.panning.ymin - realOffset < Gx.panymin) {
+                // At the left
                 // edge
                 range.max = Gx.panymin + (range.max - range.min);
                 range.min = Gx.panymin;
-            } else if ((Gx.panning.ymax - realOffset) > Gx.panymax) { // At
+            } else if (Gx.panning.ymax - realOffset > Gx.panymax) {
+                // At
                 // the
                 // right
                 // edge
@@ -8207,17 +9552,20 @@
             }
         } else if (scrollAction === "XPAN") {
             var scaleFactor = Mx.scrollbar_x.trange / Mx.scrollbar_x.w;
-            if (scrollbar.origin === 3) { // inverted x
+            if (scrollbar.origin === 3) {
+                // inverted x
                 scaleFactor *= -1;
             }
             var mouseOffset = event.screenX - Gx.panning.xpos;
             var realOffset = mouseOffset * scaleFactor;
 
-            if ((Gx.panning.xmin + realOffset) < Gx.panxmin) { // At the left
+            if (Gx.panning.xmin + realOffset < Gx.panxmin) {
+                // At the left
                 // edge
                 range.max = Gx.panxmin + (range.max - range.min);
                 range.min = Gx.panxmin;
-            } else if ((Gx.panning.xmax + realOffset) > Gx.panxmax) { // At
+            } else if (Gx.panning.xmax + realOffset > Gx.panxmax) {
+                // At
                 // the
                 // right
                 // edge
@@ -8234,8 +9582,16 @@
      * @memberOf sigplot
      * @private
      */
-    function setupPrompt(plot, promptText, isValid, onSuccess, inputValue,
-        xpos, ypos, callback) {
+    function setupPrompt(
+        plot,
+        promptText,
+        isValid,
+        onSuccess,
+        inputValue,
+        xpos,
+        ypos,
+        callback
+    ) {
         var Mx = plot._Mx;
 
         if (Mx.prompt) {
@@ -8249,8 +9605,8 @@
         plot.disable_listeners();
 
         // Add on to the onSuccess method with plot specifics
-        var realOnSuccess = function(plot, onSuccess) {
-            return function(value) {
+        var realOnSuccess = function (plot, onSuccess) {
+            return function (value) {
                 onSuccess(value);
 
                 // Re-enable Mx keypress/mouse listeners
@@ -8267,7 +9623,8 @@
             };
         };
 
-        var refresh = function() { // TODO Refactor this setup method to be
+        var refresh = function () {
+            // TODO Refactor this setup method to be
             // more like mx.menu/main menu widget?
             plot.refresh();
         };
@@ -8276,8 +9633,17 @@
         var errorMessageTimeout = 5000;
 
         try {
-            mx.prompt(Mx, promptText, isValid, realOnSuccess(plot, onSuccess),
-                refresh, inputValue, xpos, ypos, errorMessageTimeout);
+            mx.prompt(
+                Mx,
+                promptText,
+                isValid,
+                realOnSuccess(plot, onSuccess),
+                refresh,
+                inputValue,
+                xpos,
+                ypos,
+                errorMessageTimeout
+            );
         } catch (err) {
             console.log("ERROR: Failed to set up prompt due to: " + err);
         }
@@ -8294,7 +9660,11 @@
         document.addEventListener("mouseup", plot.docMouseUp, false);
         mx.addEventListener(Mx, "mouseup", plot.mouseup, false);
         window.addEventListener("mousedown", plot.dragMouseDownHandler, false);
-        window.addEventListener("mousemove", plot.throttledDragOnMouseMove, false);
+        window.addEventListener(
+            "mousemove",
+            plot.throttledDragOnMouseMove,
+            false
+        );
         window.addEventListener("mouseup", plot.dragMouseUpHandler, false);
         window.addEventListener("wheel", plot.wheelHandler, false);
         window.addEventListener("mousewheel", plot.wheelHandler, false);
@@ -8310,14 +9680,24 @@
         var Mx = plot._Mx;
 
         mx.removeEventListener(Mx, "mousedown", plot.onmousedown, false);
-        mx.removeEventListener(Mx, "mousemove", plot.throttledOnMouseMove,
-            false);
+        mx.removeEventListener(
+            Mx,
+            "mousemove",
+            plot.throttledOnMouseMove,
+            false
+        );
         document.removeEventListener("mouseup", plot.docMouseUp, false);
         mx.removeEventListener(Mx, "mouseup", plot.mouseup, false);
-        window.removeEventListener("mousedown", plot.dragMouseDownHandler,
-            false);
-        window.removeEventListener("mousemove", plot.throttledDragOnMouseMove,
-            false);
+        window.removeEventListener(
+            "mousedown",
+            plot.dragMouseDownHandler,
+            false
+        );
+        window.removeEventListener(
+            "mousemove",
+            plot.throttledDragOnMouseMove,
+            false
+        );
         window.removeEventListener("mouseup", plot.dragMouseUpHandler, false);
         window.removeEventListener("wheel", plot.wheelHandler, false);
         window.removeEventListener("mousewheel", plot.wheelHandler, false);
@@ -8360,16 +9740,18 @@
             Gx.drety = Gx.rety - Gx.ymrk;
         }
 
-        if ((Gx.cmode === 5) && (Gx.iabsc === 1)) {
+        if (Gx.cmode === 5 && Gx.iabsc === 1) {
             Gx.iabsc = 2;
         } // R/I mode
-        if (Gx.iabsc === 1) { // index
+        if (Gx.iabsc === 1) {
+            // index
             Gx.aretx = Math.round((Gx.aretx - Gx.xstart) / Gx.xdelta);
             if (!Gx.index) {
                 Gx.aretx += 1;
             }
             Gx.dretx = Math.round(Gx.dretx / Gx.xdelta);
-        } else if (Gx.iabsc === 2) { // 1/absc
+        } else if (Gx.iabsc === 2) {
+            // 1/absc
             if (Gx.aretx !== 0.0) {
                 Gx.aretx = 1.0 / Gx.aretx;
             }
@@ -8384,7 +9766,7 @@
             }
         }
 
-        if ((!Gx.show_readout) || (Mx.widget)) {
+        if (!Gx.show_readout || Mx.widget) {
             return;
         }
 
@@ -8406,28 +9788,53 @@
 
         var xval, yval, xdelta, ydelta;
         // TODO handle xfmt/yfmt using m.d2a_form equivalent
-        if ((Gx.iabsc === 0) && (Gx.ylab === 4)) {
-            yval = (m.sec2tspec(Gx.arety) + "                ").substring(0, 16);
-            ydelta = (m.sec2tspec(Gx.drety, "delta") + "                ").substring(0, 16);
+        if (Gx.iabsc === 0 && Gx.ylab === 4) {
+            yval = (m.sec2tspec(Gx.arety) + "                ").substring(
+                0,
+                16
+            );
+            ydelta = (
+                m.sec2tspec(Gx.drety, "delta") + "                "
+            ).substring(0, 16);
         } else {
             yval = mx.format_g(Gx.arety, 16, 9, true);
             ydelta = mx.format_g(Gx.drety, 16, 9);
         }
-        if ((Gx.iabsc === 0) && (Gx.xlab === 4)) {
-            xval = (m.sec2tspec(Gx.aretx) + "                ").substring(0, 16);
-            xdelta = (m.sec2tspec(Gx.dretx, "delta") + "                ").substring(0, 16);
+        if (Gx.iabsc === 0 && Gx.xlab === 4) {
+            xval = (m.sec2tspec(Gx.aretx) + "                ").substring(
+                0,
+                16
+            );
+            xdelta = (
+                m.sec2tspec(Gx.dretx, "delta") + "                "
+            ).substring(0, 16);
         } else {
             xval = mx.format_g(Gx.aretx, 16, 9, true);
             xdelta = mx.format_g(Gx.dretx, 16, 9);
         }
 
-        var chara = "y: " + yval + " dy: " + ydelta + " L=" + Mx.level + " " + cxm[Gx.cmode - 1];
+        var chara =
+            "y: " +
+            yval +
+            " dy: " +
+            ydelta +
+            " L=" +
+            Mx.level +
+            " " +
+            cxm[Gx.cmode - 1];
         var charb = "x: " + xval + " dx: " + xdelta + " " + cam[Gx.iabsc];
         if (Gx.iabsc === 3) {
             if (Gx.dretx === 0.0) {
-                chara = chara.substr(0, 20) + "sl: Inf             " + chara.substr(40, chara.length);
+                chara =
+                    chara.substr(0, 20) +
+                    "sl: Inf             " +
+                    chara.substr(40, chara.length);
             } else {
-                chara = chara.substr(0, 20) + "sl: " + mx.format_g(Gx.drety / Gx.dretx, 16, 9) + chara.substr(40, chara.length);
+                chara =
+                    chara.substr(0, 20) +
+                    "sl: " +
+                    mx.format_g(Gx.drety / Gx.dretx, 16, 9) +
+                    chara.substr(40, chara.length);
             }
         }
 
@@ -8440,9 +9847,9 @@
             // display controls indicator
             if (k < Mx.width) {
                 if (Gx.cntrls > 0) {
-                    mx.text(Mx, k, iy, 'C');
+                    mx.text(Mx, k, iy, "C");
                 } else {
-                    mx.text(Mx, k, iy, ' ');
+                    mx.text(Mx, k, iy, " ");
                 }
             }
         }
@@ -8450,8 +9857,8 @@
         // If one of the layers is 2D we can draw a color-bar.
         // Note that if two Layer2D are drawn it is possible to
         // use a different color bar for each.
-        var needsColorBar = Gx.lyr.some(function(lyr) {
-            return (lyr instanceof Layer2D);
+        var needsColorBar = Gx.lyr.some(function (lyr) {
+            return lyr instanceof Layer2D;
         });
 
         if (needsColorBar) {
@@ -8480,14 +9887,17 @@
                 var colorbar_height = h;
                 var button_width = colorbar_width - 2;
                 var button_height = button_width / 2;
-                var button_x = colorbar_x + ((colorbar_width - button_width) / 2);
+                var button_x = colorbar_x + (colorbar_width - button_width) / 2;
                 var button_y = colorbar_y - 10;
 
                 // Draw the top button
                 ctx.beginPath();
                 ctx.moveTo(button_x, button_y);
                 ctx.lineTo(button_x + button_width, button_y);
-                ctx.lineTo(button_x + (1 / 2) * button_width, button_y - button_height);
+                ctx.lineTo(
+                    button_x + (1 / 2) * button_width,
+                    button_y - button_height
+                );
                 ctx.lineTo(button_x, button_y);
                 ctx.stroke();
                 ctx.fill();
@@ -8498,7 +9908,10 @@
                 ctx.beginPath();
                 ctx.moveTo(button_x, button_y_2);
                 ctx.lineTo(button_x + button_width, button_y_2);
-                ctx.lineTo(button_x + (1 / 2) * button_width, button_y_2 + button_height);
+                ctx.lineTo(
+                    button_x + (1 / 2) * button_width,
+                    button_y_2 + button_height
+                );
                 ctx.lineTo(button_x, button_y_2);
                 ctx.stroke();
                 ctx.fill();
@@ -8511,34 +9924,32 @@
                 Gx.cbb_bot_y1 = button_y_2;
                 Gx.cbb_width = button_width;
                 Gx.cbb_height = button_height;
-
-            } else { // draw a small colorbar
-                x = (49 * Mx.text_w) - 3;
+            } else {
+                // draw a small colorbar
+                x = 49 * Mx.text_w - 3;
                 y = Mx.height - Mx.text_h * 2.5;
                 w = Mx.text_w;
                 h = Mx.text_h * 2;
             }
 
-
             mx.colorbar(Mx, x, y, w, h);
         }
 
         //draw boxes for the p_cuts
-        if (Gx.p_cuts && (Gx.lyr.length === 1) && (Gx.lyr[0].hcb["class"] === 2)) {
+        if (Gx.p_cuts && Gx.lyr.length === 1 && Gx.lyr[0].hcb["class"] === 2) {
             draw_pcut_y(plot);
             draw_pcut_x(plot);
         }
-
     }
 
     /**
      * Determine the effective bounds of the plottable area, which is defined
      * via the pan-boundaries (panxmin/panxmax/panymin/panymax).  Then check
      * the stack (i.e. the viewable area) and update accordingly.
-     *  
+     *
      * @memberOf sigplot
      * @private
-     * 
+     *
      * @param plot
      *         the plot to scale
      * @param mode
@@ -8567,8 +9978,8 @@
         // given that SigPlot can do both 1D and 2D
         let xmin = xxmin;
         let xmax = xxmax;
-        const noxmin = (xmin === undefined);
-        const noxmax = (xmax === undefined);
+        const noxmin = xmin === undefined;
+        const noxmax = xmax === undefined;
 
         if (Gx.lyr.length === 0) {
             // If there are no layers we simply show -1 to 1 on each axis
@@ -8636,11 +10047,11 @@
         Gx.panxmin -= m.pad(xran, Gx.panxpad);
         Gx.panxmax += m.pad(xran, Gx.panxpad);
 
-        if (((Gx.autox & 1) !== 0) && noxmin) {
+        if ((Gx.autox & 1) !== 0 && noxmin) {
             Mx.stk[0].xmin = Gx.panxmin;
         }
         // If autox is set to allow auto-xmax _and_ xmax was not provided by scale_base
-        if (((Gx.autox & 2) !== 0) && noxmax) {
+        if ((Gx.autox & 2) !== 0 && noxmax) {
             // the top-level stack xmax becomes the panxmax
             Mx.stk[0].xmax = Gx.panxmax;
             // unless 'All' mode is set or 'xdata' mode is used
@@ -8651,15 +10062,19 @@
                         continue;
                     }
                     xmax = Math.min(Gx.lyr[n].xmax, Mx.stk[0].xmax);
-                    var dpts = Math.abs((xmax - Gx.lyr[n].xmin) / Gx.lyr[n].xdelta) - Gx.bufmax + 1.0;
+                    var dpts =
+                        Math.abs((xmax - Gx.lyr[n].xmin) / Gx.lyr[n].xdelta) -
+                        Gx.bufmax +
+                        1.0;
                     if (dpts > 0) {
-                        Mx.stk[0].xmax = xmax - dpts * Math.abs(Gx.lyr[n].xdelta);
+                        Mx.stk[0].xmax =
+                            xmax - dpts * Math.abs(Gx.lyr[n].xdelta);
                     }
                 }
             }
         }
 
-        if (((Gx.autoy & 1) !== 0)) {
+        if ((Gx.autoy & 1) !== 0) {
             Mx.stk[0].ymin = Gx.panymin;
             for (var i = 0; i < Mx.stk.length; i++) {
                 if (Mx.stk[i].ymin === undefined) {
@@ -8667,7 +10082,7 @@
                 }
             }
         }
-        if (((Gx.autoy & 2) !== 0)) {
+        if ((Gx.autoy & 2) !== 0) {
             Mx.stk[0].ymax = Gx.panymax;
             for (var j = 0; j < Mx.stk.length; j++) {
                 if (Mx.stk[j].ymax === undefined) {
@@ -8676,24 +10091,18 @@
             }
         }
 
-        if ((Gx.panymin !== undefined) && (Gx.panymax !== undefined)) {
-            var yran = (Gx.panymax - Gx.panymin);
+        if (Gx.panymin !== undefined && Gx.panymax !== undefined) {
+            var yran = Gx.panymax - Gx.panymin;
             Gx.panymin -= m.pad(yran, Gx.panypad);
             Gx.panymax += m.pad(yran, Gx.panypad);
         }
-
     }
 
     /**
      * @memberOf sigplot
      * @private
      */
-    function set_panbounds(plot, {
-        xmin,
-        xmax,
-        ymin,
-        ymax
-    }) {
+    function set_panbounds(plot, { xmin, xmax, ymin, ymax }) {
         var Gx = plot._Gx;
         var Mx = plot._Mx;
 
@@ -8748,14 +10157,28 @@
      * @private
      */
     function coordsInRectangle(x, y, rect_x, rect_y, rect_width, rect_height) {
-        return (x >= rect_x && x <= rect_x + rect_width && y >= rect_y && y <= rect_y + rect_height);
+        return (
+            x >= rect_x &&
+            x <= rect_x + rect_width &&
+            y >= rect_y &&
+            y <= rect_y + rect_height
+        );
     }
 
     /**
      * @memberOf sigplot
      * @private
      */
-    function coordsInTriangle(x, y, tri_x1, tri_y1, tri_x2, tri_y2, tri_x3, tri_y3) {
+    function coordsInTriangle(
+        x,
+        y,
+        tri_x1,
+        tri_y1,
+        tri_x2,
+        tri_y2,
+        tri_x3,
+        tri_y3
+    ) {
         // Uses barycentric coordinates
         // https://en.wikipedia.org/wiki/Barycentric_coordinate_system ( and http://blackpawn.com/texts/pointinpoly/)
 
@@ -8765,11 +10188,11 @@
         var v2 = [x - tri_x1, y - tri_y1];
 
         // Compute dot products
-        var dot00 = (v0[0] * v0[0]) + (v0[1] * v0[1]);
-        var dot01 = (v0[0] * v1[0]) + (v0[1] * v1[1]);
-        var dot02 = (v0[0] * v2[0]) + (v0[1] * v2[1]);
-        var dot11 = (v1[0] * v1[0]) + (v1[1] * v1[1]);
-        var dot12 = (v1[0] * v2[0]) + (v1[1] * v2[1]);
+        var dot00 = v0[0] * v0[0] + v0[1] * v0[1];
+        var dot01 = v0[0] * v1[0] + v0[1] * v1[1];
+        var dot02 = v0[0] * v2[0] + v0[1] * v2[1];
+        var dot11 = v1[0] * v1[0] + v1[1] * v1[1];
+        var dot12 = v1[0] * v2[0] + v1[1] * v2[1];
 
         var inv_denom = 1 / (dot00 * dot11 - dot01 * dot01);
 
@@ -8781,8 +10204,7 @@
         console.log("v ", v);
         */
 
-        return (u >= 0 && v >= 0 && u + v < 1);
-
+        return u >= 0 && v >= 0 && u + v < 1;
     }
 
     /**
@@ -8808,45 +10230,54 @@
             y = coord.y;
         }
 
-        var command = ' ';
+        var command = " ";
 
         if (!Gx.pan) {
             return false;
         }
 
-        var outside_right_border = (x > Mx.r);
-        var above_top_border = (y <= Gx.pt + Gx.pthk + 2);
-        var below_bottom_border = (y > Gx.pt - 2);
-        var between_top_and_bottom = (y >= Mx.t && y <= Mx.b);
-        var between_left_and_right = (x >= Gx.pl && x <= Gx.pr);
-        var has_bottom_scrollbar = (Gx.show_readout || (Gx.x_scrollbar_location === "bottom"));
+        var outside_right_border = x > Mx.r;
+        var above_top_border = y <= Gx.pt + Gx.pthk + 2;
+        var below_bottom_border = y > Gx.pt - 2;
+        var between_top_and_bottom = y >= Mx.t && y <= Mx.b;
+        var between_left_and_right = x >= Gx.pl && x <= Gx.pr;
+        var has_bottom_scrollbar =
+            Gx.show_readout || Gx.x_scrollbar_location === "bottom";
 
-        if (outside_right_border && between_top_and_bottom) { // YPAN
-            command = 'YPAN'; // Y scrollbar
+        if (outside_right_border && between_top_and_bottom) {
+            // YPAN
+            command = "YPAN"; // Y scrollbar
             // TODO do we want to
             // reset the xposition?
 
-            if (Gx.lg_colorbar && (Gx.lyr[0].hcb["class"] === 2)) {
+            if (Gx.lg_colorbar && Gx.lyr[0].hcb["class"] === 2) {
                 // Need to do an additional check since there is area outside Mx.r that is NOT the pan region
-                var right_of_colorbar = (x > Mx.r + 100); // Mx.r = Mx.r - 100 is how we moved it initally
+                var right_of_colorbar = x > Mx.r + 100; // Mx.r = Mx.r - 100 is how we moved it initally
                 if (right_of_colorbar) {
                     inPanRegion = true;
                 } else {
                     inPanRegion = false;
                 }
-
             } else {
                 Mx.xpos = Gx.pyl + m.trunc(Gx.pthk / 2);
                 inPanRegion = true;
             }
             //possibly do another check for p_cuts as well;
-        } else if (has_bottom_scrollbar && between_left_and_right && below_bottom_border) {
-            command = 'XPAN'; // X scrollbar
+        } else if (
+            has_bottom_scrollbar &&
+            between_left_and_right &&
+            below_bottom_border
+        ) {
+            command = "XPAN"; // X scrollbar
             Mx.ypos = Gx.pt + m.trunc(Gx.pthk / 2); // TODO Do we want to reset
             // the yposition?
             inPanRegion = true;
-        } else if (!has_bottom_scrollbar && between_left_and_right && above_top_border) {
-            command = 'XPAN'; // X scrollbar
+        } else if (
+            !has_bottom_scrollbar &&
+            between_left_and_right &&
+            above_top_border
+        ) {
+            command = "XPAN"; // X scrollbar
             Mx.ypos = Gx.pt + m.trunc(Gx.pthk / 2); // TODO Do we want to reset
             // the yposition?
             inPanRegion = true;
@@ -8854,10 +10285,9 @@
 
         return {
             inPanRegion: inPanRegion,
-            command: command
+            command: command,
         };
     }
-
 
     /**
      * @memberOf sigplot
@@ -8870,27 +10300,34 @@
         var y = Mx.ypos;
         var th = Mx.text_h;
         var tw = Mx.text_w;
-        var command = ' ';
+        var command = " ";
 
-        if (x < Mx.l - tw && y <= Mx.b && y >= Mx.t) { // YCENTER
+        if (x < Mx.l - tw && y <= Mx.b && y >= Mx.t) {
+            // YCENTER
             // Mx.canvas.getContext("2d").strokeStyle = "blue";
             // Mx.canvas.getContext("2d").strokeRect(0, Mx.t, Mx.l - tw, Mx.b -
             // Mx.t);
-            command = 'YCENTER';
+            command = "YCENTER";
             inCenterRegion = true;
-        } else if (y > Mx.b + m.trunc(0.5 * tw) && y <= Mx.b + m.trunc(m.trunc(3 * th) / 2) && x >= Mx.l && x <= Mx.r) { // XCENTER
+        } else if (
+            y > Mx.b + m.trunc(0.5 * tw) &&
+            y <= Mx.b + m.trunc(m.trunc(3 * th) / 2) &&
+            x >= Mx.l &&
+            x <= Mx.r
+        ) {
+            // XCENTER
             // Mx.canvas.getContext("2d").strokeStyle = "red";
             // Mx.canvas.getContext("2d").strokeRect(Mx.l, Mx.b + m.trunc(.5 *
             // tw),
             // Mx.r - Mx.l, (Mx.b + m.trunc(m.trunc(3 * th) / 2)) - (Mx.b +
             // m.trunc(.5 * tw)));
-            command = 'XCENTER';
+            command = "XCENTER";
             inCenterRegion = true;
         }
 
         return {
             inCenterRegion: inCenterRegion,
-            command: command
+            command: command,
         };
     }
 
@@ -8975,15 +10412,19 @@
         mx.scroll(Mx, scrollbar, mx.XW_COMMAND, undefined, scrollbar);
 
         // Update the viewbox based on new min and max values
-        updateViewbox(plot, scrollbar.smin, scrollbar.smin + scrollbar.srange,
-            direction.slice(0, 1));
+        updateViewbox(
+            plot,
+            scrollbar.smin,
+            scrollbar.smin + scrollbar.srange,
+            direction.slice(0, 1)
+        );
 
         plot.inPan = true; // prevent recursive pans
-        var evt = document.createEvent('Event');
+        var evt = document.createEvent("Event");
         if (direction === "XPAN") {
-            evt.initEvent('xpan', true, true);
+            evt.initEvent("xpan", true, true);
         } else if (direction === "YPAN") {
-            evt.initEvent('ypan', true, true);
+            evt.initEvent("ypan", true, true);
         }
         evt.level = Mx.level;
         evt.xmin = Mx.stk[Mx.level].xmin;
@@ -8992,7 +10433,6 @@
         evt.ymax = Mx.stk[Mx.level].ymax;
         mx.dispatchEvent(Mx, evt); // TODO should we allow pan to be cancelled?
         plot.inPan = false;
-
     }
 
     /**
@@ -9047,5 +10487,4 @@
 
     sigplot.Plot = Plot;
     module.exports = sigplot;
-
-}());
+})();

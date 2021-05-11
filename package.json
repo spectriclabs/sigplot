@@ -1,88 +1,116 @@
 {
-  "name": "sigplot",
-  "description": "Advanced plotting for signal processing applications",
-  "version": "2.0.0-rc17",
-  "homepage": "http://sigplot.lgsinnovations.com",
-  "main": "js/sigplot.js",
-  "files": [
-    "js",
-    "dist/bluefile-debug.js",
-    "dist/bluefile-minimized.js",
-    "dist/matfile-debug.js",
-    "dist/matfile-minimized.js",
-    "dist/sigplot-debug.js",
-    "dist/sigplot-minimized.js",
-    "dist/sigplot.plugins-debug.js",
-    "dist/sigplot.plugins-minimized.js"
-  ],
-  "author": {
-    "name": "LGS Innovations, Inc.",
-    "email": "sigplot@lgsinnovations.com",
-    "url": "http://www.lgsinnovations.com"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/LGSInnovations/sigplot.git"
-  },
-  "bugs": {
-    "url": "https://github.com/LGSInnovations/sigplot/issues"
-  },
-  "license": "apache-2.0",
-  "licenses": [
-    {
-      "type": "apache-2.0",
-      "url": "http://www.apache.org/licenses/LICENSE-2.0"
+    "name": "sigplot",
+    "description": "Advanced plotting for signal processing applications",
+    "version": "2.0.0-rc17",
+    "homepage": "http://sigplot.lgsinnovations.com",
+    "main": "js/sigplot.js",
+    "files": [
+        "js",
+        "dist/bluefile-debug.js",
+        "dist/bluefile-minimized.js",
+        "dist/matfile-debug.js",
+        "dist/matfile-minimized.js",
+        "dist/sigplot-debug.js",
+        "dist/sigplot-minimized.js",
+        "dist/sigplot.plugins-debug.js",
+        "dist/sigplot.plugins-minimized.js"
+    ],
+    "author": {
+        "name": "LGS Innovations, Inc.",
+        "email": "sigplot@lgsinnovations.com",
+        "url": "http://www.lgsinnovations.com"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/LGSInnovations/sigplot.git"
+    },
+    "bugs": {
+        "url": "https://github.com/LGSInnovations/sigplot/issues"
+    },
+    "license": "apache-2.0",
+    "licenses": [
+        {
+            "type": "apache-2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0"
+        }
+    ],
+    "scripts": {
+        "clean": "rm -rf ./dist ./doc",
+        "generate-docs": "rm -rf ./doc/; node_modules/.bin/jsdoc --configure .jsdoc.json --verbose; cp ./fft-white.png doc/sigplot/$npm_package_version/",
+        "test": "grunt test",
+        "format:check": "npx prettier --ignore-path .gitignore --check '*.json' '*.js' '{js,test,examples}/**/*.js'",
+        "format:cleanup": "npx prettier --ignore-path .gitignore --write '*.json' '*.js' '{js,test,examples}/**/*.js'",
+        "lint:check": "npx eslint examples/ js/ test/",
+        "lint:cleanup": "npm run lint:check -- --fix"
+    },
+    "eslintConfig": {
+        "extends": "eslint:recommended",
+        "env": {
+            "browser": true
+        },
+        "rules": {
+            "dot-notation": "error",
+            "indent": [
+                "error",
+                4
+            ],
+            "curly": "error",
+            "eqeqeq": "error",
+            "wrap-iife": "error",
+            "no-use-before-define": "error",
+            "new-cap": "error"
+        }
+    },
+    "prettier": {
+        "tabWidth": 4
+    },
+    "dependencies": {
+        "esbuild": "^0.11.20",
+        "loglevel": "^1.4.1",
+        "lru": "^3.1.0",
+        "sigfile": "^0.1.9",
+        "spin": "0.0.1",
+        "tinycolor2": "^1.4.1",
+        "travis": "^0.1.1",
+        "underscore": "^1.9.2"
+    },
+    "devDependencies": {
+        "@babel/core": "^7.10.5",
+        "@babel/preset-env": "^7.10.4",
+        "babelify": "^10.0.0",
+        "catharsis": "^0.8.9",
+        "eslint": "^7.26.0",
+        "express": "^4.13.4",
+        "grunt": "^1.0.3",
+        "grunt-browserify": "^5.0.0",
+        "grunt-cli": "^1.3.2",
+        "grunt-closure-compiler": "^0.0.21",
+        "grunt-contrib-clean": "^1.1.0",
+        "grunt-contrib-compress": "^1.4.3",
+        "grunt-contrib-jshint": "^1.1.0",
+        "grunt-contrib-qunit": "^2.0.0",
+        "grunt-express-server": "^0.5.3",
+        "grunt-githash": "^0.1.3",
+        "grunt-http-server": "^2.1.0",
+        "grunt-jsbeautifier": "^0.2.13",
+        "grunt-jsdoc": "^2.2.1",
+        "grunt-karma": "^2.0.0",
+        "grunt-open": "^0.2.3",
+        "grunt-services": "^0.1.0",
+        "grunt-shell-spawn": "^0.3.12",
+        "grunt-text-replace": "^0.4.0",
+        "jasmine": "^3.1.0",
+        "karma": "^2.0.2",
+        "karma-chrome-launcher": "^2.0.2",
+        "karma-firefox-launcher": "^1.0.0",
+        "karma-jasmine": "^1.1.2",
+        "karma-qunit": "^2.1.0",
+        "marked": "^0.3.6",
+        "minami": "^1.2.3",
+        "prettier": "^2.3.0",
+        "qunit-assert-close": "^2.1.2",
+        "qunitjs": "^2.4.1",
+        "taffydb": "^2.7.3",
+        "underscore": "^1.9.2"
     }
-  ],
-  "scripts": {
-    "generate-docs": "rm -rf ./doc/; node_modules/.bin/jsdoc --configure .jsdoc.json --verbose; cp ./fft-white.png doc/sigplot/$npm_package_version/",
-    "test": "grunt test",
-    "prepublish": "grunt dist"
-  },
-  "dependencies": {
-    "loglevel": "^1.4.1",
-    "lru": "^3.1.0",
-    "sigfile": "^0.1.9",
-    "spin": "0.0.1",
-    "tinycolor2": "^1.4.1",
-    "travis": "^0.1.1",
-    "underscore": "^1.9.2"
-  },
-  "devDependencies": {
-    "@babel/core": "^7.10.5",
-    "@babel/preset-env": "^7.10.4",
-    "babelify": "^10.0.0",
-    "catharsis": "^0.8.9",
-    "express": "^4.13.4",
-    "grunt": "^1.0.3",
-    "grunt-browserify": "^5.0.0",
-    "grunt-cli": "^1.3.2",
-    "grunt-closure-compiler": "^0.0.21",
-    "grunt-contrib-clean": "^1.1.0",
-    "grunt-contrib-compress": "^1.4.3",
-    "grunt-contrib-jshint": "^1.1.0",
-    "grunt-contrib-qunit": "^2.0.0",
-    "grunt-express-server": "^0.5.3",
-    "grunt-githash": "^0.1.3",
-    "grunt-http-server": "^2.1.0",
-    "grunt-jsbeautifier": "^0.2.13",
-    "grunt-jsdoc": "^2.2.1",
-    "grunt-karma": "^2.0.0",
-    "grunt-open": "^0.2.3",
-    "grunt-services": "^0.1.0",
-    "grunt-shell-spawn": "^0.3.12",
-    "grunt-text-replace": "^0.4.0",
-    "jasmine": "^3.1.0",
-    "karma": "^2.0.2",
-    "karma-chrome-launcher": "^2.0.2",
-    "karma-firefox-launcher": "^1.0.0",
-    "karma-jasmine": "^1.1.2",
-    "karma-qunit": "^2.1.0",
-    "marked": "^0.3.6",
-    "minami": "^1.2.3",
-    "qunit-assert-close": "^2.1.2",
-    "qunitjs": "^2.4.1",
-    "taffydb": "^2.7.3",
-    "underscore": "^1.9.2"
-  }
 }

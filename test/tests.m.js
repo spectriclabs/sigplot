@@ -28,11 +28,11 @@
 //////////////////////////////////////////////////////////////////////////////
 // QUnit 'm' module
 //////////////////////////////////////////////////////////////////////////////
-QUnit.module('m', {
-    setup: function() {},
-    teardown: function() {}
+QUnit.module("m", {
+    setup: function () {},
+    teardown: function () {},
 });
-QUnit.test('m sec2tod test', function(assert) {
+QUnit.test("m sec2tod test", function (assert) {
     var secs = 0;
     assert.equal(sigplot.m.sec2tod(0), "00:00:00.000000");
     assert.equal(sigplot.m.sec2tod(1), "00:00:01.000000");
@@ -64,6 +64,12 @@ QUnit.test('m sec2tod test', function(assert) {
     assert.equal(sigplot.m.sec2tod(86400.5, true), "1::00:00:00.5");
     assert.equal(sigplot.m.sec2tod(31535999.5, true), "364::23:59:59.5");
     assert.equal(sigplot.m.sec2tod(-31535999.5, true), "-364::23:59:59.5");
-    assert.equal(sigplot.m.sec2tod(-31536000.5, true), "1948:12:31::23:59:59.5");
-    assert.equal(sigplot.m.sec2tod(-31536001.5, true), "1948:12:31::23:59:58.5");
+    assert.equal(
+        sigplot.m.sec2tod(-31536000.5, true),
+        "1948:12:31::23:59:59.5"
+    );
+    assert.equal(
+        sigplot.m.sec2tod(-31536001.5, true),
+        "1948:12:31::23:59:58.5"
+    );
 });
