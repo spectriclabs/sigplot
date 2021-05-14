@@ -31,7 +31,7 @@
     var m = require("./m");
     var mx = require("./mx");
     var common = require("./common");
-    var LRU = require("lru");
+    var LRU = require("lru-cache");
 
     /**
      * @constructor

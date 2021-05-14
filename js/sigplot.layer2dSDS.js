@@ -127,7 +127,7 @@
             }
 
             this.hcb.class = 2;
-            const LRU = require("lru");
+            const LRU = require("lru-cache");
 
             this.cache = new LRU(500);
 

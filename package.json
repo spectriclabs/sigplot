@@ -43,7 +43,7 @@
   "dependencies": {
     "budo": "^11.6.4",
     "loglevel": "^1.4.1",
-    "lru": "^3.1.0",
+    "lru-cache": "^2.7.3",
     "sigfile": "^0.1.9",
     "spin": "0.0.1",
     "tinycolor2": "^1.4.1",
