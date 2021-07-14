@@ -754,21 +754,28 @@
             const Mx = this.plot._Mx;
             const Gx = this.plot._Gx;
 
-            //display the x-cut of the raster
+            // display the x-cut of the raster
             if (ypos !== undefined) {
-                // Stash important values
-                this.cut_stash = {};
-                this.cut_stash.ylabel = Gx.ylabel;
-                this.cut_stash.xlabel = Gx.xlabel;
-                this.cut_stash.level = Mx.level;
-                this.cut_stash.stk = JSON.parse(JSON.stringify(Mx.stk));
+                // stash important values
+                this.cut_stash = {
+                    ylabel: Gx.ylabel,
+                    xlabel: Gx.xlabel,
+                    xlab: Gx.xlab,
+                    ylab: Gx.ylab,
+                    level: Mx.level,
+                    stk: JSON.parse(JSON.stringify(Mx.stk)),
+                    panymin: Gx.panymin,
+                    panymax: Gx.panymax,
+                    panxmin: Gx.panxmin,
+                    panxmax: Gx.panxmax,
+                };
 
                 const row = Math.round((ypos - this.ystart) / this.ydelta);
                 if (row < 0 || row > this.lps) {
                     return;
                 }
 
-                //Adjust the zoom stack to adjust y values to be undefined.
+                // Adjust the zoom stack to adjust y values to be undefined.
                 for (let stk_num = 0; stk_num < Mx.stk.length; stk_num++) {
                     Mx.stk[stk_num].ymin = undefined;
                     Mx.stk[stk_num].ymax = undefined;
@@ -784,6 +791,34 @@
                     name = "y_cut_data";
                     mode = "ycut";
                 }
+
+                var cx = ((Gx.lyr.length > 0) && this.cx);
+                if (Gx.cmode === 1) {
+                    Gx.ylabel = m.UNITS[28][0];
+                } else if (Gx.cmode === 2) {
+                    Gx.ylabel = Gx.plab;
+                } else if ((Gx.cmode === 3) && (cx)) {
+                    Gx.ylabel = m.UNITS[21][0];
+                } else if (Gx.cmode === 4) {
+                    Gx.ylabel = m.UNITS[22][0];
+                } else if (Gx.cmode === 5) {
+                    Gx.ylabel = m.UNITS[22][0];
+                } else if (Gx.cmode === 6) {
+                    Gx.ylabel = m.UNITS[26][0];
+                } else if (Gx.cmode === 7) {
+                    Gx.ylabel = m.UNITS[27][0];
+                } else {
+                    Gx.ylabel = "Intensity";
+                }
+
+                if ((m.UNITS[Gx.xlab][0] !== "None") && (m.UNITS[Gx.xlab][0] !== "Unknown")) {
+                    Gx.xlabel = m.UNITS[Gx.xlab][0];
+                } else {
+                    Gx.xlabel = "Frequency";
+                }
+                Gx.xlabel += "    CURRENTLY IN X_CUT MODE";
+                Mx.origin = 1;
+
                 this.xcut_layer = this.plot.overlay_href(
                     this.hcb.url,
                     null,
@@ -798,7 +833,7 @@
                 );
                 Mx.origin = 1;
 
-                //do not display any other layers
+                // do not display any other layers
                 const xcut_lyrn = this.plot.get_lyrn(this.xcut_layer);
                 for (let i = 0; i < Gx.lyr.length; i++) {
                     if (i !== xcut_lyrn) {
@@ -806,6 +841,7 @@
                     }
                 }
                 Gx.x_cut_press_on = true;
+                this.plot.rescale();
             } else if (Gx.x_cut_press_on) {
                 // ypos wasn't provided so turn x-cut off
                 Gx.x_cut_press_on = false;
@@ -817,10 +853,16 @@
                     this.plot.deoverlay(this.xcut_layer);
 
                     // Restore settings
+                    Gx.xlab = this.cut_stash.xlab;
+                    Gx.ylab = this.cut_stash.ylab;
                     Gx.xlabel = this.cut_stash.xlabel;
                     Gx.ylabel = this.cut_stash.ylabel;
                     Mx.level = this.cut_stash.level;
                     Mx.stk = JSON.parse(JSON.stringify(this.cut_stash.stk));
+                    Gx.panymin = this.cut_stash.panymin;
+                    Gx.panymax = this.cut_stash.panymax;
+                    Gx.panxmin = this.cut_stash.panxmin;
+                    Gx.panxmax = this.cut_stash.panxmax;
                     this.cut_stash = undefined;
                     Mx.origin = 4;
 
@@ -851,6 +893,8 @@
                 this.cut_stash = {
                     xlabel: Gx.xlabel,
                     ylabel: Gx.ylabel,
+                    xlab: Gx.xlab,
+                    ylab: Gx.ylab,
                     level: Mx.level,
                     stk: JSON.parse(JSON.stringify(Mx.stk)),
                     ymax: Mx.stk[Mx.level].ymax,
@@ -875,8 +919,6 @@
                     Mx.stk[stk_num].ymax = undefined;
                     Mx.stk[stk_num].yscl = undefined;
                 }
-                Gx.panxmax = Gx.panymax;
-                Gx.panxmin = Gx.panymin;
                 Gx.panymax = undefined;
                 Gx.panymin = undefined;
 
@@ -888,6 +930,34 @@
                     name = "x_cut_data";
                     mode = "xcut";
                 }
+
+                var cx = ((Gx.lyr.length > 0) && this.cx);
+                if (Gx.cmode === 1) {
+                    Gx.ylabel = m.UNITS[28][0];
+                } else if (Gx.cmode === 2) {
+                    Gx.ylabel = Gx.plab;
+                } else if ((Gx.cmode === 3) && (cx)) {
+                    Gx.ylabel = m.UNITS[21][0];
+                } else if (Gx.cmode === 4) {
+                    Gx.ylabel = m.UNITS[22][0];
+                } else if (Gx.cmode === 5) {
+                    Gx.ylabel = m.UNITS[22][0];
+                } else if (Gx.cmode === 6) {
+                    Gx.ylabel = m.UNITS[26][0];
+                } else if (Gx.cmode === 7) {
+                    Gx.ylabel = m.UNITS[27][0];
+                } else {
+                    Gx.ylabel = "Intensity";
+                }
+
+                if ((m.UNITS[Gx.ylab][0] !== "None") && (m.UNITS[Gx.ylab][0] !== "Unknown")) {
+                    Gx.xlabel = m.UNITS[Gx.ylab][0];
+                } else {
+                    Gx.xlabel = "Time";
+                }
+                Gx.xlabel += "    CURRENTLY IN Y_CUT MODE";
+                Mx.origin = 1;
+
                 this.ycut_layer = this.plot.overlay_href(
                     this.hcb.url,
                     null,
@@ -920,6 +990,8 @@
                     this.plot.deoverlay(this.ycut_layer);
 
                     // Restore settings
+                    Gx.xlab = this.cut_stash.xlab;
+                    Gx.ylab = this.cut_stash.ylab;
                     Gx.xlabel = this.cut_stash.xlabel;
                     Gx.ylabel = this.cut_stash.ylabel;
                     Mx.level = this.cut_stash.level;
