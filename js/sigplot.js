@@ -3884,6 +3884,12 @@
                 scale_base(this, {});
             }
 
+            // Force the plot render area to pixel boundaries
+            Mx.l = Math.floor(Mx.l);
+            Mx.r = Math.ceil(Mx.r);
+            Mx.t = Math.floor(Mx.t);
+            Mx.b = Math.ceil(Mx.b);
+
             // set virtual window size/pos/scaling for current level
             var k = Mx.level;
             Mx.stk[k].x1 = Mx.l;

@@ -5741,64 +5741,89 @@
             rx = buf.height / (xmax - xmin);
             ry = buf.width / (ymax - ymin);
         }
-
-        // Ensure we are on buffer pixel boundaries, later we use clipping
-        // to constrain to the proper area
-        view_xmin = Math.floor(view_xmin * rx) / rx;
-        view_xmax = Math.ceil(view_xmax * rx) / rx;
-        view_ymin = Math.floor(view_ymin * ry) / ry;
-        view_ymax = Math.ceil(view_ymax * ry) / ry;
-
+        
+        // ul, lr are the upper-left/lower-right in view coordinates
+        // for receiving the rendered source-vuffer
         var ul, lr;
+
+        // sx, sy, sw, sh are the source-buffer pixels
+        // that have been selected for rendering
         var sy, sx, sw, sh;
+
+        // Determine the actual boundaries of the sub-source
+        // buffer being rendered; which may actually exeed the
+        // view box.  This is cleaned-up using clip()
+        var render_xmin, render_xmax, render_ymin, render_ymax;
+
         // TODO-MGR handle rotation correctly for other origins
         if (Mx.origin === 1) {
             // regular x, regular y
             if (!rotationAngle) {
                 sy = Math.max(0, Math.floor((ymax - view_ymax) * ry));
-                sh = Math.min(buf.height - sy, Math.floor((view_ymax - view_ymin) * ry));
+                sh = Math.min(buf.height - sy, Math.ceil((view_ymax - view_ymin) * ry) + 1);
                 sx = Math.max(0, Math.floor((view_xmin - xmin) * rx));
-                sw = Math.min(buf.width - sx, Math.floor((view_xmax - view_xmin) * rx));
+                sw = Math.min(buf.width - sx, Math.ceil((view_xmax - view_xmin) * rx) + 1);
             } else if (Math.abs(rotationAngle - (-Math.PI / 2)) < 1E-12) {
                 // Note the this code isn't simply swapping the left-side variable names
                 // The right-sides are also different
                 sx = Math.max(0, Math.floor((view_ymin - ymin) * ry));
-                sw = Math.min(buf.width - sx, Math.floor((view_ymax - view_ymin) * ry));
+                sw = Math.min(buf.width - sx, Math.ceil((view_ymax - view_ymin) * ry) + 1);
                 sy = Math.max(0, Math.floor((view_xmin - xmin) * rx));
-                sh = Math.min(buf.height - sy, Math.floor((view_xmax - view_xmin) * rx));
+                sh = Math.min(buf.height - sy, Math.ceil((view_xmax - view_xmin) * rx) + 1);
             } else {
                 throw new RangeError(`Rotation angle ${rotationAngle} rad not supported. Must be -Math.PI/2.`);
             }
 
-            ul = mx.real_to_pixel(Mx, view_xmin, view_ymax);
-            lr = mx.real_to_pixel(Mx, view_xmax, view_ymin);
+            // Now determine the specific view area
+            render_xmin = (sx / rx) + xmin;
+            render_xmax = ((sx + sw) / rx) + xmin;
+            render_ymin = ymax - ((sy + sh) / ry);
+            render_ymax = ymax - (sy / ry);
+            
+            ul = mx.real_to_pixel(Mx, render_xmin, render_ymax);
+            lr = mx.real_to_pixel(Mx, render_xmax, render_ymin);
         } else if (Mx.origin === 2) {
             // inverted x, regular y
             sy = Math.max(0, Math.floor((ymax - view_ymax) * ry));
-            sh = Math.min(buf.height - sy, Math.floor((view_ymax - view_ymin) * ry));
-            sx = Math.max(0, Math.ceil((view_xmin - xmin) * rx));
+            sh = Math.min(buf.height - sy, Math.ceil((view_ymax - view_ymin) * ry) + 1);
+            sx = Math.max(0, Math.floor((view_xmax - xmax) * rx));
             sw = Math.min(buf.width - sx, Math.floor((view_xmax - view_xmin) * rx));
 
-            ul = mx.real_to_pixel(Mx, view_xmax, view_ymax);
-            lr = mx.real_to_pixel(Mx, view_xmin, view_ymin);
+            render_xmin = xmax - ((sx + sw) / rx);
+            render_xmax = xmax - (sx / rx);
+            render_ymin = ymax - ((sy + sh) / ry);
+            render_ymax = ymax - (sy / ry);
+
+            ul = mx.real_to_pixel(Mx, render_xmax, render_ymax);
+            lr = mx.real_to_pixel(Mx, render_xmin, render_ymin);
         } else if (Mx.origin === 3) {
             // inverted x, inverted y
-            sy = Math.max(0, Math.ceil((view_ymin - ymin) * ry));
-            sh = Math.min(buf.height - sy, Math.floor((view_ymax - view_ymin) * ry));
-            sx = Math.max(0, Math.ceil((view_xmin - xmin) * rx));
-            sw = Math.min(buf.width - sx, Math.floor((view_xmax - view_xmin) * rx));
+            sy = Math.max(0, Math.floor((view_ymin - ymin) * ry));
+            sh = Math.min(buf.height - sy, Math.ceil((view_ymax - view_ymin) * ry) + 1);
+            sx = Math.max(0, Math.floor((view_xmax - xmax) * rx));
+            sw = Math.min(buf.width - sx, Math.ceil((view_xmax - view_xmin) * rx) + 1);
 
-            ul = mx.real_to_pixel(Mx, view_xmax, view_ymin);
-            lr = mx.real_to_pixel(Mx, view_xmin, view_ymax);
+            render_xmin = xmax - ((sx + sw) / rx);
+            render_xmax = xmax - (sx / rx);
+            render_ymin = (sy / ry) + ymin;
+            render_ymax = ((sy + sh) / ry) + ymin;
+
+            ul = mx.real_to_pixel(Mx, render_xmax, render_ymin);
+            lr = mx.real_to_pixel(Mx, render_xmin, render_ymax);
         } else if (Mx.origin === 4) {
             // regular x, inverted y
-            sy = Math.max(0, Math.ceil((view_ymin - ymin) * ry));
-            sh = Math.min(buf.height - sy, Math.floor((view_ymax - view_ymin) * ry));
+            sy = Math.max(0, Math.floor((view_ymin - ymin) * ry));
+            sh = Math.min(buf.height - sy, Math.ceil((view_ymax - view_ymin) * ry) + 1);
             sx = Math.max(0, Math.floor((view_xmin - xmin) * rx));
-            sw = Math.min(buf.width - sx, Math.floor((view_xmax - view_xmin) * rx));
+            sw = Math.min(buf.width - sx, Math.ceil((view_xmax - view_xmin) * rx) + 1);
 
-            ul = mx.real_to_pixel(Mx, view_xmin, view_ymin);
-            lr = mx.real_to_pixel(Mx, view_xmax, view_ymax);
+            render_xmin = (sx / rx) + xmin;
+            render_xmax = ((sx + sw) / rx) + xmin;
+            render_ymin = (sy / ry) + ymin;
+            render_ymax = ((sy + sh) / ry) + ymin;
+
+            ul = mx.real_to_pixel(Mx, render_xmin, render_ymin);
+            lr = mx.real_to_pixel(Mx, render_xmax, render_ymax);
         }
 
         var iw = lr.x - ul.x;

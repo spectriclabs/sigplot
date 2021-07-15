@@ -287,8 +287,13 @@
                     this.xcompression = settings.xcmp;
                 }
             }
+
             if (settings.usetiles !== undefined) {
                 this.usetiles = settings.usetiles;
+            }
+
+            if (settings.opacity !== undefined) {
+                this.opacity = settings.opacity;
             }
         },
 
@@ -571,7 +576,7 @@
                                     img.ymin, // vertical_min
                                     img.xmax, // horizontal_max
                                     img.ymax, // vertical_max
-                                    1.0,
+                                    this.opacity,
                                     false,
                                     true,
                                     rotationAngle,
@@ -586,7 +591,7 @@
                                     img.xmin, // vertical_min
                                     img.ymax, // horizontal_max
                                     img.xmax, // vertical_max
-                                    1.0,
+                                    this.opacity,
                                     false,
                                     true,
                                     rotationAngle,
@@ -649,7 +654,7 @@
                             vertical_min, // ymin
                             horizontal_max, // xmax
                             vertical_max, // ymax
-                            1.0,
+                            this.opacity,
                             false,
                             true,
                             rotationAngle
@@ -662,7 +667,7 @@
                             horizontal_min, // ymin
                             vertical_max, // xmax
                             horizontal_max, // ymax
-                            1.0,
+                            this.opacity,
                             false,
                             true,
                             rotationAngle
@@ -709,7 +714,7 @@
                                         vertical_min, // ymin
                                         horizontal_max, // xmax
                                         vertical_max, // ymax
-                                        1.0,
+                                        that.opacity,
                                         false,
                                         true,
                                         rotationAngle
@@ -722,7 +727,7 @@
                                         horizontal_min, // ymin
                                         vertical_max, // xmax
                                         horizontal_max, // ymax
-                                        1.0,
+                                        that.opacity,
                                         false,
                                         true,
                                         rotationAngle

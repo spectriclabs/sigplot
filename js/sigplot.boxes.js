@@ -781,6 +781,10 @@
             const Mx = this.plot._Mx;
             const ctx = canvas.getContext("2d");
 
+            if ((Gx.x_cut_press_on || Gx.y_cut_press_on)) {
+                return;
+            }
+
             // Save off the current context
             ctx.save();
 
