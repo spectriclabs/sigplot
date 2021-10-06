@@ -2769,13 +2769,15 @@
                         //console.log("error fetching SDS header" + oEvent)
                     };
                     oReq.send(null);
-                    this._Gx.HCB_RDR[lyr_uuid] = oReq;
                 } else {
                     reader = new bluefile.BlueFileReader();
                     oReq = reader.read_http(href, handleHeader);
                 }
+
+                // If oReq exists, set the HCB destructor to oReq.abort()
                 if (oReq) {
-                    this._Gx.HCB_RDR[lyr_uuid] = oReq;
+                    const layer_n = this.get_layer_n(lyr_uuid);
+                    this._Gx.HCB[layer_n].cleanup = () => oReq.abort();
                 }
             } catch (error) {
                 this.hide_spinner();
@@ -2905,8 +2907,6 @@
                 }
                 // Update the HCB
                 Gx.HCB_UUID[lyr_uuid] = hcb;
-                // Remove the req
-                delete Gx.HCB_RDR[lyr_uuid];
             } else {
                 lyr_uuid = this.reg_hcb(hcb);
             }
@@ -3092,11 +3092,6 @@
             if (HCB && _.isFunction(HCB.cleanup)) {
                 HCB.cleanup();
             }
-
-            if (_.has(Gx.HCB_RDR, lyr_uuid)) {
-                Gx.HCB_RDR[lyr_uuid].abort();
-            }
-            delete Gx.HCB_RDR[lyr_uuid];
 
             var fileName = "";
             if (HCB) {
@@ -4267,7 +4262,6 @@
         this.lyr = [];
         this.HCB = [];
         this.HCB_UUID = {};
-        this.HCB_RDR = {};
         this.plugins = [];
 
         this.plotData = document.createElement("canvas");
