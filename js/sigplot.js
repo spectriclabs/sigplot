@@ -2450,7 +2450,7 @@
                 overrides = {};
             }
             overrides.pipe = true;
-            var hcb = m.initialize(null, overrides);
+            var hcb = m.initialize(null, overrides, () => ws.close());
             hcb.ws = ws;
 
             var layer_n = this.overlay_bluefile(hcb, layerOptions);
@@ -2574,7 +2574,7 @@
 
                             wpipe.hcb.pipe = true;
                             try {
-                                wpipe.hcb = m.initialize(null, wpipe.hcb);
+                                wpipe.hcb = m.initialize(null, wpipe.hcb, () => wpipe.ws.close());
                                 wpipe.layer_n = plot.overlay_bluefile(wpipe.hcb, wpipe.plotLayerOptions);
                             } catch (e) {
                                 wpipe.ws.close();
