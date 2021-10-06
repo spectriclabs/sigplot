@@ -3078,7 +3078,7 @@
         /**
          * Remove a layer.
          *
-         * @param index
+         * @param lyr_uuid
          *            the layer to remove
          */
         remove_layer: function(lyr_uuid) {
@@ -3086,6 +3086,13 @@
 
             var HCB = Gx.HCB_UUID[lyr_uuid];
             delete Gx.HCB_UUID[lyr_uuid];
+
+            // This will also return false if
+            // `cleanup` is not defined.
+            if (_.isFunction(HCB.cleanup)) {
+                HCB.cleanup();
+            }
+
             if (_.has(Gx.HCB_RDR, lyr_uuid)) {
                 Gx.HCB_RDR[lyr_uuid].abort();
             }
