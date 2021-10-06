@@ -3089,7 +3089,7 @@
 
             // This will also return false if
             // `cleanup` is not defined.
-            if (_.isFunction(HCB.cleanup)) {
+            if (HCB && _.isFunction(HCB.cleanup)) {
                 HCB.cleanup();
             }
 
