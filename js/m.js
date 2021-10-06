@@ -548,9 +548,10 @@
      * @param	{string}	filename	Name of File to Create
      * @param  	{array}		data		Input data buffer
      * @param  	{array}	  	overrides	List of fields/values to be overridden in the bluefile header
+     * @param   {function}	cleanup	Function to be called when layer is deoverlayed
      * @return 	{header} 	hcb		Return <hcb> type-1000 bluefile header, filename=null
      */
-    m.initialize = function(data, overrides) {
+    m.initialize = function(data, overrides, cleanup) {
         var hcb = new bluefile.BlueHeader(null);
 
         hcb.version = 'BLUE';
@@ -566,6 +567,10 @@
         hcb.ydelta = 1.0;
         hcb.yunits = 0;
         hcb.enabled_streaming_pcut = false;
+
+        // if cleanup function provided, add it to the header
+        // otherwise, set to empty function
+        hcb.cleanup = cleanup || (() => {});
 
         if (!overrides) {
             /* if no overrides provided...set it to empty*/
