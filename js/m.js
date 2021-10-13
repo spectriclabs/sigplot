@@ -569,8 +569,8 @@
         hcb.enabled_streaming_pcut = false;
 
         // if cleanup function provided, add it to the header
-        // otherwise, set to empty function
-        hcb.cleanup = cleanup || (() => {});
+        // otherwise, it'll be undefined
+        hcb.cleanup = cleanup;
 
         if (!overrides) {
             /* if no overrides provided...set it to empty*/
