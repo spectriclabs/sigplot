@@ -198,3 +198,29 @@ interactiveTest('sigplot symbol XY', 'Do you see six symbols?', function(assert)
     plot.overlay_array(data, data_header, layer_options);
 });
 
+interactiveTest('sigplot symbol XY large', 'Do you see six symbols?', function(assert) {
+
+    var plot_options = {
+        autohide_panbars: true,
+        hide_note: true,
+    };
+
+    var container = document.getElementById('plot');
+    var plot = new sigplot.Plot(container, plot_options);
+    assert.notEqual(plot, null);
+
+
+    var data = [100, 20, 30, 30, 50, 40, 20, 10, 30, 10, 40, 100]; // the series of y-values
+    var data_header = {
+        xunits: "Time",
+        yunits: "Power"
+    };
+    var layer_options = {
+        name: "Sample Data",
+        symbol: 3,
+        mode: "XY"
+    };
+    var plot = new sigplot.Plot(document.getElementById('plot'), plot_options);
+    plot.overlay_array(data, data_header, layer_options);
+});
+

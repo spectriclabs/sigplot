@@ -818,7 +818,7 @@ interactiveTest('pipe 1D name', 'Do you see a random data plot (0 to 1 ) properl
     }, 100);
 });
 
-interactiveTest('complex scrolling line', 'Do you see a scrolling random data (0 to 1) plot that auto-scales', function(assert) {
+interactiveTest('complex scrolling linse', 'Do you see a scrolling random data (0 to 1) plot that auto-scales', function(assert) {
     var container = document.getElementById('plot');
     var plot = new sigplot.Plot(container, {});
     assert.notEqual(plot, null);
