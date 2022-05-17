@@ -5747,7 +5747,7 @@
         }
         var rx = buf.width / (xmax - xmin);
         var ry = buf.height / (ymax - ymin);
-        
+
         // ul, lr are the upper-left/lower-right in view coordinates
         // for receiving the rendered source-vuffer
         var ul, lr;
