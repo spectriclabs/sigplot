@@ -105,6 +105,11 @@
     mx.LEGACY_BEHAVIOR = false;
 
     /**
+     * Set to allow more than the default 9 zooms; undefined allows infinite zooms (limited only by memory)
+     */
+    mx.MAX_ZOOM = 9;
+
+    /**
      * The zoom stack structure object
      * @private
      */

@@ -3203,7 +3203,8 @@
             var Mx = this._Mx;
             var Gx = this._Gx;
 
-            if (Mx.level >= 9) { // currently only allow 10 zooms
+            let max_zoom = mx.MAX_ZOOM;
+            if ((Mx.level >= max_zoom) && (max_zoom !== undefined)) {
                 return;
             }
 
