@@ -333,7 +333,7 @@ if (!ArrayBuffer.transfer) {
             // it's time to fire the callback
             return callback(event);
 
-        }, useCapture || false);
+        }, {capture: useCapture || false, passive: false});
     }
     /* jshint +W030 */
 
