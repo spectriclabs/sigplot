@@ -3196,18 +3196,13 @@
          *
          * @param continuous
          *            enter continuous zoom mode.  This will create a
-         *            new if you are on level 0, but stay on the same level
-         *            otherwise
+         *            new level
          */
         zoom: function(ul, lr, continuous) {
             var Mx = this._Mx;
             var Gx = this._Gx;
 
             let max_zoom = mx.MAX_ZOOM;
-            if ((Mx.level >= max_zoom) && (max_zoom !== undefined)) {
-                return;
-            }
-
             if (ul.x === undefined) {
                 ul.x = Mx.stk[Mx.level].xmin;
             }
@@ -3254,8 +3249,12 @@
             if (!continuous || (!Gx.inContinuousZoom)) {
                 // We aren't yet in continuous zoom mode
                 // so create a new level
-                Mx.stk.push(zstk);
-                Mx.level = Mx.stk.length - 1;
+                if ((Mx.level >= max_zoom) && (max_zoom !== undefined)) {
+                    Mx.stk[Mx.level] = zstk;
+                } else {
+                    Mx.stk.push(zstk);
+                    Mx.level = Mx.stk.length - 1;
+                }
             } else {
                 // Once in continuous zoom mode update the current level
                 Mx.stk[Mx.level] = zstk;
