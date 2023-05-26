@@ -1,8 +1,8 @@
 {
   "name": "sigplot",
   "description": "Advanced plotting for signal processing applications",
-  "version": "2.0.0-rc21",
-  "homepage": "http://sigplot.lgsinnovations.com",
+  "version": "2.0.0-rc22",
+  "homepage": "http://github.com/spectriclabs/sigplot",
   "main": "js/sigplot.js",
   "files": [
     "js",
@@ -16,16 +16,16 @@
     "dist/sigplot.plugins-minimized.js"
   ],
   "author": {
-    "name": "LGS Innovations, Inc.",
-    "email": "sigplot@lgsinnovations.com",
-    "url": "http://www.lgsinnovations.com"
+    "name": "Spectric Labs, Inc.",
+    "email": "foss@spectric.com",
+    "url": "http://www.spectric.com"
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/LGSInnovations/sigplot.git"
+    "url": "git://github.com/spectriclabs/sigplot.git"
   },
   "bugs": {
-    "url": "https://github.com/LGSInnovations/sigplot/issues"
+    "url": "https://github.com/spectriclabs/sigplot/issues"
   },
   "license": "apache-2.0",
   "licenses": [
