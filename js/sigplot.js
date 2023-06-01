@@ -2815,8 +2815,10 @@
 
                 // If oReq exists, set the HCB destructor to oReq.abort()
                 if (oReq) {
-                    const layer_n = this.get_layer_n(lyr_uuid);
-                    this._Gx.HCB[layer_n].cleanup = () => oReq.abort();
+                    const layer_n = this.get_lyrn(lyr_uuid);
+                    if (layer_n >= 0) {
+                        this._Gx.HCB[layer_n].cleanup = () => oReq.abort();
+                    }
                 }
             } catch (error) {
                 this.hide_spinner();
