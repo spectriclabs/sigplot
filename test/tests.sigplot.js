@@ -876,3 +876,45 @@ QUnit.test('Plot y-cut preserves pan values', function(assert) {
         done();
     }, {});
 });
+QUnit.test('Plot onerror callback', function(assert) {
+    var container = document.getElementById('plot');
+    var plot = new sigplot.Plot(container, {});
+    assert.notEqual(plot, null);
+
+    var done = assert.async();
+
+    var onload = function(hcb, ii) {
+        assert.notOk(true, 'onload should not have been called');
+        done();
+    };
+    var onerror = function(event) {
+        assert.ok(true, 'onerror was expected to be be called');
+        done();
+    };
+    plot.overlay_href("dat/nonexistant.tmp", {
+        "onload": onload,
+        "onerror": onerror
+    });
+});
+QUnit.test('Plot onerror SDS callback', function(assert) {
+    var container = document.getElementById('plot');
+    var plot = new sigplot.Plot(container, {});
+    assert.notEqual(plot, null);
+
+    var done = assert.async();
+
+    var onload = function(hcb, ii) {
+        assert.notOk(true, 'onload should not have been called');
+        done();
+    };
+    var onerror = function(event) {
+        assert.ok(true, 'onerror was expected to be be called');
+        done();
+    };
+    plot.overlay_href("dat/nonexistant.tmp", {
+        "onload": onload,
+        "onerror": onerror
+    }, {
+        layerType: "2DSDS"
+    });
+});

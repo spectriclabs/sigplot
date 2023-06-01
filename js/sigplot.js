@@ -2673,8 +2673,11 @@
          *
          * @param {String}
          *            href the url to the bluefile or matfile
-         * @param [onload]
-         *            callback to be called when the file has been loaded
+         * 
+         * @param [evt_cb]
+         *            callback to be called when the file has been loaded.  Can be
+         *            a single function, which get's called after successful load
+         *            or can be a object with an onload and/or onerror function
          *
          * @param [layerOptions]
          *            Key-value pairs whose values are the settings for the plot
@@ -2692,17 +2695,30 @@
          * @returns data_layer
          *
          */
-        overlay_href_single: function(href, onload, layerOptions, overrides) {
+        overlay_href_single: function(href, evt_cb, layerOptions, overrides) {
             var lyr_uuid = this.reg_hcb(null);
+
+            let onload_cb = null;
+            let onerror_cb = null;
+            if (evt_cb && (evt_cb.onload || evt_cb.onerror)) {
+                onload_cb = evt_cb.onload;
+                onerror_cb = evt_cb.onerror;
+            } else {
+                onload_cb = evt_cb;
+            }
 
             m.log.debug("Overlay href: " + href + " " + lyr_uuid);
             try {
                 this.show_spinner();
-                var handleHeader = (function(plot, onload) {
+                var handleHeader = (function(plot, _onload, _onerror) {
                     return function(hcb) {
                         try {
                             if (!hcb) {
-                                m.log.error("Failed to load data: " + href);
+                                if (onerror_cb) {
+                                    onerror_cb("Failed to load data: " + href);
+                                } else {
+                                    m.log.error("Failed to load data: " + href);
+                                }
                             } else {
                                 hcb._uuid = lyr_uuid;
                                 common.update(hcb, overrides);
@@ -2713,23 +2729,26 @@
                                 } else {
                                     i = plot.overlay_bluefile(hcb, layerOptions);
                                 }
-                                if (onload) {
-                                    onload(hcb, i);
+                                if (_onload) {
+                                    _onload(hcb, i);
                                 }
                             }
                         } finally {
                             plot.hide_spinner();
                         }
                     };
-                }(this, onload));
+                }(this, onload_cb, onerror_cb));
 
-                var handleSDS = (function(plot, onload) {
+                var handleSDS = (function(plot, _onload, _onerror) {
                     return function(hcb, layertype) {
-                        // LOWER CASE CRAP THAT GRANT SENT US
                         try {
                             var i = null;
                             if (!hcb) {
-                                m.log.error("Failed to load data: " + href);
+                                if (onerror_cb) {
+                                    onerror_cb("Failed to load data: " + href);
+                                } else {
+                                    m.log.error("Failed to load data: " + href);
+                                }
                             } else {
                                 hcb._uuid = lyr_uuid;
                                 common.update(hcb, overrides);
@@ -2744,15 +2763,15 @@
                                 }
 
                                 i = plot.overlay_bluefile(hcb, layerOptions);
-                                if (onload) {
-                                    onload(hcb, i);
+                                if (_onload) {
+                                    _onload(hcb, i);
                                 }
                             }
                         } finally {
                             plot.hide_spinner();
                         }
                     };
-                }(this, onload));
+                }(this, onload_cb, onerror_cb));
 
                 var reader;
                 var oReq;
@@ -2766,15 +2785,27 @@
                     oReq.open("GET", href, true);
                     oReq.responseType = "";
                     oReq.onload = function(oEvent) {
-                        var hcb = JSON.parse(oReq.responseText);
-                        if (hcb) {
-                            hcb.url = href;
+                        try {
+                            let hcb = JSON.parse(oReq.responseText);
+                            if (hcb) {
+                                hcb.url = href;
+                                handleSDS(hcb, layerOptions.layerType);
+                            }
+                        } catch (error) {
+                            if (onerror_cb) {
+                                onerror_cb(error);
+                            }
                         }
-                        handleSDS(hcb, layerOptions.layerType);
-
                     };
                     oReq.onerror = function(oEvent) {
-                        //console.log("error fetching SDS header" + oEvent)
+                        if (onerror_cb) {
+                            onerror_cb(oEvent);
+                        }
+                    };
+                    oReq.ontimeout = function(oEvent) {
+                        if (onerror_cb) {
+                            onerror_cb(oEvent);
+                        }
                     };
                     oReq.send(null);
                 } else {
@@ -2789,6 +2820,9 @@
                 }
             } catch (error) {
                 this.hide_spinner();
+                if (onerror_cb) {
+                    onerror_cb(error);
+                }
             }
 
             return lyr_uuid;
