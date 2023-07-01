@@ -3798,7 +3798,12 @@
 
                 // Set top and bottom
                 if (Gx.show_readout) {
-                    Mx.t = Mx.text_h * 2;
+                    if (Gx.no_legend_button) {
+                        Mx.t = Mx.text_h * 1;
+                    } else {
+                        Mx.t = Mx.text_h * 2;
+                    }
+
                     if (Gx.show_x_axis) {
                         Mx.b = Mx.height - Mx.text_h * 4;
                     } else {
