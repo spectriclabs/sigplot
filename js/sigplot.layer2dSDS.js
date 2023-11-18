@@ -345,7 +345,6 @@
                     arrayBuffer.ymax = ymax;
                     this.cache.set(url, arrayBuffer); // store the data in the cache
 
-                    delete this.pendingURLs[url]; // Remove this url as pending
                     this.plot.refresh(); // refresh the plot will cause this tile to be drawn
                 }
             }
@@ -421,8 +420,19 @@
          * @param url
          */
         sendTileRequest: function (url) {
+            var Mx = this.plot._Mx;
+            // If this URL is already pending, don't request it again
             if (this.pendingURLs[url]) {
                 return;
+            }
+
+            if (Object.keys(this.pendingURLs).length === 0) {
+                var evt = new Event("sds_tiles_loading");
+                evt.layer = this;
+                var executeDefault = mx.dispatchEvent(Mx, evt);
+                if (executeDefault) {
+                    this.plot.show_spinner();    
+                }
             }
 
             const oReq = new XMLHttpRequest();
@@ -435,9 +445,24 @@
             const that = this;
             oReq.onload = function (oEvent) {
                 // `this` will be oReq within this context
+                delete that.pendingURLs[url]; // Remove this url as pending
                 that.load_tile(url, this, oEvent);
+                if (Object.keys(that.pendingURLs).length === 0) {
+                    var evt = new Event("sds_tiles_loaded");
+                    evt.layer = this;
+                    mx.dispatchEvent(Mx, evt);
+                    that.plot.hide_spinner();
+                }
             };
-            oReq.onerror = function (oEvent) {};
+            oReq.onerror = function (oEvent) {
+                delete that.pendingURLs[url];
+                if (Object.keys(that.pendingURLs).length === 0) {
+                    var evt = new Event("sds_tiles_loaded");
+                    evt.layer = this;
+                    mx.dispatchEvent(Mx, evt);
+                    that.plot.hide_spinner();
+                }
+            };
             oReq.send(null);
             // this.debounceSend(oReq);
         },
