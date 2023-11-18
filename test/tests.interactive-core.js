@@ -729,3 +729,21 @@ interactiveTest('complex data falling raster', 'Do you see a falling raster?', f
         plot.push(lyr0, ramp);
     }, 100);
 });
+
+interactiveTest('issue-17', 'Do you see random data?', function(assert) {
+    var container = document.getElementById('plot');
+    var plot = new sigplot.Plot(container, {});
+    assert.notEqual(plot, null);
+
+    var data = [];
+    for (var i = 0; i < plot._Gx.bufmax + 1; i += 1) {
+        data.push(i);
+    }
+
+    var lyr_uuid = plot.overlay_array(data);
+
+    for (var i = 0; i < plot._Gx.bufmax + 1; i += 1) {
+        data[i] = (Math.random() * plot._Gx.bufmax);
+    }
+    plot.reload(lyr_uuid, data, null, true);
+});

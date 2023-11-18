@@ -260,7 +260,7 @@
                 imin = imax - npts + 1;
             }
 
-            if ((imin >= this.imin) && (imin + npts <= this.imin + this.size) && (this.ybuf !== undefined)) {
+            if ((imin >= this.imin) && (imin + npts <= this.imin + this.size) && (this.ybuf !== undefined) && (this.ybufn !== undefined)) {
                 // data already in buffers
             } else if (this.modified) {
                 // modified data not yet saved off
@@ -337,7 +337,8 @@
             }
             this.hcb.setData(data);
 
-            // Setting these causes refresh() to refetch
+            // Setting ybufn to undefined causes refresh() to refetch via get_data
+            this.ybufn = undefined;
             this.imin = -1;
             this.size = this.hcb.size;
 
