@@ -60,6 +60,7 @@
 
     sigplot.bluefile = bluefile;
     sigplot.matfile = matfile;
+    sigplot.common = common;
     sigplot.m = m;
     sigplot.mx = mx;
     sigplot.Layer1D = Layer1D;
