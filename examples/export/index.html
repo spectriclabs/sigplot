@@ -1,0 +1,34 @@
+<html>
+  <head>
+    <script src="/sigplot.js"></script>
+    <script src="sigplot.export.js"></script>
+    <style>
+    #plot {
+        width: 100%;
+        height: 100vh;
+    }
+
+    #body {
+        margin: 0;
+    }
+    </style>
+  </head>
+  <body>
+    <div id="plot"></div>
+    <script>
+    window.onload = function() {
+        var plot = new sigplot.Plot(document.getElementById('plot'));
+
+        var export_plugin = new ExportPlugin({});
+        plot.add_plugin(export_plugin, 1);
+
+        var ramp = [];
+        for (var i = 0; i < 1024; i += 1) {
+            ramp.push(i);
+        }
+        plot.overlay_array(ramp);
+    }
+    </script>
+  </body>
+</html>
+
