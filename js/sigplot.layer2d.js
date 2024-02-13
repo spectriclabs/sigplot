@@ -164,20 +164,35 @@
                     var d = this.hcb.xstart + (this.hcb.xdelta * this.hcb.subsize);
                     this.xmin = this.hcb.xmin || Math.min(this.hcb.xstart, d);
                     this.xmax = this.hcb.xmax || Math.max(this.hcb.xstart, d);
-                    this.ystart = this.hcb.ystart;
-                    this.ydelta = this.hcb.ydelta;
-                    var d = this.hcb.ystart + (this.hcb.ydelta * this.lps);
-                    this.ymin = this.hcb.ymin || Math.min(this.hcb.ystart, d);
-                    this.ymax = this.hcb.ymax || Math.max(this.hcb.ystart, d);
+                    if (this.hcb.class === 1) {
+                        this.ystart = this.hcb.xstart;
+                        this.ydelta = this.hcb.xdelta * this.hcb.subsize;
+                    } else {
+                        this.ystart = this.hcb.ystart;
+                        this.ydelta = this.hcb.ydelta;
+                    }
+                    var d = this.ystart + (this.ydelta * this.lps);
+                    this.ymin = this.hcb.ymin || Math.min(this.ystart, d);
+                    this.ymax = this.hcb.ymax || Math.max(this.ystart, d);
                 } else {
+                    // This code is kinda confusing because it will look like we are
+                    // incorrectly mixing and matching x and y incorrectly, but it's
+                    // likely right ... just not clear, before changing anything here
+                    // think first
                     this.ystart = this.hcb.xstart;
                     this.ydelta = this.hcb.xdelta;
                     var d = this.hcb.xstart + (this.hcb.xdelta * this.hcb.subsize);
                     this.ymin = this.hcb.xmin || Math.min(this.hcb.xstart, d);
                     this.ymax = this.hcb.xmax || Math.max(this.hcb.xstart, d);
-                    this.xstart = this.hcb.ystart;
-                    this.xdelta = this.hcb.ydelta;
-                    var d = this.hcb.ystart + (this.hcb.ydelta * this.lps);
+
+                    if (this.hcb.class === 1) {
+                        this.xstart = this.hcb.xstart;
+                        this.xdelta = this.hcb.xdelta * this.hcb.subsize;
+                    } else {
+                        this.xstart = this.hcb.ystart;
+                        this.xdelta = this.hcb.ydelta;
+                    }
+                    var d = this.xstart + (this.xdelta * this.lps);
                     this.xmin = this.hcb.ymin || Math.min(this.hcb.ystart, d);
                     this.xmax = this.hcb.ymax || Math.max(this.hcb.ystart, d);
                 }

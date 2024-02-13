@@ -1720,3 +1720,11 @@ interactiveTest('sigplot 2d array origin 2', 'Do you see a raster? Is alignment 
         preferred_origin: 2
     });
 });
+
+interactiveTest('type1000 file', 'Do you see ydelta calculated correctly?', function(assert) {
+    var container = document.getElementById('plot');
+    var plot = new sigplot.Plot(container, {});
+    assert.notEqual(plot, null);
+    plot.overlay_href("dat/ramp.tmp", null, { layerType: sigplot.Layer2D }, {subsize: 10});
+
+});
