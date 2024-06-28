@@ -871,6 +871,8 @@
                 this.options.highlight.push(highlight);
             }
             this.plot.refresh();
+
+            return highlight;
         },
 
         /**
