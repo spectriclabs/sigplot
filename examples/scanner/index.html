@@ -1,0 +1,129 @@
+<html>
+  <head>
+    <script src="/sigplot.js"></script>
+    <style>
+    #plot {
+        width: 100%;
+        height: 100vh;
+    }
+
+    #body {
+        margin: 0;
+    }
+    </style>
+  </head>
+  <body>
+    <div id="plot"></div>
+    <script>
+
+    window.onload = function() {
+      // These options are preference to make a cleaner display  
+      var plot_options = {
+        autohide_panbars: true,
+        hide_note: true,
+        all: true,
+        expand: true,
+        cmode: "L2"
+      };
+
+      var scan_lower = 300e6;
+      var scan_upper = 1300e6;
+      var scan_width = 100e6;
+      var n_scans =  Math.ceil((scan_upper - scan_lower) / scan_width);
+      var scan_bin_width = 10e3;
+      var scan_bins = Math.floor(scan_upper - scan_lower) / scan_bin_width
+
+      // assumes we have a 1 GHz scan with a frequency resolution of
+      // 1khz (i.e. 1e9 / 1e3 = 1e6 frequency bins)
+      var data = Array(scan_bins).fill(0)
+      var data_header = {
+        xunits: "Frequency",
+        xstart: scan_lower, // the start of the x-axis
+        xdelta: scan_bin_width, // the x-axis step between each data point
+        yunits: "Power"
+      };
+
+      // Setup layer
+      var layer_options = {
+        name: "Scan Data",
+        color: "red"
+      };
+      var plot = new sigplot.Plot(document.getElementById('plot'), plot_options);
+      var lyr = plot.overlay_array(data, data_header, layer_options);
+
+      var scan_pos = scan_lower;
+      var lft_bin = Math.floor((scan_lower - scan_lower) / scan_bin_width);
+      var scan_n_bins = Math.ceil(scan_width / scan_bin_width);
+
+      // Create highlights for each scan area
+      var scans = []
+      for (var ii=0; ii<n_scans; ii++) {
+          var highlight = plot.get_layer(lyr).add_highlight({
+            xstart: scan_lower + (ii * scan_width),
+            xend: scan_lower + ((ii+1) * scan_width),
+            color: "red"
+          });
+          highlight.timestamp = 0;
+          scans.push(highlight);
+      }
+
+      var scan_idx = 0;
+
+      // This timer emulates new scan data arriving every 1 seconds
+      window.setInterval(
+        function() {
+          if (scan_idx >= scans.length) {
+            scan_idx = 0;
+          }
+          var lft_bin = (scan_idx * scan_n_bins);
+          var rgt_bin = Math.min(lft_bin + scan_n_bins, scan_bins);
+
+          // Create a crappy simulation of spectrum
+          var ii = lft_bin;
+          while (ii < rgt_bin) {
+            var amplitude = Math.random()
+            var span = Math.floor(Math.random() * scan_n_bins/10);
+
+            for (var jj=0; jj<span; jj++) {
+              if (ii >= rgt_bin) {
+                break;
+              }
+              data[ii++] = amplitude + (Math.random() - 0.5)*0.1;
+            }
+
+          }
+
+          scans[scan_idx].color = "green";
+          scans[scan_idx].timestamp = Date.now();
+
+          plot.reload(lyr, data);
+
+          plot.redraw();
+
+          scan_idx += 1;
+        },
+        1000 // 1 second scan
+      )
+
+      window.setInterval(
+        function() {
+          var now =  Date.now();
+          for (var ii=0; ii<scans.length; ii++) {
+            if (now - scans[ii].timestamp < 2000) {
+              scans[ii].color = "green";
+            } else if (now - scans[ii].timestamp < 5000) {
+              scans[ii].color = "blue";
+            } else {
+              scans[ii].color = "red";
+            }
+          }
+          plot.redraw();
+        },
+        500
+      );
+    }
+
+    </script>
+  </body>
+</html>
+
