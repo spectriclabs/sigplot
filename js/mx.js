@@ -1584,7 +1584,7 @@
                     var xs = Math.max(options.highlight[sn].xstart, xmin);
                     var xe = Math.min(options.highlight[sn].xend, xmax);
 
-                    if (xs < xe) {
+                    if (xs <= xe) {
                         var rxs = Math.round((xs - xxmin) * xscl) + left;
                         var rxe = Math.round((xe - xxmin) * xscl) + left;
 
@@ -1627,17 +1627,32 @@
                     }
                 }
 
-                // The first color is the start of the plot
-                // in the base-line color
-                colors.push({
-                    start: left,
-                    color: color
-                });
-
                 colors.sort(function(a, b) {
                     return a.start - b.start;
                 });
 
+                // If the first highlight doesn't include the first range add it
+                if (colors[0].start > left) {
+                    // The first color is the start of the plot
+                    // in the base-line color
+                    colors.splice(
+                        0,
+                        0,
+                        {
+                            start: left,
+                            color: color
+                        }
+                    );
+                }
+
+                if (colors[colors.length-1].end) {
+                    colors.push(
+                        {
+                            start: colors[colors.length-1].end,
+                            color: color
+                        }
+                    );
+                }
             } else {
                 colors = color;
             }
