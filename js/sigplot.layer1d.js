@@ -260,11 +260,12 @@
                 imin = imax - npts + 1;
             }
 
-            if ((imin >= this.imin) && (imin + npts <= this.imin + this.size) && (this.ybuf !== undefined) && (this.ybufn !== undefined)) {
+            if ((imin >= this.imin) && (imin + npts <= this.imin + npts) && (this.ybuf !== undefined) && (this.ybufn !== undefined)) {
                 // data already in buffers
+                return this.ybuf.length;
             } else if (this.modified) {
                 // modified data not yet saved off
-
+                return 0;
             } else if (HCB["class"] <= 2) {
                 // load new data
                 var start = this.offset + imin;
@@ -278,12 +279,13 @@
                 var ngot = m.grab(HCB, ybuf, start, npts);
                 this.imin = imin;
                 this.xstart = HCB.xstart + (imin) * this.xdelta;
-                this.size = ngot;
+                return ngot;
             } else {
                 // type 3000, 4000, 5000
                 // TODO yeah right
             }
 
+            return 0;
         },
 
         change_settings: function(settings) {
@@ -408,9 +410,15 @@
             var Gx = this.plot._Gx;
             var Mx = this.plot._Mx;
 
-            this.get_data(xmin, xmax);
+            var npts = this.get_data(xmin, xmax);
+            if (npts == null) {
+                return {
+                    num: 0,
+                    start: 0,
+                    end: 0
+                };
+            }
 
-            var npts = Math.ceil(this.size);
             if (this.mode === "XY") {
                 npts = Math.floor(npts / 2);
             }
@@ -783,16 +791,16 @@
                     }
                 }
 
-                if (this.size === 0) {
+                if (pts.num === 0) {
                     xmin = xmax;
                 } else {
                     if (Gx.index) {
                         xmin = xmin + pts.num;
                     } else {
                         if (xdelta >= 0) {
-                            xmin = xmin + (this.size * xdelta);
+                            xmin = xmin + (pts.num * xdelta);
                         } else {
-                            xmax = xmax + (this.size * xdelta);
+                            xmax = xmax + (pts.num * xdelta);
                         }
                     }
                 }
