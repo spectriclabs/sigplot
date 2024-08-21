@@ -410,7 +410,8 @@
             var Gx = this.plot._Gx;
             var Mx = this.plot._Mx;
 
-            var npts = this.get_data(xmin, xmax);
+            this.get_data(xmin, xmax);
+            var npts = Math.ceil(this.size);
             if (npts == null) {
                 return {
                     num: 0,
