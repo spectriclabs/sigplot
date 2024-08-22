@@ -279,6 +279,7 @@
                 var ngot = m.grab(HCB, ybuf, start, npts);
                 this.imin = imin;
                 this.xstart = HCB.xstart + (imin) * this.xdelta;
+                this.size = ngot
                 return ngot;
             } else {
                 // type 3000, 4000, 5000
