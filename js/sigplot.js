@@ -2344,6 +2344,7 @@
          */
         update_href: function(lyr_uuid, href, center_freq, evt_cb, overrides) {
             m.log.debug(`update href function called! ${center_freq}`);
+            var Gx = this._Gx;
             var HCB = Gx.HCB_UUID[lyr_uuid];
 
             let onload_cb = null;
