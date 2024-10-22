@@ -2379,8 +2379,8 @@
 
                 }(this, onload_cb, onerror_cb));
 
-                reader = new bluefile.BlueFileReader();
-                oReq = reader.read_http(href, handleHeader);
+                var reader = new bluefile.BlueFileReader();
+                var oReq = reader.read_http(href, handleHeader);
                 
                 if (oReq) {
                     const layer_n = this.get_lyrn(lyr_uuid);
@@ -2391,7 +2391,7 @@
                 
             } catch (error) {
                 console.log("Error trying to get file from href");
-                console.log(error)
+                m.log.error(error)
             }
 
             return lyr_uuid
