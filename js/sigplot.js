@@ -2343,9 +2343,8 @@
          *              
          */
         update_href: function(lyr_uuid, href, center_freq, evt_cb, overrides) {
-            console.log(`update href function called! ${center_freq}`)
-            var Gx = this._Gx;
-            var HCB = Gx.HCB_UUID[lyr_uuid]
+            m.log.debug(`update href function called! ${center_freq}`);
+            var HCB = Gx.HCB_UUID[lyr_uuid];
 
             let onload_cb = null;
             let onerror_cb = null;
@@ -2373,7 +2372,7 @@
                                 plot.reload(lyr_uuid, HCB.dview, null, null);
                             }
                         } catch (error) {
-                            m.log.error(error)
+                            m.log.error(error);
                         }
                     }
 
@@ -2382,19 +2381,11 @@
                 var reader = new bluefile.BlueFileReader();
                 var oReq = reader.read_http(href, handleHeader);
                 
-                if (oReq) {
-                    const layer_n = this.get_lyrn(lyr_uuid);
-                    if (layer_n >= 0) {
-                        this._Gx.HCB[layer_n].cleanup = () => oReq.abort();
-                    }
-                }
-                
             } catch (error) {
-                console.log("Error trying to get file from href");
-                m.log.error(error)
+                m.log.error(error);
             }
 
-            return lyr_uuid
+            return lyr_uuid;
         },
 
         /**
