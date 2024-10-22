@@ -712,6 +712,40 @@
     };
 
     /**
+     * Replace a specified portion of the data with a new set of data
+     * @param {header} hcb_original 
+     * @param {header} hcb_new 
+     * @param {number} center_freq
+     * 
+     */
+
+    m.replace = function(hcb_original, hcb_new, center_freq) {
+        if (hcb_original.dview.length < hcb_new.dview.length) {
+            m.log.error(`New dataview length exceeds original dataview length: ${hcb_new.dview.length} > ${hcb_original.dview.length}`)
+            return hcb_original
+        }
+
+        var xstart = hcb_new.xstart
+        var xdelta = hcb_new.xdelta
+        var start_freq = center_freq + xstart
+        var start_index = Math.floor((start_freq - hcb_original.xstart) / xdelta)
+
+        if (start_index < 0) {
+            m.log.error("Start index is less than 0")
+            return hcb_original
+        }
+
+        if (start_index + hcb_new.dview.length > hcb_original.dview.length) {
+            m.log.error(`New dataview placement exceeds original dataview length by: ${hcb_original.dview.length - start_index + hcb_new.dview.length}`)
+            return hcb_original
+        }
+
+        hcb_original.dview.set(hcb_new.dview, start_index)
+
+        return hcb_original
+    }
+
+    /**
      * @param	{header}	hcb		Bluefile header control block
      * @return	{number}	elements available
      * @private

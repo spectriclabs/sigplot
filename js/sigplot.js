@@ -2325,6 +2325,79 @@
         },
 
         /**
+         * Replaces a section of a layer with the data retreived from the provided href
+         * @param {Number} lyr 
+         *              The layer to push data into
+         * @param {String} href 
+         *              The URL to get the data from (currently only supporting bluefile)
+         * @param {Number} center_freq
+         *              Center frequency at which to place the new data
+         * @param [evt_cb]
+         *              callback to be called when the file has been loaded.  Can be
+         *              a single function, which get's called after successful load
+         *              or can be a object with an onload and/or onerror function
+         * @param [layerOptions]
+         *              Key-value pairs whose values are the settings for the plot
+         * @param [overrides]
+         *              HCB overrides
+         *              
+         */
+        update_href: function(lyr_uuid, href, center_freq, evt_cb, overrides) {
+            console.log(`update href function called! ${center_freq}`)
+            var Gx = this._Gx;
+            var HCB = Gx.HCB_UUID[lyr_uuid]
+
+            let onload_cb = null;
+            let onerror_cb = null;
+            if (evt_cb && (evt_cb.onload || evt_cb.onerror)) {
+                onload_cb = evt_cb.onload;
+                onerror_cb = evt_cb.onerror;
+            } else {
+                onload_cb = evt_cb;
+            }
+
+            try {
+                var handleHeader = (function(plot, _onload, _onerror) {
+                    return function(hcb) {
+                        try {
+                            if (!hcb) {
+                                if (onerror_cb) {
+                                    onerror_cb("Failed to load data: " + href);
+                                } else {
+                                    m.log.error("Failed to load data: " + href);
+                                }
+                            } else {
+                                hcb._uuid = lyr_uuid;
+                                HCB = m.replace(HCB, hcb, center_freq);
+                                common.update(HCB, overrides);
+                                plot.reload(lyr_uuid, HCB.dview, null, null);
+                            }
+                        } catch (error) {
+                            m.log.error(error)
+                        }
+                    }
+
+                }(this, onload_cb, onerror_cb));
+
+                reader = new bluefile.BlueFileReader();
+                oReq = reader.read_http(href, handleHeader);
+                
+                if (oReq) {
+                    const layer_n = this.get_lyrn(lyr_uuid);
+                    if (layer_n >= 0) {
+                        this._Gx.HCB[layer_n].cleanup = () => oReq.abort();
+                    }
+                }
+                
+            } catch (error) {
+                console.log("Error trying to get file from href");
+                console.log(error)
+            }
+
+            return lyr_uuid
+        },
+
+        /**
          * Create a plot layer with an array overlay
          *
          * @example plot.overlay_array(data, {[overrides]}, {[layerOptions]});
