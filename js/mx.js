@@ -1632,26 +1632,33 @@
                 });
 
                 // If the first highlight doesn't include the first range add it
-                if (colors[0].start > left) {
-                    // The first color is the start of the plot
-                    // in the base-line color
-                    colors.splice(
-                        0,
-                        0,
-                        {
-                            start: left,
-                            color: color
-                        }
-                    );
-                }
+                if (colors.length > 0) {
+                    if (colors[0].start > left) {
+                        // The first color is the start of the plot
+                        // in the base-line color
+                        colors.splice(
+                            0,
+                            0,
+                            {
+                                start: left,
+                                color: color
+                            }
+                        );
+                    }
 
-                if (colors[colors.length-1].end) {
-                    colors.push(
-                        {
-                            start: colors[colors.length-1].end,
-                            color: color
-                        }
-                    );
+                    if (colors[colors.length-1].end) {
+                        colors.push(
+                            {
+                                start: colors[colors.length-1].end,
+                                color: color
+                            }
+                        );
+                    }
+                } else {
+                    colors.push({
+                        start: left,
+                        color: color
+                })
                 }
             } else {
                 colors = color;
