@@ -2371,6 +2371,9 @@
                                 HCB = m.replace(HCB, hcb, center_freq);
                                 common.update(HCB, overrides);
                                 plot.reload(lyr_uuid, HCB.dview, null, null);
+                                if (_onload) {
+                                    _onload(HCB);
+                                }
                             }
                         } catch (error) {
                             m.log.error(error);
