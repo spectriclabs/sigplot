@@ -2441,8 +2441,13 @@
          */
 
         overlay_websocket: function(wsurl, overrides, layerOptions) {
-            m.log.debug("Overlay websocket: " + wsurl);
-            var ws = new WebSocket(wsurl, "plot-data");
+            if (typeof wsurl === "string") {
+                m.log.debug("Overlay websocket: " + wsurl);
+                var ws = new WebSocket(wsurl, "plot-data");
+            } else {
+                m.log.debug("Using provided websocket");
+                var ws = wsurl;
+            }
             ws.binaryType = "arraybuffer";
 
             var plot = this;
@@ -2455,16 +2460,16 @@
 
             var layer_n = this.overlay_bluefile(hcb, layerOptions);
 
-            ws.onopen = function(evt) {};
+            ws.addEventListener("open",  function(evt) {});
 
-            ws.onmessage = (function(theSocket) {
+            ws.addEventListener("message", (function(theSocket) {
                 return function(evt) {
                     if (evt.data instanceof ArrayBuffer) {
                         var data = hcb.createArray(evt.data);
                         plot.push(layer_n, data);
                     } else if (typeof evt.data === "string") {
                         var Gx = plot._Gx;
-                        var hdr = Gx.lyr[layer_n].hcb;
+                        var hdr = plot.get_layer(layer_n).hcb;
                         if (!hdr) {
                             m.log.warning("Couldn't find header for layer " + layer_n);
                         }
@@ -2473,7 +2478,7 @@
                         plot.push(layer_n, [], newHdr);
                     }
                 };
-            })(ws);
+            })(ws));
 
             return layer_n;
         },
