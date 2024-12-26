@@ -373,7 +373,7 @@
                     }
                 }
 
-                if (hdrmod.subsize && (hdrmod.subsize != this.size)) {
+                if (hdrmod.subsize && (hdrmod.subsize !== this.size)) {
                     if (this.hcb["class"] === 2) {
                         m.force1000(this.hcb);
                         this.size = this.hcb.subsize;

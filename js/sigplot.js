@@ -2442,12 +2442,13 @@
          */
 
         overlay_websocket: function(wsurl, overrides, layerOptions) {
+            let ws = null;
             if (typeof wsurl === "string") {
                 m.log.debug("Overlay websocket: " + wsurl);
-                var ws = new WebSocket(wsurl, "plot-data");
+                ws = new WebSocket(wsurl, "plot-data");
             } else {
                 m.log.debug("Using provided websocket");
-                var ws = wsurl;
+                ws = wsurl;
             }
             ws.binaryType = "arraybuffer";
 
@@ -2461,7 +2462,7 @@
 
             var layer_n = this.overlay_bluefile(hcb, layerOptions);
 
-            ws.addEventListener("open",  function(evt) {});
+            ws.addEventListener("open", function(evt) {});
 
             ws.addEventListener("message", (function(theSocket) {
                 return function(evt) {
