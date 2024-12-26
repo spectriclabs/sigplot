@@ -37,6 +37,7 @@
   "scripts": {
     "build": "grunt dist",
     "prep": "grunt prep",
+    "grunt": "grunt",
     "generate-docs": "rm -rf ./doc/; node_modules/.bin/jsdoc --configure .jsdoc.json --verbose; cp ./fft-white.png doc/sigplot/$npm_package_version/",
     "serve": "budo js/sigplot.js --live -p 1337 -v . -- --standalone=sigplot",
     "test": "grunt test"
