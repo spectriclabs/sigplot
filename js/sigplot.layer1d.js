@@ -373,7 +373,7 @@
                     }
                 }
 
-                if (hdrmod.subsize) {
+                if (hdrmod.subsize && (hdrmod.subsize != this.size)) {
                     if (this.hcb["class"] === 2) {
                         m.force1000(this.hcb);
                         this.size = this.hcb.subsize;
@@ -381,14 +381,17 @@
                         this.position = null;
                         this.ybufn = this.size * Math.max(this.skip * m.PointArray.BYTES_PER_ELEMENT, m.PointArray.BYTES_PER_ELEMENT);
                         this.ybuf = new ArrayBuffer(this.ybufn);
+                        this.ymin = null;
+                        this.ymax = null;
                     }
                 }
 
-                var d = this.hcb.xstart + this.hcb.xdelta * (this.size - 1.0);
-                this.xmin = this.hcb.xmin || Math.min(this.hcb.xstart, d);
-                this.xmax = this.hcb.xmax || Math.max(this.hcb.xstart, d);
                 this.xdelta = this.hcb.xdelta;
-                this.xstart = this.hcb.xstart;
+                this.xstart = this.hcb.xstart + (this.imin) * this.xdelta;
+
+                var d = this.hcb.xstart + this.hcb.xdelta * (this.size - 1.0);
+                this.xmin = Math.min(this.hcb.xstart, d);
+                this.xmax = Math.max(this.hcb.xstart, d);
             }
 
             if (data.length > 0) {
