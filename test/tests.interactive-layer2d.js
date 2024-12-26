@@ -1725,6 +1725,10 @@ interactiveTest('type1000 file', 'Do you see ydelta calculated correctly?', func
     var container = document.getElementById('plot');
     var plot = new sigplot.Plot(container, {});
     assert.notEqual(plot, null);
-    plot.overlay_href("dat/ramp.tmp", null, { layerType: sigplot.Layer2D }, {subsize: 10});
+    plot.overlay_href("dat/ramp.tmp", null, {
+        layerType: sigplot.Layer2D
+    }, {
+        subsize: 10
+    });
 
 });
