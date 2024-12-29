@@ -2876,7 +2876,7 @@
         },
 
         get_hcb_by_uuid: function(uuid) {
-            return this._Gx.HCB[uuid];
+            return this._Gx.HCB_UUID[uuid];
         },
 
         get_hcb_by_lyrn: function(lyrN) {
