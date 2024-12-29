@@ -8606,11 +8606,19 @@
             Gx.iabsc = 2;
         } // R/I mode
         if (Gx.iabsc === 1) { // index
-            Gx.aretx = Math.round((Gx.aretx - Gx.xstart) / Gx.xdelta);
+            // if there is more than one layer index is ambiguous, so use the first layer only
+            var hcb = plot.get_hcb_by_lyrn(0);
+            if (hcb) {
+                Gx.aretx = Math.round((Gx.aretx - hcb.xstart) / hcb.xdelta);
+                Gx.dretx = Math.round(Gx.dretx / hcb.xdelta);
+            } else {
+                Gx.aretx = 0;
+                Gx.dretx = 1;
+            }
             if (!Gx.index) {
                 Gx.aretx += 1;
             }
-            Gx.dretx = Math.round(Gx.dretx / Gx.xdelta);
+           
         } else if (Gx.iabsc === 2) { // 1/absc
             if (Gx.aretx !== 0.0) {
                 Gx.aretx = 1.0 / Gx.aretx;
