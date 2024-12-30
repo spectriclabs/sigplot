@@ -320,6 +320,10 @@
                 this.ybufn = this.size * Math.max(this.skip * m.PointArray.BYTES_PER_ELEMENT, m.PointArray.BYTES_PER_ELEMENT);
                 this.ybuf = new ArrayBuffer(this.ybufn);
             }
+
+            if (settings.color !== undefined) {
+                this.color = settings.color;
+            }
         },
 
         reload: function(data, hdrmod) {
