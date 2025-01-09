@@ -1287,7 +1287,19 @@
 
         window.addWheelListener(window, this.wheelHandler, false);
 
-        window.addEventListener("resize", this.onresize, false);
+        // window.ResizeObserver was introduced well after SigPlot was available
+        // although ResizeObserver is widely supported, there might be environments
+        // where it is not available and thus we keep the old code for backwards compatibility
+        if (window.ResizeObserver) {
+            this.resizeObserver = new ResizeObserver(entries => {
+                if (mx.checkresize(this._Mx)) {
+                    this.refresh();
+                }
+            });
+            this.resizeObserver.observe(this._Mx.root);
+        } else {
+            window.addEventListener("resize", this.onresize, false);
+        }
 
         // If multiple plots are in the same window, then it
         // may be desired to disable keypress behavior and implement
@@ -3707,7 +3719,11 @@
             window.addEventListener("mouseup", Mx.onmouseup, false);
             window.addEventListener("keydown", Mx.onkeydown, false);
             window.addEventListener("keyup", Mx.onkeyup, false);
-            window.addEventListener("resize", this.onresize, false);
+            if (this.resizeObserver) {
+                this.resizeObserver.observe(Mx.root);
+            } else {
+                window.addEventListener("resize", this.onresize, false);
+            }
             document.addEventListener("mouseup", this.docMouseUp, false);
             mx.addEventListener(Mx, "mouseup", this.mouseup, false);
             window.addEventListener("mousedown", this.dragMouseDownHandler, false);
@@ -3733,7 +3749,11 @@
             window.removeEventListener("mouseup", Mx.onmouseup, false);
             window.removeEventListener("keydown", Mx.onkeydown, false);
             window.removeEventListener("keyup", Mx.onkeyup, false);
-            window.removeEventListener("resize", this.onresize, false);
+            if (this.resizeObserver) {
+                this.resizeObserver.unobserve(Mx.root);
+            } else {
+                window.removeEventListener("resize", this.onresize, false);
+            }
             document.removeEventListener("mouseup", this.docMouseUp, false);
             window.removeEventListener("mousedown", this.dragMouseDownHandler,
                 false);
