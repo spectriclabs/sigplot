@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+  <!--
+    WARNING! Make sure that you match all Quasar related
+    tags to the same version! (Below it's "@2.17.6")
+  -->
+
+  <head>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900|Material+Icons" rel="stylesheet" type="text/css">
+    <link href="https://cdn.jsdelivr.net/npm/quasar@2.17.6/dist/quasar.prod.css" rel="stylesheet" type="text/css">
+    <link href="global.css" rel="stylesheet" type="text/css">
+  </head>
+
+  <body>
+    <!-- example of injection point where you write your app template -->
+    <div id="q-app">
+        <q-layout view="hHh Lpr fFf">
+
+            <!-- Drawer -->
+            <q-drawer dark elevated show-if-above side="left" behavior="desktop" :bordered="true" :width="275">
+            </q-drawer>
+    
+            <!-- Page Container -->
+            <q-page-container>
+                <q-page class="page-content">
+                    <div class="plot" id="plot-line"></div>
+                    <div class="plot" id="plot-raster"></div>            
+                </q-page>
+            </q-page-container>
+        </q-layout>
+    </div>
+
+    <!-- Add the following at the end of your body tag -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.prod.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/quasar@2.17.6/dist/quasar.umd.prod.js"></script>
+    <script src="/sigplot.js"></script>
+    <script src="dsp.js"></script>
+
+    <script>
+
+        const fs = 44100; // sample rate
+        const fftsize = 2048; // fft size
+        const xdelta = fs / fftsize;
+        const complex_mode = false;
+
+        let freq1 = 440;
+        let freq2 = 14400;
+
+        let osc1 = new Oscillator(DSP.SINEWAVE, freq1, 1, fftsize, fs);
+        let hann1 = new WindowFunction(DSP.HANN)
+        let fft1 = new FFT(fftsize, fs);
+
+        let osc2 = new Oscillator(DSP.SINEWAVE, freq2, 1, fftsize, fs);
+        let hann2 = new WindowFunction(DSP.HANN)
+        let fft2 = new FFT(fftsize, fs);
+
+        function generate() {
+            osc1.generate();
+            hann1.process(osc1.signal)
+            fft1.forward(osc1.signal);
+            var spectrum1;
+            spectrum1 = fft1.spectrum;
+            
+            osc2.generate();
+            hann2.process(osc2.signal)
+            fft2.forward(osc2.signal);
+            var spectrum2;
+            spectrum2 = fft2.spectrum;
+
+            var mix = DSP.mixSampleBuffers(spectrum1, spectrum2, false, 1);
+            return {
+                spectrum1: spectrum1,
+                spectrum2: spectrum2,
+                mix: mix
+            }
+        }
+
+        const App = {
+            components: {
+            },
+            
+            setup() {
+            },
+
+            mounted() {
+                const PLOT_OPTIONS = {
+                    autol: 3,
+                    colors: {
+                        "bg": "#051116",
+                        "fg": "#FFF"
+                    },
+                    font_family: "Montserrat",
+                    font_width: 12,
+                    autohide_panbars: true,
+                    autohide_readout: true,
+                    no_legend_button: true,
+                    nodragdrop: true,
+                    cmode: "LO"
+                };
+
+
+                let plot_line = new sigplot.Plot(document.getElementById('plot-line'), PLOT_OPTIONS);
+                let plot_raster = new sigplot.Plot(document.getElementById('plot-raster'), PLOT_OPTIONS);
+
+                let line_layer1 = plot_line.overlay_pipe({
+                    xdelta: xdelta,
+                    xunits: 3,
+                    yunits: 26,
+                    size: fftsize / 2
+                }, {
+                    framesize: fftsize / 2
+                });
+
+                let line_layer2 = plot_line.overlay_pipe({
+                    xdelta: xdelta,
+                    xunits: 3,
+                    yunits: 26,
+                    size: fftsize / 2
+                }, {
+                    framesize: fftsize / 2
+                });
+
+                let raster_layer = plot_raster.overlay_pipe({
+                    type: 2000,
+                    format: 'CF',
+                    subsize: fftsize / 2,
+                    xdelta: xdelta,
+                    pipesize: (fftsize / 2) * 8,
+                    xunits: 3
+                });
+
+
+                generator = window.setInterval(() => {
+                    let data = generate();
+                    plot_line.push(line_layer1, data.spectrum1);
+                    plot_line.push(line_layer2, data.spectrum2);
+                    plot_raster.push(raster_layer, data.mix);
+                }, 100);
+            },
+        }
+
+
+      const app = Vue.createApp(App);
+      app.use(Quasar)
+      app.mount('#q-app')
+    </script>
+  </body>
+</html>

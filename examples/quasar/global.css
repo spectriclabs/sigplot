@@ -1,0 +1,196 @@
+/*
+// General Styling
+*/
+body {
+    height: 100%;
+    font-family: Montserrat, Roboto, -apple-system, Helvetica, Arial, sans-serif;
+    line-height: 1.5;
+    font-size: 14px;
+    background-color: #051116;
+    color: white;
+}
+.page-content {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 0px;
+}
+/*
+// Plot styling
+*/
+.plot {
+    display: flex;
+    flex: 1;
+    width: 100%;
+    position: relative;
+    height: 100%;
+    margin: 0px;
+}
+.plot>div {
+    width: 100%;
+    position: static !important;
+}
+.plot>div.spinner {
+    position: relative !important;
+}
+.plot>div>canvas {
+    width: 100%;
+    height: 100%;
+}
+/*
+// Quasar styling
+*/
+.q-drawer {
+    background: linear-gradient(145deg,#1f3135,#061318);
+}
+/*
+.q-slider__marker-labels {
+    white-space: nowrap;
+    font-size: 12px;
+}
+*/
+.q-field__bottom--animated {
+  white-space: nowrap;
+}
+/*
+// Q-Select option height
+*/
+.q-list--dense > .q-item, .q-item--dense {
+    min-height: 24px;
+}
+/*
+// Q-Select with input width
+*/
+.q-field--dark .q-field__native,
+.q-field--dark .q-field__prefix,
+.q-field--dark .q-field__suffix,
+.q-field--dark .q-field__input  {
+    width: 100% !important;
+}
+/*
+// Q-Select with input centering
+*/
+.q-field__native:has(.select-input) {
+    padding-top: 4px !important;
+  }
+
+/*
+// ===================================================================
+// These two options control the height of the quasar input components
+*/
+
+.q-field--auto-height.q-field--dense .q-field__control,
+.q-field--auto-height.q-field--dense .q-field__native {
+    min-height: 30px;
+}
+.q-field--dense .q-field__control,
+.q-field--dense .q-field__marginal {
+    height: 30px;
+}
+
+/*
+// ===================================================================
+// Hide number input arrows
+// input::-webkit-outer-spin-button,
+// input::-webkit-inner-spin-button {
+//   -webkit-appearance: none;
+//   margin: 0;
+// }
+// input[type=number] {
+//   -moz-appearance: textfield;
+// }
+*/
+
+.title {
+    font-family: 'Montserrat';
+}
+
+.q-toolbar__title>a {
+    color: inherit;
+    text-decoration: inherit;
+    font-size: inherit;
+    padding: inherit;
+    margin: inherit;
+}
+
+.q-toolbar__title>a:hover {
+    color: #d8d8d8;
+}
+
+.radio-name {
+    font-size: 1.5rem;
+    text-align: center;
+    width: 100%;
+}
+
+.item-label {
+    color: rgba(255, 255, 255);
+    font-size: 13px;
+    white-space: nowrap;
+    padding-right: 12px;
+}
+
+.q-item__label--header {
+    padding-left: 8px;
+    padding-top: 8px;
+}
+
+.q-item {
+    display: flex;
+    justify-content: space-evenly;
+    flex-grow: 1;
+    width: 100%;
+    align-items: center;
+    padding: 6px 8px;
+    min-height: 40px;
+}
+
+.q-item-space-between {
+    justify-content: space-between;
+}
+
+.q-item__label+.q-item__label {
+    margin-top: 0px;
+}
+
+.q-select {
+    display: flex;
+    flex-grow: 1;
+}
+
+.slider-with-label {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding-left: 16px;
+    padding-right: 16px;
+    padding-bottom: 50px;
+}
+
+.slider-with-label:first-of-type {
+    padding-top: 10px;
+}
+
+.slider-with-label:last-of-type {
+    padding-bottom: 10px;
+}
+
+.slider-with-label>.q-item__label {
+    margin: auto;
+    margin-top: -20px;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.separator {
+    margin: 4px 12px;
+}
+
+.recordIcon {
+    margin: 0px 5px;
+}
+
+.recordIcon:first-of-type {
+    margin-left: 10px;
+}
