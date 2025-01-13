@@ -27,7 +27,7 @@
 
 /* global module */
 /* global require */
-
+/* global ResizeObserver */
 (function() {
 
     var version = "version-PLACEHOLDER";
