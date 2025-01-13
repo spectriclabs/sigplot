@@ -8638,7 +8638,7 @@
             if (!Gx.index) {
                 Gx.aretx += 1;
             }
-           
+
         } else if (Gx.iabsc === 2) { // 1/absc
             if (Gx.aretx !== 0.0) {
                 Gx.aretx = 1.0 / Gx.aretx;
