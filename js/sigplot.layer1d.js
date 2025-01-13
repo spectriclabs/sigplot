@@ -75,8 +75,10 @@
         this.pointbufsize = 0;
         this.xptr = null;
         this.yptr = null;
+        this.mhptr = null;
         this.xpoint = null; // PointArray backed by memory in xptr
         this.ypoint = null; // PointArray backed by memory in yptr
+        this.mhpoint = null; // PointArray backed by memory in mhptr
         this.firstpush = false;
         this.options = {};
     };
@@ -125,6 +127,10 @@
 
             if (options.mode) {
                 this.mode = options.mode;
+            }
+            
+            if (options.maxhold !== undefined) {
+                this.maxhold = options.maxhold;
             }
 
             // pipe data requires a valid size on overlay, but
@@ -438,6 +444,10 @@
                 this.yptr = new ArrayBuffer(this.pointbufsize);
                 this.xpoint = new m.PointArray(this.xptr);
                 this.ypoint = new m.PointArray(this.yptr);
+                if (this.maxhold !== undefined) {
+                    this.mhptr = new ArrayBuffer(this.pointbufsize);
+                    this.mhpoint = new m.PointArray(this.mhptr);
+                }
             }
 
             var dbuf = new m.PointArray(this.ybuf);
@@ -571,6 +581,10 @@
                 m.vsmul(this.ypoint, dbscale, this.ypoint);
             }
             mxmn = m.vmxmn(this.ypoint, npts);
+            
+            if ((this.maxhold !== undefined) && (this.mhpoint)) {
+                m.vmovmax(this.ypoint, 1, this.mhpoint, 1);
+            }
 
             qmax = mxmn.smax;
             qmin = mxmn.smin;
@@ -787,6 +801,20 @@
                             symbol,
                             rad,
                             traceoptions);
+
+                        if (this.maxhold) {
+                            mx.trace(Mx,
+                                this.maxhold.color,
+                                new m.PointArray(this.xptr),
+                                new m.PointArray(this.mhptr),
+                                pts.num,
+                                pts.start,
+                                1,
+                                this.maxhold.line,
+                                this.maxhold.symbol,
+                                this.maxhold.rad,
+                                this.maxhold.traceoptions);
+                        }
                     }
                 }
 

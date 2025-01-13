@@ -1105,6 +1105,34 @@
     };
 
     /**
+     * Move <count> elements from <src> to <dest> keeping the maximum value.  Stride is the distance between each array element in either or both the input and output vectors.
+     * @param {array}	src		Input vector.
+     * @param {number}	sstride		Input stride.
+     * @param {array}	dest		Output vector.
+     * @param {number}	dstride		Output stride.
+     * @param {number}	count		Number of input vector elements to move, starting with 0th element of <vec>. Cannot exceed vector lengths,
+     *					taking into account the strides.
+     */
+     m.vmovmax = function(src, sstride, dest, dstride, count) {
+        if (count === undefined) {
+            count = src.length;
+        }
+        count = Math.min(src.length, count);
+        
+        for (var i = 0; i < count; i++) {
+            var s = i * sstride;
+            var d = i * dstride;
+            if (s >= src.length) {
+                break;
+            }
+            if (d >= dest.length) {
+                break;
+            }
+            dest[d] = Math.max(dest[d], src[s]);
+        }
+    };
+
+    /**
      * Initialize <count> consecutive elements of input vector <vec> with value <inpval>.
      * @param	{array}		vec		Input vector
      * @param	{number}	inpval		Value
