@@ -128,9 +128,12 @@
             if (options.mode) {
                 this.mode = options.mode;
             }
-            
+
             if (options.maxhold !== undefined) {
                 this.maxhold = options.maxhold;
+                if (this.maxhold.decay === undefined) {
+                    this.maxhold.decay = 0;
+                }
             }
 
             // pipe data requires a valid size on overlay, but
@@ -316,6 +319,15 @@
                 this.ybuf = new ArrayBuffer(this.ybufn);
             }
 
+            if (settings.maxhold !== undefined) {
+                this.maxhold = settings.maxhold;
+                if (this.maxhold.decay === undefined) {
+                    this.maxhold.decay = 0;
+                }
+                // clear the maxhold buffer by setting to the current ypoint
+                this.mhpoint.set(this.ypoint);
+            }
+
             if (settings.framesize !== undefined) {
                 this.size = settings.framesize;
                 this.xstart = this.hcb.xstart + (this.imin) * this.xdelta;
@@ -325,11 +337,16 @@
                 this.xmax = Math.max(this.hcb.xstart, d);
                 this.ybufn = this.size * Math.max(this.skip * m.PointArray.BYTES_PER_ELEMENT, m.PointArray.BYTES_PER_ELEMENT);
                 this.ybuf = new ArrayBuffer(this.ybufn);
+                if (this.maxhold !== undefined) {
+                    this.mhptr = new ArrayBuffer(this.pointbufsize);
+                    this.mhpoint = new m.PointArray(this.mhptr);
+                }
             }
 
             if (settings.color !== undefined) {
                 this.color = settings.color;
             }
+
         },
 
         reload: function(data, hdrmod) {
@@ -581,9 +598,9 @@
                 m.vsmul(this.ypoint, dbscale, this.ypoint);
             }
             mxmn = m.vmxmn(this.ypoint, npts);
-            
+
             if ((this.maxhold !== undefined) && (this.mhpoint)) {
-                m.vmovmax(this.ypoint, 1, this.mhpoint, 1);
+                m.vmovmax(this.ypoint, 1, this.mhpoint, 1, undefined, this.maxhold.decay);
             }
 
             qmax = mxmn.smax;

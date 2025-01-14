@@ -1507,21 +1507,77 @@ interactiveTest('1d max-hold', 'does the plot have a max hold feature', function
         framesize: 2048,
         name: "Test",
         maxhold: {
-            decay: 0,
+            decay: 0.01, // slow decay
             color: "red",
-            traceoptions: {dashed: true}
+            traceoptions: {
+                dashed: true
+            }
         }
     });
 
     var offset = 0;
-    window.setInterval(function() { offset = (offset + 200) % 2048}, 2000);
+    window.setInterval(function() {
+        offset = (offset + 200) % 2048
+    }, 2000);
 
     ifixture.interval = window.setInterval(function() {
         var random = [];
         for (var i = 0; i < 2048; i += 1) {
-            
-            if ((i > offset) && (i < offset +500)) {
-                random.push(Math.random() *3);
+
+            if ((i > offset) && (i < offset + 500)) {
+                random.push(Math.random() * 3);
+            } else {
+                random.push(Math.random());
+            }
+        }
+        plot.push(lyr0, random);
+    }, 100);
+});
+
+interactiveTest('1d max-hold reset', 'does the plot have a max hold feature that resets every 5 seconds', function(assert) {
+    var container = document.getElementById('plot');
+    var plot = new sigplot.Plot(container, {
+        legend: true,
+        autol: 5
+    });
+    assert.notEqual(plot, null);
+    var lyr0 = plot.overlay_pipe({
+        type: 1000
+    }, {
+        framesize: 2048,
+        name: "Test",
+        maxhold: {
+            decay: 0, // never decay
+            color: "red",
+            traceoptions: {
+                dashed: true
+            }
+        }
+    });
+
+    var offset = 0;
+    window.setInterval(function() {
+        offset = (offset + 200) % 2048
+    }, 2000);
+
+    window.setInterval(function() {
+        plot.change_settings({
+            maxhold: {
+                decay: 0, // never decay
+                color: "red",
+                traceoptions: {
+                    dashed: true
+                }
+            }
+        })
+    }, 5000);
+
+    ifixture.interval = window.setInterval(function() {
+        var random = [];
+        for (var i = 0; i < 2048; i += 1) {
+
+            if ((i > offset) && (i < offset + 500)) {
+                random.push(Math.random() * 3);
             } else {
                 random.push(Math.random());
             }
