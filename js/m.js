@@ -1128,7 +1128,7 @@
             if (d >= dest.length) {
                 break;
             }
-            dest[d] = dest[d] * Math.exp(-decay);
+            dest[d] = dest[d] + (src[s] - dest[d]) * (1 - Math.exp(-decay));
             dest[d] = Math.max(dest[d], src[s]);
         }
     };
