@@ -324,8 +324,17 @@
                 if (this.maxhold.decay === undefined) {
                     this.maxhold.decay = 0;
                 }
-                // clear the maxhold buffer by setting to the current ypoint
-                this.mhpoint.set(this.ypoint);
+                if (this.mhpoint) {
+                    // clear the maxhold buffer by setting to the current ypoint
+                    this.mhpoint.set(this.ypoint);
+                } else {
+                    this.mhptr = new ArrayBuffer(this.pointbufsize);
+                    this.mhpoint = new m.PointArray(this.mhptr);
+                    this.mhpoint.set(this.ypoint);
+                }
+            } else if (settings.maxhold === null) {
+                this.maxhold = undefined;
+                this.mhpoint = undefined;
             }
 
             if (settings.framesize !== undefined) {
@@ -337,7 +346,7 @@
                 this.xmax = Math.max(this.hcb.xstart, d);
                 this.ybufn = this.size * Math.max(this.skip * m.PointArray.BYTES_PER_ELEMENT, m.PointArray.BYTES_PER_ELEMENT);
                 this.ybuf = new ArrayBuffer(this.ybufn);
-                if (this.maxhold !== undefined) {
+                if (this.maxhold) {
                     this.mhptr = new ArrayBuffer(this.pointbufsize);
                     this.mhpoint = new m.PointArray(this.mhptr);
                 }
@@ -461,7 +470,7 @@
                 this.yptr = new ArrayBuffer(this.pointbufsize);
                 this.xpoint = new m.PointArray(this.xptr);
                 this.ypoint = new m.PointArray(this.yptr);
-                if (this.maxhold !== undefined) {
+                if (this.maxhold) {
                     this.mhptr = new ArrayBuffer(this.pointbufsize);
                     this.mhpoint = new m.PointArray(this.mhptr);
                 }
@@ -599,7 +608,7 @@
             }
             mxmn = m.vmxmn(this.ypoint, npts);
 
-            if ((this.maxhold !== undefined) && (this.mhpoint)) {
+            if ((this.maxhold && this.mhpoint)) {
                 m.vmovmax(this.ypoint, 1, this.mhpoint, 1, undefined, this.maxhold.decay);
             }
 
