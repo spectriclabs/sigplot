@@ -1113,7 +1113,7 @@
      * @param {number}	count		Number of input vector elements to move, starting with 0th element of <vec>. Cannot exceed vector lengths,
      *					taking into account the strides.
      */
-    m.vmovmax = function(src, sstart, sstride, dest, dstart,dstride, count, decay) {
+    m.vmovmax = function(src, sstart, sstride, dest, dstart, dstride, count, decay) {
         if (count === undefined) {
             count = src.length;
         }
