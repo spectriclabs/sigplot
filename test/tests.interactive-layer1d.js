@@ -1534,6 +1534,126 @@ interactiveTest('1d max-hold', 'does the plot have a max hold feature', function
     }, 100);
 });
 
+interactiveTest('1d max-hold negative', 'does the plot have a max hold feature that works with negative numbers', function(assert) {
+    var container = document.getElementById('plot');
+    var plot = new sigplot.Plot(container, {
+        legend: true,
+        autol: 5
+    });
+    assert.notEqual(plot, null);
+    var lyr0 = plot.overlay_pipe({
+        type: 1000
+    }, {
+        framesize: 2048,
+        name: "Test",
+        maxhold: {
+            decay: 0.01, // slow decay
+            color: "red",
+            traceoptions: {
+                dashed: true
+            }
+        }
+    });
+
+    var offset = 0;
+    window.setInterval(function() {
+        offset = (offset + 200) % 2048
+    }, 2000);
+
+    ifixture.interval = window.setInterval(function() {
+        var random = [];
+        for (var i = 0; i < 2048; i += 1) {
+
+            if ((i > offset) && (i < offset + 500)) {
+                random.push(Math.random() * 3 - 50);
+            } else {
+                random.push(Math.random() - 50);
+            }
+        }
+        plot.push(lyr0, random);
+    }, 100);
+});
+
+interactiveTest('1d max-hold no-decay', 'does the plot have a no-decay max hold feature', function(assert) {
+    var container = document.getElementById('plot');
+    var plot = new sigplot.Plot(container, {
+        legend: true,
+        autol: 5
+    });
+    assert.notEqual(plot, null);
+    var lyr0 = plot.overlay_pipe({
+        type: 1000
+    }, {
+        framesize: 2048,
+        name: "Test",
+        maxhold: {
+            decay: 0, // no decay
+            color: "red",
+            traceoptions: {
+                dashed: true
+            }
+        }
+    });
+
+    var offset = 0;
+    window.setInterval(function() {
+        offset = (offset + 200) % 2048
+    }, 2000);
+
+    ifixture.interval = window.setInterval(function() {
+        var random = [];
+        for (var i = 0; i < 2048; i += 1) {
+
+            if ((i > offset) && (i < offset + 500)) {
+                random.push(Math.random() * 3);
+            } else {
+                random.push(Math.random());
+            }
+        }
+        plot.push(lyr0, random);
+    }, 100);
+});
+
+interactiveTest('1d max-hold negative no-decay', 'does the plot have a no-decay max hold feature that works with negative numbers', function(assert) {
+    var container = document.getElementById('plot');
+    var plot = new sigplot.Plot(container, {
+        legend: true,
+        autol: 5
+    });
+    assert.notEqual(plot, null);
+    var lyr0 = plot.overlay_pipe({
+        type: 1000
+    }, {
+        framesize: 2048,
+        name: "Test",
+        maxhold: {
+            decay: 0, // no decay
+            color: "red",
+            traceoptions: {
+                dashed: true
+            }
+        }
+    });
+
+    var offset = 0;
+    window.setInterval(function() {
+        offset = (offset + 200) % 2048
+    }, 2000);
+
+    ifixture.interval = window.setInterval(function() {
+        var random = [];
+        for (var i = 0; i < 2048; i += 1) {
+
+            if ((i > offset) && (i < offset + 500)) {
+                random.push(Math.random() * 3 - 50);
+            } else {
+                random.push(Math.random() - 50);
+            }
+        }
+        plot.push(lyr0, random);
+    }, 100);
+});
+
 interactiveTest('1d max-hold reset', 'does the plot have a max hold feature that resets every 5 seconds', function(assert) {
     var container = document.getElementById('plot');
     var plot = new sigplot.Plot(container, {
@@ -1583,5 +1703,112 @@ interactiveTest('1d max-hold reset', 'does the plot have a max hold feature that
             }
         }
         plot.push(lyr0, random);
+    }, 100);
+});
+
+interactiveTest('1d max-hold change framesize', 'does the plot have a max hold feature that works after frame resize', function(assert) {
+    var container = document.getElementById('plot');
+    var plot = new sigplot.Plot(container, {
+        legend: true,
+        autol: 5
+    });
+    assert.notEqual(plot, null);
+
+    var framesize = 2048;
+
+    var lyr0 = plot.overlay_pipe({
+        type: 1000
+    }, {
+        framesize: framesize,
+        expand: true,
+        all: true,
+        name: "Test",
+        maxhold: {
+            decay: 0, // never decay
+            color: "red",
+            traceoptions: {
+                dashed: true
+            }
+        }
+    });
+
+    var offset = 0;
+    window.setTimeout(function() {
+        framesize = 4096;
+        plot.change_settings({
+            framesize: framesize
+        });
+        plot.rescale();
+    }, 5000);
+
+    var offset = 0;
+    window.setInterval(function() {
+        offset = (offset + 200) % framesize
+    }, 500);
+
+    ifixture.interval = window.setInterval(function() {
+        var random = [];
+        for (var i = 0; i < framesize; i += 1) {
+
+            if ((i > offset) && (i < offset + 500)) {
+                random.push(Math.random() * 3);
+            } else {
+                random.push(Math.random());
+            }
+        }
+        plot.push(lyr0, random);
+    }, 100);
+});
+
+interactiveTest('1d max-hold change framesize hdrmod', 'does the plot have a max hold feature that works after frame resize', function(assert) {
+    var container = document.getElementById('plot');
+    var plot = new sigplot.Plot(container, {
+        legend: true,
+        autol: 5
+    });
+    assert.notEqual(plot, null);
+
+    var framesize = 2048;
+
+    var lyr0 = plot.overlay_pipe({
+        type: 2000,
+        subsize: framesize
+    }, {
+        layerType: "1D",
+        expand: true,
+        all: true,
+        name: "Test",
+        maxhold: {
+            decay: 0, // never decay
+            color: "red",
+            traceoptions: {
+                dashed: true
+            }
+        }
+    });
+
+    var offset = 0;
+    window.setTimeout(function() {
+        framesize = 4096;
+    }, 5000);
+
+    var offset = 0;
+    window.setInterval(function() {
+        offset = (offset + 200) % framesize
+    }, 500);
+
+    ifixture.interval = window.setInterval(function() {
+        var random = [];
+        for (var i = 0; i < framesize; i += 1) {
+            // make fully negative to simulate a PSD with negative dB ratios
+            if ((i > offset) && (i < offset + 500)) {
+                random.push(Math.random() * 3 - 50);
+            } else {
+                random.push(Math.random() - 50);
+            }
+        }
+        plot.push(lyr0, random, {
+            subsize: framesize
+        });
     }, 100);
 });
