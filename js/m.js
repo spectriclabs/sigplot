@@ -1119,6 +1119,7 @@
         }
         count = Math.min(src.length, count);
 
+        let adjust = 0;
         for (var i = 0; i < count; i++) {
             var s = i * sstride;
             var d = i * dstride;
@@ -1128,7 +1129,8 @@
             if (d >= dest.length) {
                 break;
             }
-            dest[d] = dest[d] + (src[s] - dest[d]) * (1 - Math.exp(-decay));
+            adjust = (src[s] - dest[d]) * (1 - Math.exp(-decay));
+            dest[d] = Number.isNaN(dest[d] + adjust) ? src[s] : dest[d] + adjust;
             dest[d] = Math.max(dest[d], src[s]);
         }
     };
