@@ -1517,7 +1517,7 @@ interactiveTest('1d max-hold', 'does the plot have a max hold feature', function
 
     var offset = 0;
     window.setInterval(function() {
-        offset = (offset + 200) % 2048
+        offset = (offset + 200) % 2048;
     }, 2000);
 
     ifixture.interval = window.setInterval(function() {
@@ -1557,7 +1557,7 @@ interactiveTest('1d max-hold negative', 'does the plot have a max hold feature t
 
     var offset = 0;
     window.setInterval(function() {
-        offset = (offset + 200) % 2048
+        offset = (offset + 200) % 2048;
     }, 2000);
 
     ifixture.interval = window.setInterval(function() {
@@ -1597,7 +1597,7 @@ interactiveTest('1d max-hold no-decay', 'does the plot have a no-decay max hold 
 
     var offset = 0;
     window.setInterval(function() {
-        offset = (offset + 200) % 2048
+        offset = (offset + 200) % 2048;
     }, 2000);
 
     ifixture.interval = window.setInterval(function() {
@@ -1637,7 +1637,7 @@ interactiveTest('1d max-hold negative no-decay', 'does the plot have a no-decay 
 
     var offset = 0;
     window.setInterval(function() {
-        offset = (offset + 200) % 2048
+        offset = (offset + 200) % 2048;
     }, 2000);
 
     ifixture.interval = window.setInterval(function() {
@@ -1677,7 +1677,7 @@ interactiveTest('1d max-hold reset', 'does the plot have a max hold feature that
 
     var offset = 0;
     window.setInterval(function() {
-        offset = (offset + 200) % 2048
+        offset = (offset + 200) % 2048;
     }, 2000);
 
     window.setInterval(function() {
@@ -1689,7 +1689,7 @@ interactiveTest('1d max-hold reset', 'does the plot have a max hold feature that
                     dashed: true
                 }
             }
-        })
+        });
     }, 5000);
 
     ifixture.interval = window.setInterval(function() {
@@ -1743,7 +1743,7 @@ interactiveTest('1d max-hold change framesize', 'does the plot have a max hold f
 
     var offset = 0;
     window.setInterval(function() {
-        offset = (offset + 200) % framesize
+        offset = (offset + 200) % framesize;
     }, 500);
 
     ifixture.interval = window.setInterval(function() {
@@ -1794,7 +1794,7 @@ interactiveTest('1d max-hold change framesize hdrmod', 'does the plot have a max
 
     var offset = 0;
     window.setInterval(function() {
-        offset = (offset + 200) % framesize
+        offset = (offset + 200) % framesize;
     }, 500);
 
     ifixture.interval = window.setInterval(function() {
