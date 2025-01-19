@@ -228,7 +228,16 @@
                 }
 
                 // update the position
-                this.position = (this.position + tle) % this.size;
+                this.position = (this.position + tle);
+                // after we get one full buffer of data we can initialize maxhold and
+                // no longer rescale on first push
+                if ((this.position >= this.size) && (this.firstpush === false)) {
+                    this.firstpush = true;
+                    if (this.mhpoint) {
+                        this.mhpoint.fill(-Infinity);
+                    }
+                }
+                this.position = this.position % this.size;
 
                 if (this.tle === undefined) {
                     tle = Math.floor(m.pavail(this.hcb)) / this.hcb.spa;
@@ -325,12 +334,12 @@
                     this.maxhold.decay = 0;
                 }
                 if (this.mhpoint) {
-                    // clear the maxhold buffer by setting to the current ypoint
-                    this.mhpoint.set(this.ypoint);
+                    // clear the maxhold buffer by setting to negative Infinity
+                    this.mhpoint.fill(-Infinity);
                 } else {
                     this.mhptr = new ArrayBuffer(this.pointbufsize);
                     this.mhpoint = new m.PointArray(this.mhptr);
-                    this.mhpoint.set(this.ypoint);
+                    this.mhpoint.fill(-Infinity);
                 }
             } else if (settings.maxhold === null) {
                 this.maxhold = undefined;
@@ -349,6 +358,7 @@
                 if (this.maxhold) {
                     this.mhptr = new ArrayBuffer(this.pointbufsize);
                     this.mhpoint = new m.PointArray(this.mhptr);
+                    this.mhpoint.fill(-Infinity);
                 }
             }
 
@@ -420,6 +430,7 @@
                         this.ymin = null;
                         this.ymax = null;
                     }
+                    this.firstpush = false;
                 }
 
                 this.xdelta = this.hcb.xdelta;
@@ -436,7 +447,6 @@
 
             // if this is the first push of data, request a rescale
             if (this.firstpush === false) {
-                this.firstpush = true;
                 hdrmod = true;
             }
             return hdrmod ? true : false;
@@ -470,9 +480,13 @@
                 this.yptr = new ArrayBuffer(this.pointbufsize);
                 this.xpoint = new m.PointArray(this.xptr);
                 this.ypoint = new m.PointArray(this.yptr);
+                // invalidate max hold buffers
+                this.mhptr = null;
+                this.mhpoint = null;
                 if (this.maxhold) {
                     this.mhptr = new ArrayBuffer(this.pointbufsize);
                     this.mhpoint = new m.PointArray(this.mhptr);
+                    this.mhpoint.fill(-Infinity);
                 }
             }
 
