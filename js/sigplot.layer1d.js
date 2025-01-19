@@ -623,7 +623,7 @@
             mxmn = m.vmxmn(this.ypoint, npts);
 
             if ((this.maxhold && this.mhpoint)) {
-                m.vmovmax(this.ypoint, 1, this.mhpoint, 1, undefined, this.maxhold.decay);
+                m.vmovmax(this.ypoint, 0, 1, this.mhpoint, n1, 1, npts, this.maxhold.decay);
             }
 
             qmax = mxmn.smax;
@@ -846,7 +846,7 @@
                             mx.trace(Mx,
                                 this.maxhold.color,
                                 new m.PointArray(this.xptr),
-                                new m.PointArray(this.mhptr),
+                                this.mhpoint.slice(pts.start, pts.end),
                                 pts.num,
                                 pts.start,
                                 1,
