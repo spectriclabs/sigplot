@@ -23,19 +23,19 @@
  * under the License.
  */
 
-/* global module */
-/* global require */
-
-(function() {
+import Plugin from "./sigplot.plugin.js";
+import AccordionPlugin from "./sigplot.accordion.js";
+import AnnotationPlugin from "./sigplot.annotations.js";
+import BoxesPlugin from "./sigplot.boxes.js";
+import PlaybackControlsPlugin from "./sigplot.playback.js";
+import SliderPlugin from "./sigplot.slider.js";
 
 // Bundle all the standard-plugins into this module
-module.exports = {
-    Plugin                 : require("./sigplot.plugin"),
-    AccordionPlugin        : require("./sigplot.accordion"),
-    AnnotationPlugin       : require("./sigplot.annotations"),
-    BoxesPlugin            : require("./sigplot.boxes"),
-    PlaybackControlsPlugin : require("./sigplot.playback"),
-    SliderPlugin           : require("./sigplot.slider")
+export default {
+    Plugin,
+    AccordionPlugin,
+    AnnotationPlugin,
+    BoxesPlugin,
+    PlaybackControlsPlugin,
+    SliderPlugin
 };
-
-}());
