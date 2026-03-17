@@ -278,6 +278,8 @@
                 imin = imax - npts + 1;
             }
 
+            this.imin = imin;
+
             if ((this.ybufmin !== undefined) && (this.ybufmax !== undefined) && (imin >= this.ybufmin) && (imin + npts <= this.ybufmax)) {
                 // data already in buffers
                 return npts;
@@ -466,7 +468,7 @@
             var Gx = this.plot._Gx;
             var Mx = this.plot._Mx;
 
-            var npts = this.get_data(xmin, xmax);;
+            var npts = this.get_data(xmin, xmax);
             if (this.mode === "XY") {
                 npts = Math.floor(npts / 2);
             }
@@ -543,35 +545,34 @@
                 //    this.xmax = qmax;
                 //}
             } else if (npts > 0) {
-                var xstart = this.xstart;
+                var xstart = this.hcb.xstart + this.imin * this.xdelta;
                 var xdelta = this.xdelta;
                 var d = npts;
 
-                // n1 and n2 are the minimal and maximal index bounds based on the
-                // passed in xmin/xmax, but get_data may have returned less data
                 if (Gx.index) {
                     n1 = 0;
                     n2 = npts - 1;
                 } else if (xdelta >= 0.0) {
-                    n1 = Math.max(1.0, Math.min(this.size, Math.round((xmin - xstart) / xdelta))) - 1.0;
-                    n2 = Math.max(1.0, Math.min(this.size, Math.round((xmax - xstart) / xdelta) + 2.0)) - 1.0;
+                    n1 = Math.max(1.0, Math.min(d, Math.round((xmin - xstart) / xdelta))) - 1.0;
+                    n2 = Math.max(1.0, Math.min(d, Math.round((xmax - xstart) / xdelta) + 2.0)) - 1.0;
                 } else {
-                    n1 = Math.max(1.0, Math.min(this.size, Math.round((xmax - xstart) / xdelta) - 1.0)) - 1.0;
-                    n2 = Math.max(1.0, Math.min(this.size, Math.round((xmin - xstart) / xdelta) + 2.0)) - 1.0;
+                    n1 = Math.max(1.0, Math.min(d, Math.round((xmax - xstart) / xdelta) - 1.0)) - 1.0;
+                    n2 = Math.max(1.0, Math.min(d, Math.round((xmin - xstart) / xdelta) + 2.0)) - 1.0;
                 }
 
-                n2 = Math.min(n2, n1 + d - 1);
+                npts = n2 - n1 + 1;
                 if (npts < 0) {
                     m.log.debug("Nothing to plot");
                     npts = 0;
                 }
-                dbuf = new m.PointArray(this.ybuf);
+                var bufoff = (this.imin - (this.ybufmin || 0)) + n1;
+                dbuf = new m.PointArray(this.ybuf).subarray(bufoff * skip);
                 xstart = xstart + xdelta * (n1);
                 for (var i = 0; i < npts; i++) {
                     if (Gx.index) {
-                        this.xpoint[i] = this.imin + i + 1;
+                        this.xpoint[i] = this.imin + n1 + i + 1;
                     } else {
-                        this.xpoint[i] = xmin + i * xdelta;
+                        this.xpoint[i] = xstart + i * xdelta;
                     }
                 }
             }
@@ -808,6 +809,13 @@
                 if (xmin >= xmax) { // no data but do scaling
                     Gx.panxmin = Math.min(Gx.panxmin, this.xmin);
                     Gx.panxmax = Math.max(Gx.panxmax, this.xmax);
+                    return {
+                        num: 0,
+                        xmin: this.xmin,
+                        xmax: this.xmax,
+                        ymin: this.ymin,
+                        ymax: this.ymax
+                    };
                 }
             }
 

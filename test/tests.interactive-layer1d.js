@@ -1828,7 +1828,7 @@ interactiveTest('1d negative xstart gt bufmax', 'does the plot display a full tr
         all: true,
         expand: true,
     };
-    
+
     var plot = new sigplot.Plot(document.getElementById('plot'), plot_options);
 
     var num_elements = (plot._Gx.bufmax * 4);
@@ -1838,19 +1838,19 @@ interactiveTest('1d negative xstart gt bufmax', 'does the plot display a full tr
 
     var val = 1;
     var data = []; // the series of y-values
-    for (var ii=0; ii<num_elements; ii++) {
+    for (var ii = 0; ii < num_elements; ii++) {
         data.push(val);
-        if (ii < num_elements/2) {
-        val = val + 1;
+        if (ii < num_elements / 2) {
+            val = val + 1;
         } else {
-        val = val - 1;
+            val = val - 1;
         }
     }
-    
+
     let xdelta = 50;
     var data_header = {
         xunits: "Time",
-        xstart: -1 * (num_elements/2) * xdelta, // the start of the x-axis
+        xstart: -1 * (num_elements / 2) * xdelta, // the start of the x-axis
         xdelta: xdelta, // the x-axis step between each data point
         yunits: "Power"
     };
