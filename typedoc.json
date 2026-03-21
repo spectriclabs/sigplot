@@ -1,0 +1,11 @@
+{
+    "$schema": "https://typedoc.org/schema.json",
+    "entryPoints": ["js"],
+    "entryPointStrategy": "expand",
+    "out": "doc",
+    "readme": "README.md",
+    "includeVersion": true,
+    "excludePrivate": false,
+    "excludeInternal": false,
+    "tsconfig": "tsconfig.json"
+}

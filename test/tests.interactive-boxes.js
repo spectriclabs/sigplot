@@ -25,12 +25,12 @@
  */
 
 /* globals QUnit, sigplot, ColorMap, sigplot.plugins, assert, assert.strictEqual, QUnit.asyncTest, assert.notEqual, alert, BlueFileReader, start, ok, throws, interactiveBeforeEach, interactiveAfterEach, interactiveTest, fixture, ifixture */
-QUnit.module('sigplot-interactive-boxes', {
+QUnit.module("sigplot-interactive-boxes", {
     beforeEach: interactiveBeforeEach,
     afterEach: interactiveAfterEach
 });
-interactiveTest('boxes', 'Do you see a boxes at the correct locations?', function(assert) {
-    var container = document.getElementById('plot');
+interactiveTest("boxes", "Do you see a boxes at the correct locations?", function (assert) {
+    var container = document.getElementById("plot");
     var plot = new sigplot.Plot(container, {});
     assert.notEqual(plot, null);
     var boxes = new sigplot.plugins.BoxesPlugin();
@@ -73,8 +73,8 @@ interactiveTest('boxes', 'Do you see a boxes at the correct locations?', functio
     });
     assert.equal(boxes.getBoxes().length, 4);
 });
-interactiveTest('boxes (type 2000)', 'Do you see a boxes at the correct locations (type 2000)?', function(assert) {
-    var container = document.getElementById('plot');
+interactiveTest("boxes (type 2000)", "Do you see a boxes at the correct locations (type 2000)?", function (assert) {
+    var container = document.getElementById("plot");
     var plot = new sigplot.Plot(container, {});
 
     var framesize = 128;
@@ -137,9 +137,9 @@ interactiveTest('boxes (type 2000)', 'Do you see a boxes at the correct location
     });
     assert.equal(boxes.getBoxes().length, 4);
 });
-interactiveTest('clear boxes', 'Do you see one box?', function(assert) {
+interactiveTest("clear boxes", "Do you see one box?", function (assert) {
     var done = assert.async();
-    var container = document.getElementById('plot');
+    var container = document.getElementById("plot");
     var plot = new sigplot.Plot(container, {});
     assert.notEqual(plot, null);
     var boxes = new sigplot.plugins.BoxesPlugin();
@@ -153,7 +153,7 @@ interactiveTest('clear boxes', 'Do you see one box?', function(assert) {
         text: "I should be gone soon..."
     });
     assert.equal(boxes.getBoxes().length, 1);
-    window.setTimeout(function() {
+    window.setTimeout(function () {
         boxes.clear_boxes();
         assert.equal(boxes.getBoxes().length, 0);
         boxes.add_box({
@@ -167,9 +167,9 @@ interactiveTest('clear boxes', 'Do you see one box?', function(assert) {
         done();
     }, 1000);
 });
-interactiveTest('remove boxes', 'Do you see one box?', function(assert) {
+interactiveTest("remove boxes", "Do you see one box?", function (assert) {
     var done = assert.async();
-    var container = document.getElementById('plot');
+    var container = document.getElementById("plot");
     var plot = new sigplot.Plot(container, {});
     assert.notEqual(plot, null);
     var boxes = new sigplot.plugins.BoxesPlugin();
@@ -183,7 +183,7 @@ interactiveTest('remove boxes', 'Do you see one box?', function(assert) {
         text: "I should be gone soon..."
     });
     assert.equal(boxes.getBoxes().length, 1);
-    window.setTimeout(function() {
+    window.setTimeout(function () {
         boxes.remove_box(box_id);
         assert.equal(boxes.getBoxes().length, 0);
         boxes.add_box({

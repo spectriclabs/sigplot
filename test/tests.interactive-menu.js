@@ -25,13 +25,13 @@
  */
 
 /* globals QUnit, sigplot, ColorMap, sigplot.plugins, assert, assert.strictEqual, QUnit.asyncTest, assert.notEqual, alert, BlueFileReader, start, ok, throws, interactiveBeforeEach, interactiveAfterEach, interactiveTest, fixture, ifixture */
-QUnit.module('sigplot-interactive-menu', {
+QUnit.module("sigplot-interactive-menu", {
     beforeEach: interactiveBeforeEach,
     afterEach: interactiveAfterEach
 });
 
-interactiveTest('radius menu', 'Do you see a working radius option in the traces menu?', function(assert) {
-    var container = document.getElementById('plot');
+interactiveTest("radius menu", "Do you see a working radius option in the traces menu?", function (assert) {
+    var container = document.getElementById("plot");
     var plot = new sigplot.Plot(container, {});
     assert.notEqual(plot, null);
 
@@ -39,10 +39,14 @@ interactiveTest('radius menu', 'Do you see a working radius option in the traces
     for (var i = 0; i < 25; i++) {
         ramp.push(i);
     }
-    var layer = plot.overlay_array(ramp, {
-        file_name: "ramp"
-    }, {
-        symbol: 3,
-        line: 0
-    });
+    var layer = plot.overlay_array(
+        ramp,
+        {
+            file_name: "ramp"
+        },
+        {
+            symbol: 3,
+            line: 0
+        }
+    );
 });

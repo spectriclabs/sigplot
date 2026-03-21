@@ -25,18 +25,22 @@
  */
 
 /* globals QUnit, sigplot, ColorMap, sigplot.plugins, assert, assert.strictEqual, QUnit.asyncTest, assert.notEqual, alert, BlueFileReader, start, ok, throws, interactiveBeforeEach, interactiveAfterEach, interactiveTest, fixture, ifixture */
-QUnit.module('sigplot-interactive-layer1d', {
+QUnit.module("sigplot-interactive-layer1d", {
     beforeEach: interactiveBeforeEach,
     afterEach: interactiveAfterEach
 });
 
-interactiveTest('sigplot 1d deoverlay', 'Do you see a ramp from 0 to 1023?', function(assert) {
-    var container = document.getElementById('plot');
+interactiveTest("sigplot 1d deoverlay", "Do you see a ramp from 0 to 1023?", function (assert) {
+    var container = document.getElementById("plot");
     var plot = new sigplot.Plot(container, {});
     assert.notEqual(plot, null);
-    var lyr_n = plot.overlay_array([], {}, {
-        layerType: sigplot.Layer1D
-    });
+    var lyr_n = plot.overlay_array(
+        [],
+        {},
+        {
+            layerType: sigplot.Layer1D
+        }
+    );
 
     var ramp = [];
     for (var i = 0; i < 1024; i++) {
@@ -50,15 +54,15 @@ interactiveTest('sigplot 1d deoverlay', 'Do you see a ramp from 0 to 1023?', fun
     });
 });
 
-interactiveTest('sigplot multi-file overlay', 'Do you see a sin wave and a pulse train?', function(assert) {
-    var container = document.getElementById('plot');
+interactiveTest("sigplot multi-file overlay", "Do you see a sin wave and a pulse train?", function (assert) {
+    var container = document.getElementById("plot");
     var plot = new sigplot.Plot(container, {});
     assert.notEqual(plot, null);
     plot.overlay_href("dat/sin.tmp|dat/pulse_cx.tmp");
 });
 
-interactiveTest('empty t1000 array', 'Do you see a plot with two pulses?', function(assert) {
-    var container = document.getElementById('plot');
+interactiveTest("empty t1000 array", "Do you see a plot with two pulses?", function (assert) {
+    var container = document.getElementById("plot");
     var plot = new sigplot.Plot(container, {});
     assert.notEqual(plot, null);
     var lyr0 = plot.overlay_array([], {
@@ -70,12 +74,12 @@ interactiveTest('empty t1000 array', 'Do you see a plot with two pulses?', funct
     var pulse1 = [];
     var pulse2 = [];
     for (var i = 0; i < 1000; i++) {
-        if ((i < 490) || (i > 510)) {
+        if (i < 490 || i > 510) {
             pulse1.push(0);
         } else {
             pulse1.push(10.0);
         }
-        if ((i < 240) || (i > 260)) {
+        if (i < 240 || i > 260) {
             pulse2.push(0);
         } else {
             pulse2.push(10.0);
@@ -85,33 +89,41 @@ interactiveTest('empty t1000 array', 'Do you see a plot with two pulses?', funct
     plot.reload(lyr1, pulse2);
 });
 
-interactiveTest('empty t2000 array', 'Do you see a plot with two pulses?', function(assert) {
-    var container = document.getElementById('plot');
+interactiveTest("empty t2000 array", "Do you see a plot with two pulses?", function (assert) {
+    var container = document.getElementById("plot");
     var plot = new sigplot.Plot(container, {});
     assert.notEqual(plot, null);
-    var lyr0 = plot.overlay_array([], {
-        type: 2000,
-        subsize: 1000,
-        file_name: "data1"
-    }, {
-        layerType: sigplot.Layer1D
-    });
-    var lyr1 = plot.overlay_array([], {
-        type: 2000,
-        subsize: 1000,
-        file_name: "data2"
-    }, {
-        layerType: sigplot.Layer1D
-    });
+    var lyr0 = plot.overlay_array(
+        [],
+        {
+            type: 2000,
+            subsize: 1000,
+            file_name: "data1"
+        },
+        {
+            layerType: sigplot.Layer1D
+        }
+    );
+    var lyr1 = plot.overlay_array(
+        [],
+        {
+            type: 2000,
+            subsize: 1000,
+            file_name: "data2"
+        },
+        {
+            layerType: sigplot.Layer1D
+        }
+    );
     var pulse1 = [];
     var pulse2 = [];
     for (var i = 0; i < 1000; i++) {
-        if ((i < 490) || (i > 510)) {
+        if (i < 490 || i > 510) {
             pulse1.push(0);
         } else {
             pulse1.push(10.0);
         }
-        if ((i < 240) || (i > 260)) {
+        if (i < 240 || i > 260) {
             pulse2.push(0);
         } else {
             pulse2.push(10.0);
@@ -121,8 +133,8 @@ interactiveTest('empty t2000 array', 'Do you see a plot with two pulses?', funct
     plot.reload(lyr1, pulse2);
 });
 
-interactiveTest('sigplot custom xmult', 'Do you see the x-axis in "hecto-" units (0-40)?', function(assert) {
-    var container = document.getElementById('plot');
+interactiveTest("sigplot custom xmult", 'Do you see the x-axis in "hecto-" units (0-40)?', function (assert) {
+    var container = document.getElementById("plot");
     var plot = new sigplot.Plot(container, {
         xmult: 100
     });
@@ -136,72 +148,88 @@ interactiveTest('sigplot custom xmult', 'Do you see the x-axis in "hecto-" units
     });
 });
 
-interactiveTest('sigplot penny 1d legend default', 'Do you see a 1d penny with properly labeled legend (default)?', function(assert) {
-    var container = document.getElementById('plot');
-    var plot = new sigplot.Plot(container, {});
-    assert.notEqual(plot, null);
-    var ramp = [];
-    for (var i = 0; i < 1024; i++) {
-        ramp.push(i);
+interactiveTest(
+    "sigplot penny 1d legend default",
+    "Do you see a 1d penny with properly labeled legend (default)?",
+    function (assert) {
+        var container = document.getElementById("plot");
+        var plot = new sigplot.Plot(container, {});
+        assert.notEqual(plot, null);
+        var ramp = [];
+        for (var i = 0; i < 1024; i++) {
+            ramp.push(i);
+        }
+        plot.overlay_href("dat/penny.prm", null, {
+            layerType: sigplot.Layer1D
+        });
     }
-    plot.overlay_href("dat/penny.prm", null, {
-        layerType: sigplot.Layer1D
-    });
-});
+);
 
-interactiveTest('sigplot penny 1d legend string override', 'Do you see a penny with properly labeled legend (abc)?', function(assert) {
-    var container = document.getElementById('plot');
-    var plot = new sigplot.Plot(container, {});
-    assert.notEqual(plot, null);
-    var ramp = [];
-    for (var i = 0; i < 1024; i++) {
-        ramp.push(i);
+interactiveTest(
+    "sigplot penny 1d legend string override",
+    "Do you see a penny with properly labeled legend (abc)?",
+    function (assert) {
+        var container = document.getElementById("plot");
+        var plot = new sigplot.Plot(container, {});
+        assert.notEqual(plot, null);
+        var ramp = [];
+        for (var i = 0; i < 1024; i++) {
+            ramp.push(i);
+        }
+        plot.overlay_href("dat/penny.prm", null, {
+            layerType: sigplot.Layer1D,
+            name: "abc"
+        });
     }
-    plot.overlay_href("dat/penny.prm", null, {
-        layerType: sigplot.Layer1D,
-        name: "abc"
-    });
-});
+);
 
-interactiveTest('sigplot penny 1d legend multiple', 'Do you see a penny with properly labeled legend (one, two, three)?', function(assert) {
-    var container = document.getElementById('plot');
-    var plot = new sigplot.Plot(container, {});
-    assert.notEqual(plot, null);
-    var ramp = [];
-    for (var i = 0; i < 1024; i++) {
-        ramp.push(i);
+interactiveTest(
+    "sigplot penny 1d legend multiple",
+    "Do you see a penny with properly labeled legend (one, two, three)?",
+    function (assert) {
+        var container = document.getElementById("plot");
+        var plot = new sigplot.Plot(container, {});
+        assert.notEqual(plot, null);
+        var ramp = [];
+        for (var i = 0; i < 1024; i++) {
+            ramp.push(i);
+        }
+        plot.overlay_href("dat/penny.prm", null, {
+            layerType: sigplot.Layer1D,
+            name: ["one", "two", "three"]
+        });
     }
-    plot.overlay_href("dat/penny.prm", null, {
-        layerType: sigplot.Layer1D,
-        name: ["one", "two", "three"]
-    });
-});
+);
 
-interactiveTest('sigplot small xrange', 'Do you see a properly formatted axis for 999.9965-999.9985?', function(assert) {
-    var container = document.getElementById('plot');
-    var plot = new sigplot.Plot(container, {});
-    assert.notEqual(plot, null);
-    var ramp = [];
-    for (var i = 0; i < 4096; i++) {
-        ramp.push(i);
+interactiveTest(
+    "sigplot small xrange",
+    "Do you see a properly formatted axis for 999.9965-999.9985?",
+    function (assert) {
+        var container = document.getElementById("plot");
+        var plot = new sigplot.Plot(container, {});
+        assert.notEqual(plot, null);
+        var ramp = [];
+        for (var i = 0; i < 4096; i++) {
+            ramp.push(i);
+        }
+        plot.overlay_array(ramp, {
+            file_name: "ramp",
+            xstart: 999996296.08025432,
+            xdelta: 0.637054443359375,
+            format: "SF"
+        });
     }
-    plot.overlay_array(ramp, {
-        file_name: "ramp",
-        xstart: 999996296.08025432,
-        xdelta: 0.637054443359375,
-        format: "SF"
-    });
-});
+);
 
-interactiveTest('sigplot panxpad', 'Do you see spikes at 10 and 110 with an x-axis from 0 to 120?', function(assert) {
-    var container = document.getElementById('plot');
+interactiveTest("sigplot panxpad", "Do you see spikes at 10 and 110 with an x-axis from 0 to 120?", function (assert) {
+    var container = document.getElementById("plot");
     var plot = new sigplot.Plot(container, {
         panxpad: 10
     });
     assert.notEqual(plot, null);
     var ramp = [];
     for (var i = 0; i < 101; i++) {
-        if ((i === 0) || (i === 100)) {
+        if (i === 0 || i === 100) {
             ramp.push(100);
         } else {
             ramp.push(0);
@@ -212,8 +240,8 @@ interactiveTest('sigplot panxpad', 'Do you see spikes at 10 and 110 with an x-ax
     });
 });
 
-interactiveTest('sigplot xtimecode', 'Do you see a timecode xaxis 0 to 1h?', function(assert) {
-    var container = document.getElementById('plot');
+interactiveTest("sigplot xtimecode", "Do you see a timecode xaxis 0 to 1h?", function (assert) {
+    var container = document.getElementById("plot");
     var plot = new sigplot.Plot(container, {});
     assert.notEqual(plot, null);
     var ramp = [];
@@ -227,8 +255,8 @@ interactiveTest('sigplot xtimecode', 'Do you see a timecode xaxis 0 to 1h?', fun
     });
 });
 
-interactiveTest('sigplot ytimecode', 'Do you see a timecode yaxis?', function(assert) {
-    var container = document.getElementById('plot');
+interactiveTest("sigplot ytimecode", "Do you see a timecode yaxis?", function (assert) {
+    var container = document.getElementById("plot");
     var plot = new sigplot.Plot(container, {});
     assert.notEqual(plot, null);
     var ramp = [];
@@ -242,8 +270,8 @@ interactiveTest('sigplot ytimecode', 'Do you see a timecode yaxis?', function(as
     });
 });
 
-interactiveTest('sigplot ytimecode w/dates', 'Do you see a timecode yaxis?', function(assert) {
-    var container = document.getElementById('plot');
+interactiveTest("sigplot ytimecode w/dates", "Do you see a timecode yaxis?", function (assert) {
+    var container = document.getElementById("plot");
     var plot = new sigplot.Plot(container, {});
     assert.notEqual(plot, null);
     var ramp = [];
@@ -258,8 +286,8 @@ interactiveTest('sigplot ytimecode w/dates', 'Do you see a timecode yaxis?', fun
     });
 });
 
-interactiveTest('sigplot custom xlabel/ylabel', 'Do you see custom xlabel/ylabel?', function(assert) {
-    var container = document.getElementById('plot');
+interactiveTest("sigplot custom xlabel/ylabel", "Do you see custom xlabel/ylabel?", function (assert) {
+    var container = document.getElementById("plot");
     var plot = new sigplot.Plot(container, {
         xlabel: "CustomX",
         ylabel: "CustomY"
@@ -277,14 +305,14 @@ interactiveTest('sigplot custom xlabel/ylabel', 'Do you see custom xlabel/ylabel
     });
 });
 
-interactiveTest('sigplot custom function xlabel/ylabel', 'Do you see custom xlabel/ylabel?', function(assert) {
-    var xlabel = function(units, mult) {
+interactiveTest("sigplot custom function xlabel/ylabel", "Do you see custom xlabel/ylabel?", function (assert) {
+    var xlabel = function (units, mult) {
         return "CustomX - " + units + " " + mult;
     };
-    var ylabel = function(units, mult) {
+    var ylabel = function (units, mult) {
         return "CustomY - " + units + " " + mult;
     };
-    var container = document.getElementById('plot');
+    var container = document.getElementById("plot");
     var plot = new sigplot.Plot(container, {
         xlabel: xlabel,
         ylabel: ylabel
@@ -303,8 +331,8 @@ interactiveTest('sigplot custom function xlabel/ylabel', 'Do you see custom xlab
 });
 
 // TODO  this test seems broken
-interactiveTest('sigplot expand full', 'Do you see a fully expanded plot?', function(assert) {
-    var container = document.getElementById('plot');
+interactiveTest("sigplot expand full", "Do you see a fully expanded plot?", function (assert) {
+    var container = document.getElementById("plot");
     var plot = new sigplot.Plot(container, {
         autox: 3,
         autoy: 3,
@@ -317,44 +345,52 @@ interactiveTest('sigplot expand full', 'Do you see a fully expanded plot?', func
     assert.notEqual(plot, null);
 
     function plot2(plot) {
-        plot.overlay_array([1, 2, 2, 3, 3, 4, 4, 5], {
-            subsize: 4,
-            type: 2000,
-            format: "CD",
-            xdelta: 7.01200008392334,
-            xstart: 1435763625.898,
-            xunits: 1,
-            yunits: 44
-        }, {
-            layerType: sigplot.Layer1D,
-            expand: true
-        });
+        plot.overlay_array(
+            [1, 2, 2, 3, 3, 4, 4, 5],
+            {
+                subsize: 4,
+                type: 2000,
+                format: "CD",
+                xdelta: 7.01200008392334,
+                xstart: 1435763625.898,
+                xunits: 1,
+                yunits: 44
+            },
+            {
+                layerType: sigplot.Layer1D,
+                expand: true
+            }
+        );
     }
 
     function plot1(plot) {
-        plot.overlay_array([0, 0, 1, 1, 2, 2, 3, 3], {
-            subsize: 4,
-            type: 2000,
-            format: "CD",
-            xdelta: 7.01200008392334,
-            xstart: 1435763625.898,
-            xunits: 1,
-            yunits: 44
-        }, {
-            layerType: sigplot.Layer1D,
-            expand: true
-        });
+        plot.overlay_array(
+            [0, 0, 1, 1, 2, 2, 3, 3],
+            {
+                subsize: 4,
+                type: 2000,
+                format: "CD",
+                xdelta: 7.01200008392334,
+                xstart: 1435763625.898,
+                xunits: 1,
+                yunits: 44
+            },
+            {
+                layerType: sigplot.Layer1D,
+                expand: true
+            }
+        );
     }
     plot1(plot);
     plot2(plot);
 });
 
-interactiveTest('sigplot expand full on command', 'Do you see a fully expanded plot?', function(assert) {
-    var container = document.getElementById('plot');
+interactiveTest("sigplot expand full on command", "Do you see a fully expanded plot?", function (assert) {
+    var container = document.getElementById("plot");
     var plot = new sigplot.Plot(container, {});
     assert.notEqual(plot, null);
     var ramp = [];
-    for (var i = 0; i < (plot._Gx.bufmax * 2); i++) {
+    for (var i = 0; i < plot._Gx.bufmax * 2; i++) {
         ramp.push(i);
     }
     plot.overlay_array(ramp, {
@@ -385,45 +421,57 @@ interactiveTest('sigplot expand full on command', 'Do you see a fully expanded p
     assert.equal(plot._Mx.stk[0].ymax, 33422.34);
 });
 
-interactiveTest('sigplot custom axis label', 'Do you see the axis label "CustomY (a) vs. Time code format"?', function(assert) {
-    var container = document.getElementById('plot');
-    var plot = new sigplot.Plot(container, {});
-    assert.notEqual(plot, null);
-    var ramp = [];
-    for (var i = 0; i < 1024; i++) {
-        ramp.push(i);
+interactiveTest(
+    "sigplot custom axis label",
+    'Do you see the axis label "CustomY (a) vs. Time code format"?',
+    function (assert) {
+        var container = document.getElementById("plot");
+        var plot = new sigplot.Plot(container, {});
+        assert.notEqual(plot, null);
+        var ramp = [];
+        for (var i = 0; i < 1024; i++) {
+            ramp.push(i);
+        }
+        plot.overlay_href("dat/sin.tmp", null, {
+            xlab: 4,
+            ylab: ["CustomY", "a"]
+        });
     }
-    plot.overlay_href("dat/sin.tmp", null, {
-        xlab: 4,
-        ylab: ["CustomY", "a"]
-    });
-});
+);
 
-interactiveTest('sigplot custom axis label', 'Do you see the axis label "CustomY (Ka) vs. CustomX"?', function(assert) {
-    var container = document.getElementById('plot');
-    var plot = new sigplot.Plot(container, {});
-    assert.notEqual(plot, null);
-    var ramp = [];
-    for (var i = 0; i < 1024; i++) {
-        ramp.push(i);
+interactiveTest(
+    "sigplot custom axis label",
+    'Do you see the axis label "CustomY (Ka) vs. CustomX"?',
+    function (assert) {
+        var container = document.getElementById("plot");
+        var plot = new sigplot.Plot(container, {});
+        assert.notEqual(plot, null);
+        var ramp = [];
+        for (var i = 0; i < 1024; i++) {
+            ramp.push(i);
+        }
+        plot.overlay_array(
+            ramp,
+            {
+                file_name: "ramp"
+            },
+            {
+                xlab: "CustomX",
+                ylab: ["CustomY", "a"]
+            }
+        );
     }
-    plot.overlay_array(ramp, {
-        file_name: "ramp"
-    }, {
-        xlab: "CustomX",
-        ylab: ["CustomY", "a"]
-    });
-});
+);
 
-interactiveTest('check-xaxis-creep-reload', 'Do you see a pulse staying stationary on the x-axis?', function(assert) {
-    var container = document.getElementById('plot');
+interactiveTest("check-xaxis-creep-reload", "Do you see a pulse staying stationary on the x-axis?", function (assert) {
+    var container = document.getElementById("plot");
     var plot = new sigplot.Plot(container, {});
     assert.notEqual(plot, null);
     var pulse = [];
     var pulse_width = 2;
     var pulse_position = 50;
     for (var i = 0; i < 100; i++) {
-        if ((i >= pulse_position) && (i < (pulse_position + pulse_width))) {
+        if (i >= pulse_position && i < pulse_position + pulse_width) {
             pulse.push(10.0);
         } else {
             pulse.push(-10.0);
@@ -432,118 +480,139 @@ interactiveTest('check-xaxis-creep-reload', 'Do you see a pulse staying stationa
     var lyr0 = plot.overlay_array(pulse, {
         type: 1000
     });
-    ifixture.interval = window.setInterval(function() {
+    ifixture.interval = window.setInterval(function () {
         plot.reload(lyr0, pulse);
     }, 100);
 });
 
-interactiveTest('check-xaxis-creep-reload-oddsize', 'Do you see a pulse staying stationary on the x-axis?', function(assert) {
-    var container = document.getElementById('plot');
-    var plot = new sigplot.Plot(container, {});
-    assert.notEqual(plot, null);
-    var pulse = [];
-    var pulse_width = 2;
-    var pulse_position = 50;
-    for (var i = 0; i < 99; i++) {
-        if ((i >= pulse_position) && (i < (pulse_position + pulse_width))) {
-            pulse.push(10.0);
-        } else {
-            pulse.push(-10.0);
+interactiveTest(
+    "check-xaxis-creep-reload-oddsize",
+    "Do you see a pulse staying stationary on the x-axis?",
+    function (assert) {
+        var container = document.getElementById("plot");
+        var plot = new sigplot.Plot(container, {});
+        assert.notEqual(plot, null);
+        var pulse = [];
+        var pulse_width = 2;
+        var pulse_position = 50;
+        for (var i = 0; i < 99; i++) {
+            if (i >= pulse_position && i < pulse_position + pulse_width) {
+                pulse.push(10.0);
+            } else {
+                pulse.push(-10.0);
+            }
         }
+        var lyr0 = plot.overlay_array(pulse, {
+            type: 1000
+        });
+        ifixture.interval = window.setInterval(function () {
+            plot.reload(lyr0, pulse);
+        }, 100);
     }
-    var lyr0 = plot.overlay_array(pulse, {
-        type: 1000
-    });
-    ifixture.interval = window.setInterval(function() {
-        plot.reload(lyr0, pulse);
-    }, 100);
-});
+);
 
-interactiveTest('check-xaxis-creep-push', 'Do you see a pulse staying stationary on the x-axis?', function(assert) {
-    var container = document.getElementById('plot');
+interactiveTest("check-xaxis-creep-push", "Do you see a pulse staying stationary on the x-axis?", function (assert) {
+    var container = document.getElementById("plot");
     var plot = new sigplot.Plot(container, {});
     assert.notEqual(plot, null);
     var pulse = [];
     var pulse_width = 2;
     var pulse_position = 50;
     for (var i = 0; i < 100; i++) {
-        if ((i >= pulse_position) && (i < (pulse_position + pulse_width))) {
+        if (i >= pulse_position && i < pulse_position + pulse_width) {
             pulse.push(10.0);
         } else {
             pulse.push(-10.0);
         }
     }
-    var lyr0 = plot.overlay_pipe({
-        type: 2000,
-        subsize: 100
-    }, {
-        layerType: "1D"
-    });
-    ifixture.interval = window.setInterval(function() {
+    var lyr0 = plot.overlay_pipe(
+        {
+            type: 2000,
+            subsize: 100
+        },
+        {
+            layerType: "1D"
+        }
+    );
+    ifixture.interval = window.setInterval(function () {
         plot.push(lyr0, pulse);
     }, 100);
 });
 
-interactiveTest('check-xaxis-creep-push-oddsize', 'Do you see a pulse staying stationary on the x-axis?', function(assert) {
-    var container = document.getElementById('plot');
-    var plot = new sigplot.Plot(container, {});
-    assert.notEqual(plot, null);
-    var pulse = [];
-    var pulse_width = 2;
-    var pulse_position = 50;
-    for (var i = 0; i < 99; i++) {
-        if ((i >= pulse_position) && (i < (pulse_position + pulse_width))) {
-            pulse.push(10.0);
-        } else {
-            pulse.push(-10.0);
+interactiveTest(
+    "check-xaxis-creep-push-oddsize",
+    "Do you see a pulse staying stationary on the x-axis?",
+    function (assert) {
+        var container = document.getElementById("plot");
+        var plot = new sigplot.Plot(container, {});
+        assert.notEqual(plot, null);
+        var pulse = [];
+        var pulse_width = 2;
+        var pulse_position = 50;
+        for (var i = 0; i < 99; i++) {
+            if (i >= pulse_position && i < pulse_position + pulse_width) {
+                pulse.push(10.0);
+            } else {
+                pulse.push(-10.0);
+            }
         }
+        var lyr0 = plot.overlay_pipe(
+            {
+                type: 2000,
+                subsize: 99
+            },
+            {
+                layerType: "1D"
+            }
+        );
+        ifixture.interval = window.setInterval(function () {
+            plot.push(lyr0, pulse);
+        }, 100);
     }
-    var lyr0 = plot.overlay_pipe({
-        type: 2000,
-        subsize: 99
-    }, {
-        layerType: "1D"
-    });
-    ifixture.interval = window.setInterval(function() {
-        plot.push(lyr0, pulse);
-    }, 100);
-});
+);
 
-interactiveTest('check-xaxis-creep-push-partial', 'Do you see a pulse staying stationary on the x-axis?', function(assert) {
-    var container = document.getElementById('plot');
-    var plot = new sigplot.Plot(container, {});
-    assert.notEqual(plot, null);
-    var pulse = [];
-    var pulse_width = 2;
-    var pulse_position = 50;
-    for (var i = 0; i < 100; i++) {
-        if ((i >= pulse_position) && (i < (pulse_position + pulse_width))) {
-            pulse.push(10.0);
-        } else {
-            pulse.push(-10.0);
+interactiveTest(
+    "check-xaxis-creep-push-partial",
+    "Do you see a pulse staying stationary on the x-axis?",
+    function (assert) {
+        var container = document.getElementById("plot");
+        var plot = new sigplot.Plot(container, {});
+        assert.notEqual(plot, null);
+        var pulse = [];
+        var pulse_width = 2;
+        var pulse_position = 50;
+        for (var i = 0; i < 100; i++) {
+            if (i >= pulse_position && i < pulse_position + pulse_width) {
+                pulse.push(10.0);
+            } else {
+                pulse.push(-10.0);
+            }
         }
+        var lyr0 = plot.overlay_pipe(
+            {
+                type: 2000,
+                subsize: 100
+            },
+            {
+                layerType: "1D"
+            }
+        );
+        ifixture.interval = window.setInterval(function () {
+            plot.push(lyr0, pulse.slice(0, 50));
+            plot.push(lyr0, pulse.slice(50, 100));
+        }, 100);
     }
-    var lyr0 = plot.overlay_pipe({
-        type: 2000,
-        subsize: 100
-    }, {
-        layerType: "1D"
-    });
-    ifixture.interval = window.setInterval(function() {
-        plot.push(lyr0, pulse.slice(0, 50));
-        plot.push(lyr0, pulse.slice(50, 100));
-    }, 100);
-});
+);
 
-interactiveTest('reload', 'Do you see a pulse scrolling right?', function(assert) {
-    var container = document.getElementById('plot');
+interactiveTest("reload", "Do you see a pulse scrolling right?", function (assert) {
+    var container = document.getElementById("plot");
     var plot = new sigplot.Plot(container, {});
     assert.notEqual(plot, null);
     var pulse = [];
     var pulse_width = 5;
     var pulse_position = 0;
     for (var i = 0; i < 1000; i++) {
-        if ((i >= pulse_position) && (i < (pulse_position + pulse_width))) {
+        if (i >= pulse_position && i < pulse_position + pulse_width) {
             pulse.push(10.0);
         } else {
             pulse.push(-10.0);
@@ -552,10 +621,10 @@ interactiveTest('reload', 'Do you see a pulse scrolling right?', function(assert
     var lyr0 = plot.overlay_array(pulse, {
         type: 1000
     });
-    ifixture.interval = window.setInterval(function() {
+    ifixture.interval = window.setInterval(function () {
         pulse_position = (pulse_position + 1) % 1000;
         for (var i = 0; i < 1000; i++) {
-            if ((i >= pulse_position) && (i < (pulse_position + pulse_width))) {
+            if (i >= pulse_position && i < pulse_position + pulse_width) {
                 pulse[i] = 10.0;
             } else {
                 pulse[i] = -10.0;
@@ -565,17 +634,17 @@ interactiveTest('reload', 'Do you see a pulse scrolling right?', function(assert
     }, 100);
 });
 
-interactiveTest('xtimecode', 'Do you see a pulse scrolling right with an xtimecode axis?', function(assert) {
+interactiveTest("xtimecode", "Do you see a pulse scrolling right with an xtimecode axis?", function (assert) {
     var epochDelta = (20.0 * 365.0 + 5.0) * (24 * 3600 * 1000);
     var currentTime = (new Date().getTime() + epochDelta) / 1000;
-    var container = document.getElementById('plot');
+    var container = document.getElementById("plot");
     var plot = new sigplot.Plot(container, {});
     assert.notEqual(plot, null);
     var pulse = [];
     var pulse_width = 5;
     var pulse_position = 0;
     for (var i = 0; i < 1000; i++) {
-        if ((i >= pulse_position) && (i < (pulse_position + pulse_width))) {
+        if (i >= pulse_position && i < pulse_position + pulse_width) {
             pulse.push(10.0);
         } else {
             pulse.push(-10.0);
@@ -586,10 +655,10 @@ interactiveTest('xtimecode', 'Do you see a pulse scrolling right with an xtimeco
         xstart: currentTime,
         xunits: 4
     });
-    ifixture.interval = window.setInterval(function() {
+    ifixture.interval = window.setInterval(function () {
         pulse_position = (pulse_position + 1) % 1000;
         for (var i = 0; i < 1000; i++) {
-            if ((i >= pulse_position) && (i < (pulse_position + pulse_width))) {
+            if (i >= pulse_position && i < pulse_position + pulse_width) {
                 pulse[i] = 10.0;
             } else {
                 pulse[i] = -10.0;
@@ -602,30 +671,34 @@ interactiveTest('xtimecode', 'Do you see a pulse scrolling right with an xtimeco
     }, 100);
 });
 
-interactiveTest('t2000 odd-size layer1D (reload)', 'Do you see a stationary pulse?', function(assert) {
-    var container = document.getElementById('plot');
+interactiveTest("t2000 odd-size layer1D (reload)", "Do you see a stationary pulse?", function (assert) {
+    var container = document.getElementById("plot");
     var plot = new sigplot.Plot(container, {});
     assert.notEqual(plot, null);
     var pulse = [];
     var pulse_width = 5;
     var pulse_position = 8192;
     for (var i = 0; i < 16385; i++) {
-        if ((i >= pulse_position) && (i < (pulse_position + pulse_width))) {
+        if (i >= pulse_position && i < pulse_position + pulse_width) {
             pulse.push(10.0);
         } else {
             pulse.push(-10.0);
         }
     }
-    var lyr0 = plot.overlay_array(null, {
-        type: 2000,
-        subsize: 16385
-    }, {
-        layerType: sigplot.Layer1D
-    });
-    ifixture.interval = window.setInterval(function() {
+    var lyr0 = plot.overlay_array(
+        null,
+        {
+            type: 2000,
+            subsize: 16385
+        },
+        {
+            layerType: sigplot.Layer1D
+        }
+    );
+    ifixture.interval = window.setInterval(function () {
         var pulse = [];
         for (var i = 0; i < 16385; i++) {
-            if ((i >= pulse_position) && (i < (pulse_position + pulse_width))) {
+            if (i >= pulse_position && i < pulse_position + pulse_width) {
                 pulse.push(Math.random() * 10.0);
             } else {
                 pulse.push(-10.0);
@@ -635,30 +708,33 @@ interactiveTest('t2000 odd-size layer1D (reload)', 'Do you see a stationary puls
     }, 100);
 });
 
-interactiveTest('t2000 odd-size layer1D (push)', 'Do you see a stationary pulse?', function(assert) {
-    var container = document.getElementById('plot');
+interactiveTest("t2000 odd-size layer1D (push)", "Do you see a stationary pulse?", function (assert) {
+    var container = document.getElementById("plot");
     var plot = new sigplot.Plot(container, {});
     assert.notEqual(plot, null);
     var pulse = [];
     var pulse_width = 5;
     var pulse_position = 8192;
     for (var i = 0; i < 16385; i++) {
-        if ((i >= pulse_position) && (i < (pulse_position + pulse_width))) {
+        if (i >= pulse_position && i < pulse_position + pulse_width) {
             pulse.push(10.0);
         } else {
             pulse.push(-10.0);
         }
     }
-    var lyr0 = plot.overlay_pipe({
-        type: 2000,
-        subsize: 16385
-    }, {
-        layerType: sigplot.Layer1D
-    });
-    ifixture.interval = window.setInterval(function() {
+    var lyr0 = plot.overlay_pipe(
+        {
+            type: 2000,
+            subsize: 16385
+        },
+        {
+            layerType: sigplot.Layer1D
+        }
+    );
+    ifixture.interval = window.setInterval(function () {
         var pulse = [];
         for (var i = 0; i < 16385; i++) {
-            if ((i >= pulse_position) && (i < (pulse_position + pulse_width))) {
+            if (i >= pulse_position && i < pulse_position + pulse_width) {
                 pulse.push(Math.random() * 10.0);
             } else {
                 pulse.push(-10.0);
@@ -668,30 +744,34 @@ interactiveTest('t2000 odd-size layer1D (push)', 'Do you see a stationary pulse?
     }, 100);
 });
 
-interactiveTest('t2000 layer1D', 'Do you see a pulse scrolling right (type 2000)?', function(assert) {
-    var container = document.getElementById('plot');
+interactiveTest("t2000 layer1D", "Do you see a pulse scrolling right (type 2000)?", function (assert) {
+    var container = document.getElementById("plot");
     var plot = new sigplot.Plot(container, {});
     assert.notEqual(plot, null);
     var pulse = [];
     var pulse_width = 5;
     var pulse_position = 0;
     for (var i = 0; i < 1000; i++) {
-        if ((i >= pulse_position) && (i < (pulse_position + pulse_width))) {
+        if (i >= pulse_position && i < pulse_position + pulse_width) {
             pulse.push(10.0);
         } else {
             pulse.push(-10.0);
         }
     }
-    var lyr0 = plot.overlay_array(null, {
-        type: 2000,
-        subsize: 1000
-    }, {
-        layerType: sigplot.Layer1D
-    });
-    ifixture.interval = window.setInterval(function() {
+    var lyr0 = plot.overlay_array(
+        null,
+        {
+            type: 2000,
+            subsize: 1000
+        },
+        {
+            layerType: sigplot.Layer1D
+        }
+    );
+    ifixture.interval = window.setInterval(function () {
         pulse_position = (pulse_position + 1) % 1000;
         for (var i = 0; i < 1000; i++) {
-            if ((i >= pulse_position) && (i < (pulse_position + pulse_width))) {
+            if (i >= pulse_position && i < pulse_position + pulse_width) {
                 pulse[i] = 10.0;
             } else {
                 pulse[i] = -10.0;
@@ -701,8 +781,8 @@ interactiveTest('t2000 layer1D', 'Do you see a pulse scrolling right (type 2000)
     }, 100);
 });
 
-interactiveTest('zoom-xdelta', 'Is the plot fully scaled displaying a ramp?', function(assert) {
-    var container = document.getElementById('plot');
+interactiveTest("zoom-xdelta", "Is the plot fully scaled displaying a ramp?", function (assert) {
+    var container = document.getElementById("plot");
     var plot = new sigplot.Plot(container, {});
     assert.notEqual(plot, null);
     var ramp = [];
@@ -713,13 +793,16 @@ interactiveTest('zoom-xdelta', 'Is the plot fully scaled displaying a ramp?', fu
         type: 1000,
         xstart: -500
     });
-    plot.zoom({
-        x: -250,
-        y: 5
-    }, {
-        x: 250,
-        y: -5
-    });
+    plot.zoom(
+        {
+            x: -250,
+            y: 5
+        },
+        {
+            x: 250,
+            y: -5
+        }
+    );
     plot.reload(lyr0, ramp, {
         xstart: 0,
         xdelta: 50
@@ -727,8 +810,8 @@ interactiveTest('zoom-xdelta', 'Is the plot fully scaled displaying a ramp?', fu
     plot.unzoom();
 });
 
-interactiveTest('reload', 'Do you see a pulse stationary at 0 while the axis shifts?', function(assert) {
-    var container = document.getElementById('plot');
+interactiveTest("reload", "Do you see a pulse stationary at 0 while the axis shifts?", function (assert) {
+    var container = document.getElementById("plot");
     var plot = new sigplot.Plot(container, {});
     assert.notEqual(plot, null);
     var pulse = [];
@@ -737,7 +820,7 @@ interactiveTest('reload', 'Do you see a pulse stationary at 0 while the axis shi
     var xstart = -500;
     var delta = 100;
     for (var i = 0; i < 1000; i++) {
-        if ((i >= pulse_position) && (i < (pulse_position + pulse_width))) {
+        if (i >= pulse_position && i < pulse_position + pulse_width) {
             pulse.push(10.0);
         } else {
             pulse.push(-10.0);
@@ -747,14 +830,14 @@ interactiveTest('reload', 'Do you see a pulse stationary at 0 while the axis shi
         type: 1000,
         xstart: xstart
     });
-    ifixture.interval = window.setInterval(function() {
+    ifixture.interval = window.setInterval(function () {
         pulse_position = pulse_position + delta;
         xstart = xstart - delta;
-        if ((pulse_position >= 900) || (pulse_position <= 100)) {
+        if (pulse_position >= 900 || pulse_position <= 100) {
             delta = delta * -1;
         }
         for (var i = 0; i < 1000; i++) {
-            if ((i >= pulse_position) && (i < (pulse_position + pulse_width))) {
+            if (i >= pulse_position && i < pulse_position + pulse_width) {
                 pulse[i] = 10.0;
             } else {
                 pulse[i] = -10.0;
@@ -766,8 +849,8 @@ interactiveTest('reload', 'Do you see a pulse stationary at 0 while the axis shi
     }, 1000);
 });
 
-interactiveTest('reload', 'Do you see a pulse stationary at 0 while the axis grows?', function(assert) {
-    var container = document.getElementById('plot');
+interactiveTest("reload", "Do you see a pulse stationary at 0 while the axis grows?", function (assert) {
+    var container = document.getElementById("plot");
     var plot = new sigplot.Plot(container, {});
     assert.notEqual(plot, null);
     var pulse = [];
@@ -776,7 +859,7 @@ interactiveTest('reload', 'Do you see a pulse stationary at 0 while the axis gro
     var xstart = -500;
     var xdelta = 1;
     for (var i = 0; i < 1000; i++) {
-        if ((i >= pulse_position) && (i < (pulse_position + pulse_width))) {
+        if (i >= pulse_position && i < pulse_position + pulse_width) {
             pulse.push(10.0);
         } else {
             pulse.push(-10.0);
@@ -787,7 +870,7 @@ interactiveTest('reload', 'Do you see a pulse stationary at 0 while the axis gro
         xstart: -500,
         xdelta: xdelta
     });
-    ifixture.interval = window.setInterval(function() {
+    ifixture.interval = window.setInterval(function () {
         xdelta = xdelta * 2;
         xstart = -500 * xdelta;
         plot.reload(lyr0, pulse, {
@@ -797,66 +880,83 @@ interactiveTest('reload', 'Do you see a pulse stationary at 0 while the axis gro
     }, 5000);
 });
 
-interactiveTest('pipe 1D name', 'Do you see a random data plot (0 to 1 ) properly named "Test" in the legend', function(assert) {
-    var container = document.getElementById('plot');
-    var plot = new sigplot.Plot(container, {
-        legend: true
-    });
-    assert.notEqual(plot, null);
-    var lyr0 = plot.overlay_pipe({
-        type: 1000
-    }, {
-        framesize: 100,
-        name: "Test"
-    });
-    ifixture.interval = window.setInterval(function() {
-        var random = [];
-        for (var i = 0; i < 100; i += 1) {
-            random.push(Math.random());
-        }
-        plot.push(lyr0, random);
-    }, 100);
-});
+interactiveTest(
+    "pipe 1D name",
+    'Do you see a random data plot (0 to 1 ) properly named "Test" in the legend',
+    function (assert) {
+        var container = document.getElementById("plot");
+        var plot = new sigplot.Plot(container, {
+            legend: true
+        });
+        assert.notEqual(plot, null);
+        var lyr0 = plot.overlay_pipe(
+            {
+                type: 1000
+            },
+            {
+                framesize: 100,
+                name: "Test"
+            }
+        );
+        ifixture.interval = window.setInterval(function () {
+            var random = [];
+            for (var i = 0; i < 100; i += 1) {
+                random.push(Math.random());
+            }
+            plot.push(lyr0, random);
+        }, 100);
+    }
+);
 
-interactiveTest('complex scrolling line', 'Do you see a scrolling random data (0 to 1) plot that auto-scales', function(assert) {
-    var container = document.getElementById('plot');
-    var plot = new sigplot.Plot(container, {});
-    assert.notEqual(plot, null);
-    plot.change_settings({
-        cmode: 3,
-        autol: 5
-    });
-    var lyr0 = plot.overlay_pipe({
-        type: 1000,
-        format: "CF"
-    }, {
-        framesize: 32768,
-        drawmode: "scrolling"
-    });
-    ifixture.interval = window.setInterval(function() {
-        var random = [];
-        for (var i = 0; i < 100; i += 1) {
-            random.push(Math.random());
-        }
-        plot.push(lyr0, random);
-    }, 100);
-});
+interactiveTest(
+    "complex scrolling line",
+    "Do you see a scrolling random data (0 to 1) plot that auto-scales",
+    function (assert) {
+        var container = document.getElementById("plot");
+        var plot = new sigplot.Plot(container, {});
+        assert.notEqual(plot, null);
+        plot.change_settings({
+            cmode: 3,
+            autol: 5
+        });
+        var lyr0 = plot.overlay_pipe(
+            {
+                type: 1000,
+                format: "CF"
+            },
+            {
+                framesize: 32768,
+                drawmode: "scrolling"
+            }
+        );
+        ifixture.interval = window.setInterval(function () {
+            var random = [];
+            for (var i = 0; i < 100; i += 1) {
+                random.push(Math.random());
+            }
+            plot.push(lyr0, random);
+        }, 100);
+    }
+);
 
-interactiveTest('dB auto-scale', 'Do you dblog plot that auto-scales', function(assert) {
-    var container = document.getElementById('plot');
+interactiveTest("dB auto-scale", "Do you dblog plot that auto-scales", function (assert) {
+    var container = document.getElementById("plot");
     var plot = new sigplot.Plot(container, {});
     assert.notEqual(plot, null);
     plot.change_settings({
         cmode: 6,
         autol: 5
     });
-    var lyr0 = plot.overlay_pipe({
-        type: 1000,
-        format: "SF"
-    }, {
-        framesize: 1024
-    });
-    ifixture.interval = window.setInterval(function() {
+    var lyr0 = plot.overlay_pipe(
+        {
+            type: 1000,
+            format: "SF"
+        },
+        {
+            framesize: 1024
+        }
+    );
+    ifixture.interval = window.setInterval(function () {
         var random = [];
         for (var i = 0; i < 1024; i += 1) {
             random.push(Math.random() * 10);
@@ -865,13 +965,13 @@ interactiveTest('dB auto-scale', 'Do you dblog plot that auto-scales', function(
     }, 100);
 });
 
-
 // Demonstrate that changing the ymin/ymax settings
 // will implicitly change the autoy settings
-interactiveTest('sigplot layer1d change_settings ymin/ymax ',
-    'Do you see a plot scaled from -10 to 50',
-    function(assert) {
-        var container = document.getElementById('plot');
+interactiveTest(
+    "sigplot layer1d change_settings ymin/ymax ",
+    "Do you see a plot scaled from -10 to 50",
+    function (assert) {
+        var container = document.getElementById("plot");
         var plot = new sigplot.Plot(container, {});
         assert.notEqual(plot, null);
 
@@ -889,12 +989,14 @@ interactiveTest('sigplot layer1d change_settings ymin/ymax ',
             ymin: -10,
             ymax: 50
         });
-    });
+    }
+);
 
-interactiveTest('sigplot layer1d change_settings ymin/ymax ',
-    'Do you see a plot scaled from 0.2 to 50',
-    function(assert) {
-        var container = document.getElementById('plot');
+interactiveTest(
+    "sigplot layer1d change_settings ymin/ymax ",
+    "Do you see a plot scaled from 0.2 to 50",
+    function (assert) {
+        var container = document.getElementById("plot");
         var plot = new sigplot.Plot(container, {});
         assert.notEqual(plot, null);
 
@@ -911,12 +1013,14 @@ interactiveTest('sigplot layer1d change_settings ymin/ymax ',
         plot.change_settings({
             ymax: 50
         });
-    });
+    }
+);
 
-interactiveTest('sigplot layer1d change_settings ymin/ymax ',
-    'Do you see a plot scaled from -10 to 10.2',
-    function(assert) {
-        var container = document.getElementById('plot');
+interactiveTest(
+    "sigplot layer1d change_settings ymin/ymax ",
+    "Do you see a plot scaled from -10 to 10.2",
+    function (assert) {
+        var container = document.getElementById("plot");
         var plot = new sigplot.Plot(container, {});
         assert.notEqual(plot, null);
 
@@ -933,14 +1037,16 @@ interactiveTest('sigplot layer1d change_settings ymin/ymax ',
         plot.change_settings({
             ymin: -10
         });
-    });
+    }
+);
 
 // Prove that automatic autoy works when setting ymin/ymax
 // back to null
-interactiveTest('sigplot layer1d change_settings ymin/ymax ',
-    'Do you see a plot scaled from 0.2 to 10.2',
-    function(assert) {
-        var container = document.getElementById('plot');
+interactiveTest(
+    "sigplot layer1d change_settings ymin/ymax ",
+    "Do you see a plot scaled from 0.2 to 10.2",
+    function (assert) {
+        var container = document.getElementById("plot");
         var plot = new sigplot.Plot(container, {});
         assert.notEqual(plot, null);
 
@@ -962,23 +1068,28 @@ interactiveTest('sigplot layer1d change_settings ymin/ymax ',
             ymin: null,
             ymax: null
         });
-    });
+    }
+);
 
-interactiveTest('sigplot layer1d framesize change',
-    'Do you see a plots where the x-axis grows in size and the triangle stays centered?',
-    function(assert) {
-        var container = document.getElementById('plot');
+interactiveTest(
+    "sigplot layer1d framesize change",
+    "Do you see a plots where the x-axis grows in size and the triangle stays centered?",
+    function (assert) {
+        var container = document.getElementById("plot");
         var plot = new sigplot.Plot(container, {});
         assert.notEqual(plot, null);
 
         var current_framesize = 100;
-        var lyr0 = plot.overlay_pipe({
-            type: 1000
-        }, {
-            framesize: current_framesize
-        });
+        var lyr0 = plot.overlay_pipe(
+            {
+                type: 1000
+            },
+            {
+                framesize: current_framesize
+            }
+        );
 
-        ifixture.interval = window.setInterval(function() {
+        ifixture.interval = window.setInterval(function () {
             var data = [];
             for (var i = 0; i < current_framesize; i += 1) {
                 if (i < current_framesize / 2) {
@@ -996,10 +1107,11 @@ interactiveTest('sigplot layer1d framesize change',
             // increate the framesize for the next pass
             current_framesize = current_framesize + 100;
         }, 2000);
-    });
+    }
+);
 
-interactiveTest('LO ymin/ymax', 'Do you see a plot that scales -100 to -20?', function(assert) {
-    var container = document.getElementById('plot');
+interactiveTest("LO ymin/ymax", "Do you see a plot that scales -100 to -20?", function (assert) {
+    var container = document.getElementById("plot");
     var plot = new sigplot.Plot(container, {
         ymin: 1e-10,
         ymax: 1e-2,
@@ -1026,8 +1138,8 @@ interactiveTest('LO ymin/ymax', 'Do you see a plot that scales -100 to -20?', fu
     });
 });
 
-interactiveTest('D1 ymin/ymax', 'Do you see a plot that scales -100 to -20?', function(assert) {
-    var container = document.getElementById('plot');
+interactiveTest("D1 ymin/ymax", "Do you see a plot that scales -100 to -20?", function (assert) {
+    var container = document.getElementById("plot");
     var plot = new sigplot.Plot(container, {
         ymin: -100,
         ymax: -20,
@@ -1054,23 +1166,27 @@ interactiveTest('D1 ymin/ymax', 'Do you see a plot that scales -100 to -20?', fu
     });
 });
 
-interactiveTest('custom color line', 'Do you see an orange line?', function(assert) {
-    var container = document.getElementById('plot');
+interactiveTest("custom color line", "Do you see an orange line?", function (assert) {
+    var container = document.getElementById("plot");
     var plot = new sigplot.Plot(container, {});
     assert.notEqual(plot, null);
     var ramp = [];
     for (var i = 0; i < 1000; i++) {
         ramp.push(i);
     }
-    var layer = plot.overlay_array(ramp, {
-        file_name: "ramp"
-    }, {
-        color: "orange"
-    });
+    var layer = plot.overlay_array(
+        ramp,
+        {
+            file_name: "ramp"
+        },
+        {
+            color: "orange"
+        }
+    );
 });
 
-interactiveTest('custom color line (change settings)', 'Do you see an orange line?', function(assert) {
-    var container = document.getElementById('plot');
+interactiveTest("custom color line (change settings)", "Do you see an orange line?", function (assert) {
+    var container = document.getElementById("plot");
     var plot = new sigplot.Plot(container, {});
     assert.notEqual(plot, null);
     var ramp = [];
@@ -1084,8 +1200,50 @@ interactiveTest('custom color line (change settings)', 'Do you see an orange lin
     plot.refresh();
 });
 
-interactiveTest('overlapping_highlights', 'Do you see an unbroken yellow line with red on each end?', function(assert) {
-    var container = document.getElementById('plot');
+interactiveTest(
+    "overlapping_highlights",
+    "Do you see an unbroken yellow line with red on each end?",
+    function (assert) {
+        var container = document.getElementById("plot");
+        var plot = new sigplot.Plot(container, {});
+        assert.notEqual(plot, null);
+        var ramp = [];
+        for (var i = 0; i < 1000; i++) {
+            ramp.push(i);
+        }
+        var layer = plot.overlay_array(ramp, {
+            file_name: "ramp"
+        });
+        plot.get_layer(layer).add_highlight({
+            xstart: 400,
+            xend: 600,
+            color: "red"
+        });
+        plot.get_layer(layer).add_highlight({
+            xstart: 600,
+            xend: 800,
+            color: "red"
+        });
+        plot.get_layer(layer).add_highlight({
+            xstart: 450,
+            xend: 550,
+            color: "yellow"
+        });
+        plot.get_layer(layer).add_highlight({
+            xstart: 550,
+            xend: 650,
+            color: "yellow"
+        });
+        plot.get_layer(layer).add_highlight({
+            xstart: 650,
+            xend: 750,
+            color: "yellow"
+        });
+    }
+);
+
+interactiveTest("overlapping_highlights", "Do you see an unbroken red line?", function (assert) {
+    var container = document.getElementById("plot");
     var plot = new sigplot.Plot(container, {});
     assert.notEqual(plot, null);
     var ramp = [];
@@ -1094,16 +1252,6 @@ interactiveTest('overlapping_highlights', 'Do you see an unbroken yellow line wi
     }
     var layer = plot.overlay_array(ramp, {
         file_name: "ramp"
-    });
-    plot.get_layer(layer).add_highlight({
-        xstart: 400,
-        xend: 600,
-        color: "red"
-    });
-    plot.get_layer(layer).add_highlight({
-        xstart: 600,
-        xend: 800,
-        color: "red"
     });
     plot.get_layer(layer).add_highlight({
         xstart: 450,
@@ -1120,34 +1268,6 @@ interactiveTest('overlapping_highlights', 'Do you see an unbroken yellow line wi
         xend: 750,
         color: "yellow"
     });
-});
-
-interactiveTest('overlapping_highlights', 'Do you see an unbroken red line?', function(assert) {
-    var container = document.getElementById('plot');
-    var plot = new sigplot.Plot(container, {});
-    assert.notEqual(plot, null);
-    var ramp = [];
-    for (var i = 0; i < 1000; i++) {
-        ramp.push(i);
-    }
-    var layer = plot.overlay_array(ramp, {
-        file_name: "ramp"
-    });
-    plot.get_layer(layer).add_highlight({
-        xstart: 450,
-        xend: 550,
-        color: "yellow"
-    });
-    plot.get_layer(layer).add_highlight({
-        xstart: 550,
-        xend: 650,
-        color: "yellow"
-    });
-    plot.get_layer(layer).add_highlight({
-        xstart: 650,
-        xend: 750,
-        color: "yellow"
-    });
     plot.get_layer(layer).add_highlight({
         xstart: 400,
         xend: 600,
@@ -1160,8 +1280,8 @@ interactiveTest('overlapping_highlights', 'Do you see an unbroken red line?', fu
     });
 });
 
-interactiveTest('overlapping_highlights', 'Do you see evenly spaced red/yellow highlights?', function(assert) {
-    var container = document.getElementById('plot');
+interactiveTest("overlapping_highlights", "Do you see evenly spaced red/yellow highlights?", function (assert) {
+    var container = document.getElementById("plot");
     var plot = new sigplot.Plot(container, {});
     assert.notEqual(plot, null);
     var ramp = [];
@@ -1219,28 +1339,32 @@ interactiveTest('overlapping_highlights', 'Do you see evenly spaced red/yellow h
     });
 });
 
-interactiveTest('vertical and horizontal lines', 'Is there a horizontal and vertical line on every point?', function(assert) {
-    var container = document.getElementById('plot');
-    var plot = new sigplot.Plot(container, {});
-    assert.notEqual(plot, null);
+interactiveTest(
+    "vertical and horizontal lines",
+    "Is there a horizontal and vertical line on every point?",
+    function (assert) {
+        var container = document.getElementById("plot");
+        var plot = new sigplot.Plot(container, {});
+        assert.notEqual(plot, null);
 
-    var ramp = [];
-    for (var i = 0; i < 20; i++) {
-        ramp.push(i);
+        var ramp = [];
+        for (var i = 0; i < 20; i++) {
+            ramp.push(i);
+        }
+        plot.overlay_array(ramp, null, {
+            name: "x",
+            symbol: 0,
+            line: 4
+        });
     }
-    plot.overlay_array(ramp, null, {
-        name: "x",
-        symbol: 0,
-        line: 4
-    });
-});
+);
 
-interactiveTest('change_settings', 'does the plot show a range 200-2200', function(assert) {
-    var container = document.getElementById('plot');
+interactiveTest("change_settings", "does the plot show a range 200-2200", function (assert) {
+    var container = document.getElementById("plot");
     var plot = new sigplot.Plot(container, {
         autohide_panbars: false,
-        cmode: 'LO',
-        xcnt: 'continuous'
+        cmode: "LO",
+        xcnt: "continuous"
     });
     assert.notEqual(plot, null);
 
@@ -1284,15 +1408,14 @@ interactiveTest('change_settings', 'does the plot show a range 200-2200', functi
     plot.push(lyr_uuid, ramp, null, true);
     assert.strictEqual(plot._Mx.stk[0].xmin, 200);
     assert.strictEqual(plot._Mx.stk[0].xmax, 2200);
-
 });
 
-interactiveTest('headermod', 'does the plot show a range 200-2200', function(assert) {
-    var container = document.getElementById('plot');
+interactiveTest("headermod", "does the plot show a range 200-2200", function (assert) {
+    var container = document.getElementById("plot");
     var plot = new sigplot.Plot(container, {
         autohide_panbars: false,
-        cmode: 'LO',
-        xcnt: 'continuous'
+        cmode: "LO",
+        xcnt: "continuous"
     });
     assert.notEqual(plot, null);
 
@@ -1344,48 +1467,28 @@ interactiveTest('headermod', 'does the plot show a range 200-2200', function(ass
     assert.strictEqual(plot._Gx.lyr[0].xmax, 2200);
 });
 
-interactiveTest('correct scale after cmode change', 'is the plot correctly scaled with full scroll bars', function(assert) {
-    var done = assert.async();
+interactiveTest(
+    "correct scale after cmode change",
+    "is the plot correctly scaled with full scroll bars",
+    function (assert) {
+        var done = assert.async();
 
-    var plot_options = {
-        autohide_panbars: false,
-        hide_note: true
-    };
-    var data = [1, 2, 3, 4, 5, 4, 3, 2, 1]; // the series of y-values
-    var data_header = {
-        xunits: "Time",
-        xstart: 100, // the start of the x-axis
-        xdelta: 50, // the x-axis step between each data point
-        yunits: "Power"
-    };
-    var layer_options = {
-        name: "Sample Data"
-    };
-    var plot = new sigplot.Plot(document.getElementById('plot'), plot_options);
-    plot.overlay_array(data, data_header, layer_options);
-
-    assert.equal(plot._Mx.stk[0].xmin, 100);
-    assert.equal(plot._Mx.stk[0].xmax, 500);
-    assert.equal(plot._Mx.stk[0].ymin, 0.92);
-    assert.equal(plot._Mx.stk[0].ymax, 5.08);
-    assert.equal(plot._Gx.panymin, 0.92);
-    assert.equal(plot._Gx.panymax, 5.08);
-
-    plot.change_settings({
-        cmode: 6
-    });
-    window.setTimeout(function() {
-
-        assert.equal(plot._Mx.stk[0].xmin, 100);
-        assert.equal(plot._Mx.stk[0].xmax, 500);
-        assert.equal(plot._Mx.stk[0].ymin, -0.13979400086720375);
-        assert.equal(plot._Mx.stk[0].ymax, 7.129494044227391);
-        assert.equal(plot._Gx.panymin, -0.13979400086720375);
-        assert.equal(plot._Gx.panymax, 7.129494044227391);
-
-        plot.change_settings({
-            cmode: 3
-        });
+        var plot_options = {
+            autohide_panbars: false,
+            hide_note: true
+        };
+        var data = [1, 2, 3, 4, 5, 4, 3, 2, 1]; // the series of y-values
+        var data_header = {
+            xunits: "Time",
+            xstart: 100, // the start of the x-axis
+            xdelta: 50, // the x-axis step between each data point
+            yunits: "Power"
+        };
+        var layer_options = {
+            name: "Sample Data"
+        };
+        var plot = new sigplot.Plot(document.getElementById("plot"), plot_options);
+        plot.overlay_array(data, data_header, layer_options);
 
         assert.equal(plot._Mx.stk[0].xmin, 100);
         assert.equal(plot._Mx.stk[0].xmax, 500);
@@ -1394,52 +1497,80 @@ interactiveTest('correct scale after cmode change', 'is the plot correctly scale
         assert.equal(plot._Gx.panymin, 0.92);
         assert.equal(plot._Gx.panymax, 5.08);
 
-        done();
+        plot.change_settings({
+            cmode: 6
+        });
+        window.setTimeout(function () {
+            assert.equal(plot._Mx.stk[0].xmin, 100);
+            assert.equal(plot._Mx.stk[0].xmax, 500);
+            assert.equal(plot._Mx.stk[0].ymin, -0.13979400086720375);
+            assert.equal(plot._Mx.stk[0].ymax, 7.129494044227391);
+            assert.equal(plot._Gx.panymin, -0.13979400086720375);
+            assert.equal(plot._Gx.panymax, 7.129494044227391);
 
-    }, 1000);
-});
+            plot.change_settings({
+                cmode: 3
+            });
 
-interactiveTest('1d preferred origin 2 array', 'Do you see a ramp from 0 to 1023 backwards?', function(assert) {
-    var container = document.getElementById('plot');
+            assert.equal(plot._Mx.stk[0].xmin, 100);
+            assert.equal(plot._Mx.stk[0].xmax, 500);
+            assert.equal(plot._Mx.stk[0].ymin, 0.92);
+            assert.equal(plot._Mx.stk[0].ymax, 5.08);
+            assert.equal(plot._Gx.panymin, 0.92);
+            assert.equal(plot._Gx.panymax, 5.08);
+
+            done();
+        }, 1000);
+    }
+);
+
+interactiveTest("1d preferred origin 2 array", "Do you see a ramp from 0 to 1023 backwards?", function (assert) {
+    var container = document.getElementById("plot");
     var plot = new sigplot.Plot(container, {});
     assert.notEqual(plot, null);
-
 
     var ramp = [];
     for (var i = 0; i < 1024; i++) {
         ramp.push(i);
     }
 
-    var lyr_n = plot.overlay_array(ramp, {}, {
-        layerType: sigplot.Layer1D,
-        preferred_origin: 2
-    });
+    var lyr_n = plot.overlay_array(
+        ramp,
+        {},
+        {
+            layerType: sigplot.Layer1D,
+            preferred_origin: 2
+        }
+    );
 });
 
-interactiveTest('1d array negative xdelta', 'Do you see a ramp from 0 to 1023 backwards?', function(assert) {
-    var container = document.getElementById('plot');
+interactiveTest("1d array negative xdelta", "Do you see a ramp from 0 to 1023 backwards?", function (assert) {
+    var container = document.getElementById("plot");
     var plot = new sigplot.Plot(container, {});
     assert.notEqual(plot, null);
-
 
     var ramp = [];
     for (var i = 0; i < 1024; i++) {
         ramp.push(i);
     }
 
-    var lyr_n = plot.overlay_array(ramp, {
-        xstart: 300,
-        xdelta: -0.1
-    }, {
-        layerType: sigplot.Layer1D
-    });
+    var lyr_n = plot.overlay_array(
+        ramp,
+        {
+            xstart: 300,
+            xdelta: -0.1
+        },
+        {
+            layerType: sigplot.Layer1D
+        }
+    );
 });
 
-interactiveTest('1d preferred origin 2 pipe', 'does the plot x-axis show correctly', function(assert) {
-    var container = document.getElementById('plot');
+interactiveTest("1d preferred origin 2 pipe", "does the plot x-axis show correctly", function (assert) {
+    var container = document.getElementById("plot");
     var plot = new sigplot.Plot(container, {
         autohide_panbars: false,
-        xcnt: 'continuous',
+        xcnt: "continuous"
     });
     assert.notEqual(plot, null);
 
@@ -1451,8 +1582,7 @@ interactiveTest('1d preferred origin 2 pipe', 'does the plot x-axis show correct
     };
     var layerOptions = {
         framesize: 1024,
-        preferred_origin: 2,
-
+        preferred_origin: 2
     };
 
     var lyr_uuid = plot.overlay_pipe(hcb, layerOptions);
@@ -1465,11 +1595,11 @@ interactiveTest('1d preferred origin 2 pipe', 'does the plot x-axis show correct
     plot.push(lyr_uuid, ramp, null, true);
 });
 
-interactiveTest('1d negative xdelta pipe', 'does the plot x-axis show correctly', function(assert) {
-    var container = document.getElementById('plot');
+interactiveTest("1d negative xdelta pipe", "does the plot x-axis show correctly", function (assert) {
+    var container = document.getElementById("plot");
     var plot = new sigplot.Plot(container, {
         autohide_panbars: false,
-        xcnt: 'continuous',
+        xcnt: "continuous"
     });
     assert.notEqual(plot, null);
 
@@ -1481,7 +1611,7 @@ interactiveTest('1d negative xdelta pipe', 'does the plot x-axis show correctly'
         xdelta: -0.1
     };
     var layerOptions = {
-        framesize: 1024,
+        framesize: 1024
     };
 
     var lyr_uuid = plot.overlay_pipe(hcb, layerOptions);
@@ -1494,209 +1624,39 @@ interactiveTest('1d negative xdelta pipe', 'does the plot x-axis show correctly'
     plot.push(lyr_uuid, ramp, null, true);
 });
 
-interactiveTest('1d max-hold', 'does the plot have a max hold feature', function(assert) {
-    var container = document.getElementById('plot');
+interactiveTest("1d max-hold", "does the plot have a max hold feature", function (assert) {
+    var container = document.getElementById("plot");
     var plot = new sigplot.Plot(container, {
         legend: true,
         autol: 5
     });
     assert.notEqual(plot, null);
-    var lyr0 = plot.overlay_pipe({
-        type: 1000
-    }, {
-        framesize: 2048,
-        name: "Test",
-        maxhold: {
-            decay: 0.01, // slow decay
-            color: "red",
-            traceoptions: {
-                dashed: true
-            }
-        }
-    });
-
-    var offset = 0;
-    window.setInterval(function() {
-        offset = (offset + 200) % 2048;
-    }, 2000);
-
-    ifixture.interval = window.setInterval(function() {
-        var random = [];
-        for (var i = 0; i < 2048; i += 1) {
-
-            if ((i > offset) && (i < offset + 500)) {
-                random.push(Math.random() * 3);
-            } else {
-                random.push(Math.random());
-            }
-        }
-        plot.push(lyr0, random);
-    }, 100);
-});
-
-interactiveTest('1d max-hold negative', 'does the plot have a max hold feature that works with negative numbers', function(assert) {
-    var container = document.getElementById('plot');
-    var plot = new sigplot.Plot(container, {
-        legend: true,
-        autol: 5
-    });
-    assert.notEqual(plot, null);
-    var lyr0 = plot.overlay_pipe({
-        type: 1000
-    }, {
-        framesize: 2048,
-        name: "Test",
-        maxhold: {
-            decay: 0.01, // slow decay
-            color: "red",
-            traceoptions: {
-                dashed: true
-            }
-        }
-    });
-
-    var offset = 0;
-    window.setInterval(function() {
-        offset = (offset + 200) % 2048;
-    }, 2000);
-
-    ifixture.interval = window.setInterval(function() {
-        var random = [];
-        for (var i = 0; i < 2048; i += 1) {
-
-            if ((i > offset) && (i < offset + 500)) {
-                random.push(Math.random() * 3 - 50);
-            } else {
-                random.push(Math.random() - 50);
-            }
-        }
-        plot.push(lyr0, random);
-    }, 100);
-});
-
-interactiveTest('1d max-hold no-decay', 'does the plot have a no-decay max hold feature', function(assert) {
-    var container = document.getElementById('plot');
-    var plot = new sigplot.Plot(container, {
-        legend: true,
-        autol: 5
-    });
-    assert.notEqual(plot, null);
-    var lyr0 = plot.overlay_pipe({
-        type: 1000
-    }, {
-        framesize: 2048,
-        name: "Test",
-        maxhold: {
-            decay: 0, // no decay
-            color: "red",
-            traceoptions: {
-                dashed: true
-            }
-        }
-    });
-
-    var offset = 0;
-    window.setInterval(function() {
-        offset = (offset + 200) % 2048;
-    }, 2000);
-
-    ifixture.interval = window.setInterval(function() {
-        var random = [];
-        for (var i = 0; i < 2048; i += 1) {
-
-            if ((i > offset) && (i < offset + 500)) {
-                random.push(Math.random() * 3);
-            } else {
-                random.push(Math.random());
-            }
-        }
-        plot.push(lyr0, random);
-    }, 100);
-});
-
-interactiveTest('1d max-hold negative no-decay', 'does the plot have a no-decay max hold feature that works with negative numbers', function(assert) {
-    var container = document.getElementById('plot');
-    var plot = new sigplot.Plot(container, {
-        legend: true,
-        autol: 5
-    });
-    assert.notEqual(plot, null);
-    var lyr0 = plot.overlay_pipe({
-        type: 1000
-    }, {
-        framesize: 2048,
-        name: "Test",
-        maxhold: {
-            decay: 0, // no decay
-            color: "red",
-            traceoptions: {
-                dashed: true
-            }
-        }
-    });
-
-    var offset = 0;
-    window.setInterval(function() {
-        offset = (offset + 200) % 2048;
-    }, 2000);
-
-    ifixture.interval = window.setInterval(function() {
-        var random = [];
-        for (var i = 0; i < 2048; i += 1) {
-
-            if ((i > offset) && (i < offset + 500)) {
-                random.push(Math.random() * 3 - 50);
-            } else {
-                random.push(Math.random() - 50);
-            }
-        }
-        plot.push(lyr0, random);
-    }, 100);
-});
-
-interactiveTest('1d max-hold reset', 'does the plot have a max hold feature that resets every 5 seconds', function(assert) {
-    var container = document.getElementById('plot');
-    var plot = new sigplot.Plot(container, {
-        legend: true,
-        autol: 5
-    });
-    assert.notEqual(plot, null);
-    var lyr0 = plot.overlay_pipe({
-        type: 1000
-    }, {
-        framesize: 2048,
-        name: "Test",
-        maxhold: {
-            decay: 0, // never decay
-            color: "red",
-            traceoptions: {
-                dashed: true
-            }
-        }
-    });
-
-    var offset = 0;
-    window.setInterval(function() {
-        offset = (offset + 200) % 2048;
-    }, 2000);
-
-    window.setInterval(function() {
-        plot.change_settings({
+    var lyr0 = plot.overlay_pipe(
+        {
+            type: 1000
+        },
+        {
+            framesize: 2048,
+            name: "Test",
             maxhold: {
-                decay: 0, // never decay
+                decay: 0.01, // slow decay
                 color: "red",
                 traceoptions: {
                     dashed: true
                 }
             }
-        });
-    }, 5000);
+        }
+    );
 
-    ifixture.interval = window.setInterval(function() {
+    var offset = 0;
+    window.setInterval(function () {
+        offset = (offset + 200) % 2048;
+    }, 2000);
+
+    ifixture.interval = window.setInterval(function () {
         var random = [];
         for (var i = 0; i < 2048; i += 1) {
-
-            if ((i > offset) && (i < offset + 500)) {
+            if (i > offset && i < offset + 500) {
                 random.push(Math.random() * 3);
             } else {
                 random.push(Math.random());
@@ -1706,51 +1666,85 @@ interactiveTest('1d max-hold reset', 'does the plot have a max hold feature that
     }, 100);
 });
 
-interactiveTest('1d max-hold change framesize', 'does the plot have a max hold feature that works after frame resize', function(assert) {
-    var container = document.getElementById('plot');
+interactiveTest(
+    "1d max-hold negative",
+    "does the plot have a max hold feature that works with negative numbers",
+    function (assert) {
+        var container = document.getElementById("plot");
+        var plot = new sigplot.Plot(container, {
+            legend: true,
+            autol: 5
+        });
+        assert.notEqual(plot, null);
+        var lyr0 = plot.overlay_pipe(
+            {
+                type: 1000
+            },
+            {
+                framesize: 2048,
+                name: "Test",
+                maxhold: {
+                    decay: 0.01, // slow decay
+                    color: "red",
+                    traceoptions: {
+                        dashed: true
+                    }
+                }
+            }
+        );
+
+        var offset = 0;
+        window.setInterval(function () {
+            offset = (offset + 200) % 2048;
+        }, 2000);
+
+        ifixture.interval = window.setInterval(function () {
+            var random = [];
+            for (var i = 0; i < 2048; i += 1) {
+                if (i > offset && i < offset + 500) {
+                    random.push(Math.random() * 3 - 50);
+                } else {
+                    random.push(Math.random() - 50);
+                }
+            }
+            plot.push(lyr0, random);
+        }, 100);
+    }
+);
+
+interactiveTest("1d max-hold no-decay", "does the plot have a no-decay max hold feature", function (assert) {
+    var container = document.getElementById("plot");
     var plot = new sigplot.Plot(container, {
         legend: true,
         autol: 5
     });
     assert.notEqual(plot, null);
-
-    var framesize = 2048;
-
-    var lyr0 = plot.overlay_pipe({
-        type: 1000
-    }, {
-        framesize: framesize,
-        expand: true,
-        all: true,
-        name: "Test",
-        maxhold: {
-            decay: 0, // never decay
-            color: "red",
-            traceoptions: {
-                dashed: true
+    var lyr0 = plot.overlay_pipe(
+        {
+            type: 1000
+        },
+        {
+            framesize: 2048,
+            name: "Test",
+            maxhold: {
+                decay: 0, // no decay
+                color: "red",
+                traceoptions: {
+                    dashed: true
+                }
             }
         }
-    });
+    );
 
     var offset = 0;
-    window.setTimeout(function() {
-        framesize = 4096;
-        plot.change_settings({
-            framesize: framesize
-        });
-        plot.rescale();
-    }, 5000);
+    window.setInterval(function () {
+        offset = (offset + 200) % 2048;
+    }, 2000);
 
-    var offset = 0;
-    window.setInterval(function() {
-        offset = (offset + 200) % framesize;
-    }, 500);
-
-    ifixture.interval = window.setInterval(function() {
+    ifixture.interval = window.setInterval(function () {
         var random = [];
-        for (var i = 0; i < framesize; i += 1) {
-
-            if ((i > offset) && (i < offset + 500)) {
+        for (var i = 0; i < 2048; i += 1) {
+            if (i > offset && i < offset + 500) {
                 random.push(Math.random() * 3);
             } else {
                 random.push(Math.random());
@@ -1760,62 +1754,232 @@ interactiveTest('1d max-hold change framesize', 'does the plot have a max hold f
     }, 100);
 });
 
-interactiveTest('1d max-hold change framesize hdrmod', 'does the plot have a max hold feature that works after frame resize', function(assert) {
-    var container = document.getElementById('plot');
-    var plot = new sigplot.Plot(container, {
-        legend: true,
-        autol: 5
-    });
-    assert.notEqual(plot, null);
-
-    var framesize = 2048;
-
-    var lyr0 = plot.overlay_pipe({
-        type: 2000,
-        subsize: framesize
-    }, {
-        layerType: "1D",
-        expand: true,
-        all: true,
-        name: "Test",
-        maxhold: {
-            decay: 0, // never decay
-            color: "red",
-            traceoptions: {
-                dashed: true
-            }
-        }
-    });
-
-    var offset = 0;
-    window.setTimeout(function() {
-        framesize = 4096;
-    }, 5000);
-
-    var offset = 0;
-    window.setInterval(function() {
-        offset = (offset + 200) % framesize;
-    }, 500);
-
-    ifixture.interval = window.setInterval(function() {
-        var random = [];
-        for (var i = 0; i < framesize; i += 1) {
-            // make fully negative to simulate a PSD with negative dB ratios
-            if ((i > offset) && (i < offset + 500)) {
-                random.push(Math.random() * 3 - 50);
-            } else {
-                random.push(Math.random() - 50);
-            }
-        }
-        plot.push(lyr0, random, {
-            subsize: framesize
+interactiveTest(
+    "1d max-hold negative no-decay",
+    "does the plot have a no-decay max hold feature that works with negative numbers",
+    function (assert) {
+        var container = document.getElementById("plot");
+        var plot = new sigplot.Plot(container, {
+            legend: true,
+            autol: 5
         });
-    }, 100);
-});
+        assert.notEqual(plot, null);
+        var lyr0 = plot.overlay_pipe(
+            {
+                type: 1000
+            },
+            {
+                framesize: 2048,
+                name: "Test",
+                maxhold: {
+                    decay: 0, // no decay
+                    color: "red",
+                    traceoptions: {
+                        dashed: true
+                    }
+                }
+            }
+        );
 
+        var offset = 0;
+        window.setInterval(function () {
+            offset = (offset + 200) % 2048;
+        }, 2000);
 
-interactiveTest('1d negative xstart gt bufmax', 'does the plot display a full triangle correctly', function(assert) {
-    var container = document.getElementById('plot');
+        ifixture.interval = window.setInterval(function () {
+            var random = [];
+            for (var i = 0; i < 2048; i += 1) {
+                if (i > offset && i < offset + 500) {
+                    random.push(Math.random() * 3 - 50);
+                } else {
+                    random.push(Math.random() - 50);
+                }
+            }
+            plot.push(lyr0, random);
+        }, 100);
+    }
+);
+
+interactiveTest(
+    "1d max-hold reset",
+    "does the plot have a max hold feature that resets every 5 seconds",
+    function (assert) {
+        var container = document.getElementById("plot");
+        var plot = new sigplot.Plot(container, {
+            legend: true,
+            autol: 5
+        });
+        assert.notEqual(plot, null);
+        var lyr0 = plot.overlay_pipe(
+            {
+                type: 1000
+            },
+            {
+                framesize: 2048,
+                name: "Test",
+                maxhold: {
+                    decay: 0, // never decay
+                    color: "red",
+                    traceoptions: {
+                        dashed: true
+                    }
+                }
+            }
+        );
+
+        var offset = 0;
+        window.setInterval(function () {
+            offset = (offset + 200) % 2048;
+        }, 2000);
+
+        window.setInterval(function () {
+            plot.change_settings({
+                maxhold: {
+                    decay: 0, // never decay
+                    color: "red",
+                    traceoptions: {
+                        dashed: true
+                    }
+                }
+            });
+        }, 5000);
+
+        ifixture.interval = window.setInterval(function () {
+            var random = [];
+            for (var i = 0; i < 2048; i += 1) {
+                if (i > offset && i < offset + 500) {
+                    random.push(Math.random() * 3);
+                } else {
+                    random.push(Math.random());
+                }
+            }
+            plot.push(lyr0, random);
+        }, 100);
+    }
+);
+
+interactiveTest(
+    "1d max-hold change framesize",
+    "does the plot have a max hold feature that works after frame resize",
+    function (assert) {
+        var container = document.getElementById("plot");
+        var plot = new sigplot.Plot(container, {
+            legend: true,
+            autol: 5
+        });
+        assert.notEqual(plot, null);
+
+        var framesize = 2048;
+
+        var lyr0 = plot.overlay_pipe(
+            {
+                type: 1000
+            },
+            {
+                framesize: framesize,
+                expand: true,
+                all: true,
+                name: "Test",
+                maxhold: {
+                    decay: 0, // never decay
+                    color: "red",
+                    traceoptions: {
+                        dashed: true
+                    }
+                }
+            }
+        );
+
+        var offset = 0;
+        window.setTimeout(function () {
+            framesize = 4096;
+            plot.change_settings({
+                framesize: framesize
+            });
+            plot.rescale();
+        }, 5000);
+
+        var offset = 0;
+        window.setInterval(function () {
+            offset = (offset + 200) % framesize;
+        }, 500);
+
+        ifixture.interval = window.setInterval(function () {
+            var random = [];
+            for (var i = 0; i < framesize; i += 1) {
+                if (i > offset && i < offset + 500) {
+                    random.push(Math.random() * 3);
+                } else {
+                    random.push(Math.random());
+                }
+            }
+            plot.push(lyr0, random);
+        }, 100);
+    }
+);
+
+interactiveTest(
+    "1d max-hold change framesize hdrmod",
+    "does the plot have a max hold feature that works after frame resize",
+    function (assert) {
+        var container = document.getElementById("plot");
+        var plot = new sigplot.Plot(container, {
+            legend: true,
+            autol: 5
+        });
+        assert.notEqual(plot, null);
+
+        var framesize = 2048;
+
+        var lyr0 = plot.overlay_pipe(
+            {
+                type: 2000,
+                subsize: framesize
+            },
+            {
+                layerType: "1D",
+                expand: true,
+                all: true,
+                name: "Test",
+                maxhold: {
+                    decay: 0, // never decay
+                    color: "red",
+                    traceoptions: {
+                        dashed: true
+                    }
+                }
+            }
+        );
+
+        var offset = 0;
+        window.setTimeout(function () {
+            framesize = 4096;
+        }, 5000);
+
+        var offset = 0;
+        window.setInterval(function () {
+            offset = (offset + 200) % framesize;
+        }, 500);
+
+        ifixture.interval = window.setInterval(function () {
+            var random = [];
+            for (var i = 0; i < framesize; i += 1) {
+                // make fully negative to simulate a PSD with negative dB ratios
+                if (i > offset && i < offset + 500) {
+                    random.push(Math.random() * 3 - 50);
+                } else {
+                    random.push(Math.random() - 50);
+                }
+            }
+            plot.push(lyr0, random, {
+                subsize: framesize
+            });
+        }, 100);
+    }
+);
+
+interactiveTest("1d negative xstart gt bufmax", "does the plot display a full triangle correctly", function (assert) {
+    var container = document.getElementById("plot");
     var plot = new sigplot.Plot(container, {
         legend: true,
         autol: 5
@@ -1826,31 +1990,31 @@ interactiveTest('1d negative xstart gt bufmax', 'does the plot display a full tr
         autohide_panbars: true,
         hide_note: true,
         all: true,
-        expand: true,
+        expand: true
     };
-    
-    var plot = new sigplot.Plot(document.getElementById('plot'), plot_options);
 
-    var num_elements = (plot._Gx.bufmax * 4);
-    if ((num_elements % 2) === 0) {
+    var plot = new sigplot.Plot(document.getElementById("plot"), plot_options);
+
+    var num_elements = plot._Gx.bufmax * 4;
+    if (num_elements % 2 === 0) {
         num_elements = num_elements + 1;
     }
 
     var val = 1;
     var data = []; // the series of y-values
-    for (var ii=0; ii<num_elements; ii++) {
+    for (var ii = 0; ii < num_elements; ii++) {
         data.push(val);
-        if (ii < num_elements/2) {
-        val = val + 1;
+        if (ii < num_elements / 2) {
+            val = val + 1;
         } else {
-        val = val - 1;
+            val = val - 1;
         }
     }
-    
+
     let xdelta = 50;
     var data_header = {
         xunits: "Time",
-        xstart: -1 * (num_elements/2) * xdelta, // the start of the x-axis
+        xstart: -1 * (num_elements / 2) * xdelta, // the start of the x-axis
         xdelta: xdelta, // the x-axis step between each data point
         yunits: "Power"
     };

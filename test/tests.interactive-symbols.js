@@ -25,13 +25,13 @@
  */
 
 /* globals QUnit, sigplot, ColorMap, sigplot.plugins, assert, assert.strictEqual, QUnit.asyncTest, assert.notEqual, alert, BlueFileReader, start, ok, throws, interactiveBeforeEach, interactiveAfterEach, interactiveTest, fixture, ifixture */
-QUnit.module('sigplot-interactive-symbols', {
+QUnit.module("sigplot-interactive-symbols", {
     beforeEach: interactiveBeforeEach,
     afterEach: interactiveAfterEach
 });
 
-interactiveTest('sigplot triangle symbol', 'Do you see triangle symbols?', function(assert) {
-    var container = document.getElementById('plot');
+interactiveTest("sigplot triangle symbol", "Do you see triangle symbols?", function (assert) {
+    var container = document.getElementById("plot");
     var plot = new sigplot.Plot(container, {});
     assert.notEqual(plot, null);
     var ramp = [];
@@ -45,13 +45,13 @@ interactiveTest('sigplot triangle symbol', 'Do you see triangle symbols?', funct
     });
 });
 
-interactiveTest('sigplot custom symbol', 'Do you see custom symbols, alternating RGB?', function(assert) {
-    var container = document.getElementById('plot');
+interactiveTest("sigplot custom symbol", "Do you see custom symbols, alternating RGB?", function (assert) {
+    var container = document.getElementById("plot");
     var plot = new sigplot.Plot(container, {});
     assert.notEqual(plot, null);
 
     function custom_symbol(ctx, i, x, y) {
-        var n = (i % 3);
+        var n = i % 3;
         if (n === 0) {
             ctx.strokeStyle = "red";
             ctx.fillStyle = "red";
@@ -78,48 +78,56 @@ interactiveTest('sigplot custom symbol', 'Do you see custom symbols, alternating
     });
 });
 
-interactiveTest('sigplot custom symbol complex', 'Do you see custom symbols in RGB order (groups of 3)?', function(assert) {
-    var container = document.getElementById('plot');
-    var plot = new sigplot.Plot(container, {
-        cmode: "RI"
-    });
-    assert.notEqual(plot, null);
+interactiveTest(
+    "sigplot custom symbol complex",
+    "Do you see custom symbols in RGB order (groups of 3)?",
+    function (assert) {
+        var container = document.getElementById("plot");
+        var plot = new sigplot.Plot(container, {
+            cmode: "RI"
+        });
+        assert.notEqual(plot, null);
 
-    function custom_symbol(ctx, i, x, y) {
-        var n = (i % 3);
-        if (n === 0) {
-            ctx.strokeStyle = "red";
-            ctx.fillStyle = "red";
-        } else if (n === 1) {
-            ctx.strokeStyle = "green";
-            ctx.fillStyle = "green";
-        } else if (n === 2) {
-            ctx.strokeStyle = "blue";
-            ctx.fillStyle = "blue";
+        function custom_symbol(ctx, i, x, y) {
+            var n = i % 3;
+            if (n === 0) {
+                ctx.strokeStyle = "red";
+                ctx.fillStyle = "red";
+            } else if (n === 1) {
+                ctx.strokeStyle = "green";
+                ctx.fillStyle = "green";
+            } else if (n === 2) {
+                ctx.strokeStyle = "blue";
+                ctx.fillStyle = "blue";
+            }
+            ctx.beginPath();
+            ctx.arc(x, y, 2, 0, 360);
+            ctx.fill();
+            ctx.stroke();
         }
-        ctx.beginPath();
-        ctx.arc(x, y, 2, 0, 360);
-        ctx.fill();
-        ctx.stroke();
+        // make it so the line is RRRGGGBBB
+        var ramp = [1, 1, 4, 4, 7, 7, 2, 2, 5, 5, 8, 8, 3, 3, 6, 6, 9, 9];
+        plot.overlay_array(
+            ramp,
+            {
+                format: "CF"
+            },
+            {
+                name: "x",
+                symbol: custom_symbol,
+                line: 0
+            }
+        );
     }
-    // make it so the line is RRRGGGBBB
-    var ramp = [1, 1, 4, 4, 7, 7, 2, 2, 5, 5, 8, 8, 3, 3, 6, 6, 9, 9];
-    plot.overlay_array(ramp, {
-        format: "CF"
-    }, {
-        name: "x",
-        symbol: custom_symbol,
-        line: 0
-    });
-});
+);
 
-interactiveTest('sigplot custom symbol-line', 'Do you see custom symbols?', function(assert) {
-    var container = document.getElementById('plot');
+interactiveTest("sigplot custom symbol-line", "Do you see custom symbols?", function (assert) {
+    var container = document.getElementById("plot");
     var plot = new sigplot.Plot(container, {});
     assert.notEqual(plot, null);
 
     function custom_symbol(ctx, i, x, y) {
-        var n = (i % 3);
+        var n = i % 3;
         if (n === 0) {
             ctx.strokeStyle = "red";
             ctx.fillStyle = "red";
@@ -145,8 +153,8 @@ interactiveTest('sigplot custom symbol-line', 'Do you see custom symbols?', func
     });
 });
 
-interactiveTest('sigplot symbol CI', 'Do you see six symbols?', function(assert) {
-    // The legacy way to make an "XY" plot was to create CI data rendered in 
+interactiveTest("sigplot symbol CI", "Do you see six symbols?", function (assert) {
+    // The legacy way to make an "XY" plot was to create CI data rendered in
     // IR mode
     var plot_options = {
         autohide_panbars: true,
@@ -154,7 +162,7 @@ interactiveTest('sigplot symbol CI', 'Do you see six symbols?', function(assert)
         cmode: 5
     };
 
-    var container = document.getElementById('plot');
+    var container = document.getElementById("plot");
     var plot = new sigplot.Plot(container, plot_options);
     assert.notEqual(plot, null);
 
@@ -162,27 +170,25 @@ interactiveTest('sigplot symbol CI', 'Do you see six symbols?', function(assert)
     var data_header = {
         format: "CI",
         xunits: "Time",
-        yunits: "Power",
+        yunits: "Power"
     };
     var layer_options = {
         name: "Sample Data",
-        symbol: 3,
+        symbol: 3
     };
-    var plot = new sigplot.Plot(document.getElementById('plot'), plot_options);
+    var plot = new sigplot.Plot(document.getElementById("plot"), plot_options);
     plot.overlay_array(data, data_header, layer_options);
 });
 
-interactiveTest('sigplot symbol XY', 'Do you see six symbols?', function(assert) {
-
+interactiveTest("sigplot symbol XY", "Do you see six symbols?", function (assert) {
     var plot_options = {
         autohide_panbars: true,
-        hide_note: true,
+        hide_note: true
     };
 
-    var container = document.getElementById('plot');
+    var container = document.getElementById("plot");
     var plot = new sigplot.Plot(container, plot_options);
     assert.notEqual(plot, null);
-
 
     var data = [10, 2, 3, 3, 5, 4, 2, 1, 3, 1, 4, 10]; // the series of y-values
     var data_header = {
@@ -194,6 +200,6 @@ interactiveTest('sigplot symbol XY', 'Do you see six symbols?', function(assert)
         symbol: 3,
         mode: "XY"
     };
-    var plot = new sigplot.Plot(document.getElementById('plot'), plot_options);
+    var plot = new sigplot.Plot(document.getElementById("plot"), plot_options);
     plot.overlay_array(data, data_header, layer_options);
 });

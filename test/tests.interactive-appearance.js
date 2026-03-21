@@ -25,13 +25,13 @@
  */
 
 /* globals QUnit, sigplot, ColorMap, sigplot.plugins, assert, assert.strictEqual, QUnit.asyncTest, assert.notEqual, alert, BlueFileReader, start, ok, throws, interactiveBeforeEach, interactiveAfterEach, interactiveTest, fixture, ifixture */
-QUnit.module('sigplot-interactive-appearance', {
+QUnit.module("sigplot-interactive-appearance", {
     beforeEach: interactiveBeforeEach,
     afterEach: interactiveAfterEach
 });
 
-interactiveTest('sigplot no legend', 'Is the legend button hidden?', function(assert) {
-    var container = document.getElementById('plot');
+interactiveTest("sigplot no legend", "Is the legend button hidden?", function (assert) {
+    var container = document.getElementById("plot");
     assert.equal(container.childNodes.length, 0);
     assert.equal(ifixture.childNodes.length, 2);
     var plot = new sigplot.Plot(container, {
@@ -39,8 +39,8 @@ interactiveTest('sigplot no legend', 'Is the legend button hidden?', function(as
     });
 });
 
-interactiveTest('sigplot no ylabel', 'Does the label say None (U)?', function(assert) {
-    var container = document.getElementById('plot');
+interactiveTest("sigplot no ylabel", "Does the label say None (U)?", function (assert) {
+    var container = document.getElementById("plot");
     assert.equal(container.childNodes.length, 0);
     assert.equal(ifixture.childNodes.length, 2);
     var plot = new sigplot.Plot(container, {
@@ -48,8 +48,8 @@ interactiveTest('sigplot no ylabel', 'Does the label say None (U)?', function(as
     });
 });
 
-interactiveTest('sigplot no xlabel', 'Is the label say None (U)?', function(assert) {
-    var container = document.getElementById('plot');
+interactiveTest("sigplot no xlabel", "Is the label say None (U)?", function (assert) {
+    var container = document.getElementById("plot");
     assert.equal(container.childNodes.length, 0);
     assert.equal(ifixture.childNodes.length, 2);
     var plot = new sigplot.Plot(container, {
@@ -57,8 +57,8 @@ interactiveTest('sigplot no xlabel', 'Is the label say None (U)?', function(asse
     });
 });
 
-interactiveTest('sigplot no label', 'Is the label completely hidden?', function(assert) {
-    var container = document.getElementById('plot');
+interactiveTest("sigplot no label", "Is the label completely hidden?", function (assert) {
+    var container = document.getElementById("plot");
     assert.equal(container.childNodes.length, 0);
     assert.equal(ifixture.childNodes.length, 2);
     var plot = new sigplot.Plot(container, {
@@ -67,8 +67,8 @@ interactiveTest('sigplot no label', 'Is the label completely hidden?', function(
     });
 });
 
-interactiveTest('sigplot custom font', 'Is the font changed from the default?', function(assert) {
-    var container = document.getElementById('plot');
+interactiveTest("sigplot custom font", "Is the font changed from the default?", function (assert) {
+    var container = document.getElementById("plot");
     assert.equal(container.childNodes.length, 0);
     assert.equal(ifixture.childNodes.length, 2);
     var plot = new sigplot.Plot(container, {
@@ -76,16 +76,16 @@ interactiveTest('sigplot custom font', 'Is the font changed from the default?', 
     });
 });
 
-interactiveTest('sigplot fixed font size', 'Is the font size normal?', function(assert) {
-    var container = document.getElementById('plot');
+interactiveTest("sigplot fixed font size", "Is the font size normal?", function (assert) {
+    var container = document.getElementById("plot");
     assert.equal(container.childNodes.length, 0);
     assert.equal(ifixture.childNodes.length, 2);
     container.style.width = "300px";
     var plot = new sigplot.Plot(container);
 });
 
-interactiveTest('sigplot fixed font size', 'Is the font size large?', function(assert) {
-    var container = document.getElementById('plot');
+interactiveTest("sigplot fixed font size", "Is the font size large?", function (assert) {
+    var container = document.getElementById("plot");
     assert.equal(container.childNodes.length, 0);
     assert.equal(ifixture.childNodes.length, 2);
     container.style.width = "300px";
@@ -94,8 +94,8 @@ interactiveTest('sigplot fixed font size', 'Is the font size large?', function(a
     });
 });
 
-interactiveTest('sigplot fixed font size', 'Is the font size scaled smaller?', function(assert) {
-    var container = document.getElementById('plot');
+interactiveTest("sigplot fixed font size", "Is the font size scaled smaller?", function (assert) {
+    var container = document.getElementById("plot");
     assert.equal(container.childNodes.length, 0);
     assert.equal(ifixture.childNodes.length, 2);
     container.style.width = "300px";
@@ -104,8 +104,8 @@ interactiveTest('sigplot fixed font size', 'Is the font size scaled smaller?', f
     });
 });
 
-interactiveTest('sigplot bottom scrollbar', 'Is the x scrollbar on the bottom?', function(assert) {
-    var container = document.getElementById('plot');
+interactiveTest("sigplot bottom scrollbar", "Is the x scrollbar on the bottom?", function (assert) {
+    var container = document.getElementById("plot");
     assert.equal(container.childNodes.length, 0);
     assert.equal(ifixture.childNodes.length, 2);
     var plot = new sigplot.Plot(container, {
@@ -116,15 +116,15 @@ interactiveTest('sigplot bottom scrollbar', 'Is the x scrollbar on the bottom?',
     });
 });
 
-interactiveTest('sigplot readout stays visible', 'Is the readout visible when the mouse hovers?', function(assert) {
-    var container = document.getElementById('plot');
+interactiveTest("sigplot readout stays visible", "Is the readout visible when the mouse hovers?", function (assert) {
+    var container = document.getElementById("plot");
     assert.equal(container.childNodes.length, 0);
     assert.equal(ifixture.childNodes.length, 2);
 
-    var rt_plot = new sigplot.Plot(document.getElementById('plot'), {
+    var rt_plot = new sigplot.Plot(document.getElementById("plot"), {
         autohide_readout: true, // only show the readout when the mouse is over the plot
         autohide_panbars: true, // only show panbars when necessary and the mouse is over the plot
-        no_legend_button: true,
+        no_legend_button: true
     });
 
     var cnt = 0;
@@ -160,7 +160,7 @@ interactiveTest('sigplot readout stays visible', 'Is the readout visible when th
         } else {
             rt_plot.change_settings({
                 cmode: 3,
-                autol: 1,
+                autol: 1
             });
             lyr0 = rt_plot.overlay_array(random, {
                 file_name: "random"
@@ -172,8 +172,8 @@ interactiveTest('sigplot readout stays visible', 'Is the readout visible when th
     }
 });
 
-interactiveTest('sigplot minimal chrome', 'Is the plot devoid of chrome', function(assert) {
-    var container = document.getElementById('plot');
+interactiveTest("sigplot minimal chrome", "Is the plot devoid of chrome", function (assert) {
+    var container = document.getElementById("plot");
     assert.equal(container.childNodes.length, 0);
     assert.equal(ifixture.childNodes.length, 2);
     var plot = new sigplot.Plot(container, {
@@ -194,16 +194,16 @@ interactiveTest('sigplot minimal chrome', 'Is the plot devoid of chrome', functi
     });
 });
 
-interactiveTest('colorbar in legend', 'does the colorbar show in the legend?', function(assert) {
-    var container = document.getElementById('plot');
+interactiveTest("colorbar in legend", "does the colorbar show in the legend?", function (assert) {
+    var container = document.getElementById("plot");
     var plot = new sigplot.Plot(container, {});
     assert.notEqual(plot, null);
 
     plot.overlay_href("dat/penny.prm");
 });
 
-interactiveTest('Legend', 'Are the correct functions modified from the legend??', function(assert) {
-    var container = document.getElementById('plot');
+interactiveTest("Legend", "Are the correct functions modified from the legend??", function (assert) {
+    var container = document.getElementById("plot");
     var plot = new sigplot.Plot(container, {});
     assert.notEqual(plot, null);
     var ramp = [];
@@ -225,18 +225,18 @@ interactiveTest('Legend', 'Are the correct functions modified from the legend??'
     });
 });
 
-interactiveTest('Plot Note', 'Do you see the plot note saying "Test Note"?', function(assert) {
-    var container = document.getElementById('plot');
+interactiveTest("Plot Note", 'Do you see the plot note saying "Test Note"?', function (assert) {
+    var container = document.getElementById("plot");
     var plot = new sigplot.Plot(container, {
-        note: 'Test Note'
+        note: "Test Note"
     });
     assert.notEqual(plot, null);
 });
 
-interactiveTest('Plot Note with data', 'Do you see the plot note saying "Test Note"?', function(assert) {
-    var container = document.getElementById('plot');
+interactiveTest("Plot Note with data", 'Do you see the plot note saying "Test Note"?', function (assert) {
+    var container = document.getElementById("plot");
     var plot = new sigplot.Plot(container, {
-        note: 'Test Note'
+        note: "Test Note"
     });
     assert.notEqual(plot, null);
     plot.overlay_href("dat/scalarpacked.tmp", null, {
@@ -245,11 +245,11 @@ interactiveTest('Plot Note with data', 'Do you see the plot note saying "Test No
     });
 });
 
-interactiveTest('Plot Note Change Settings', 'Do you see the plot note saying "Test Note"?', function(assert) {
-    var container = document.getElementById('plot');
+interactiveTest("Plot Note Change Settings", 'Do you see the plot note saying "Test Note"?', function (assert) {
+    var container = document.getElementById("plot");
     var plot = new sigplot.Plot(container, {});
     assert.notEqual(plot, null);
     plot.change_settings({
-        note: 'Test Note'
+        note: "Test Note"
     });
 });

@@ -1,0 +1,92 @@
+{
+    "$schema": "https://biomejs.dev/schemas/2.4.8/schema.json",
+    "files": {
+        "includes": [
+            "**",
+            "!**/node_modules/",
+            "!**/dist/",
+            "!**/doc/",
+            "!**/benchmark/",
+            "!**/support/",
+            "!**/*.min.js",
+            "!**/coverage/"
+        ]
+    },
+    "formatter": {
+        "enabled": true,
+        "indentStyle": "space",
+        "indentWidth": 4,
+        "lineWidth": 120,
+        "lineEnding": "lf"
+    },
+    "javascript": {
+        "formatter": {
+            "semicolons": "always",
+            "quoteStyle": "double",
+            "trailingCommas": "none",
+            "bracketSpacing": true,
+            "arrowParentheses": "always"
+        }
+    },
+    "linter": {
+        "enabled": true,
+        "rules": {
+            "recommended": true,
+            "suspicious": {
+                "noDoubleEquals": "warn",
+                "noFallthroughSwitchClause": "warn",
+                "noRedeclare": "warn",
+                "noPrototypeBuiltins": "off",
+                "noAssignInExpressions": "off",
+                "noFunctionAssign": "warn",
+                "noVar": "off",
+                "noExplicitAny": "off",
+                "noImplicitAnyLet": "off",
+                "noConfusingVoidType": "off",
+                "noApproximativeNumericConstant": "off"
+            },
+            "correctness": {
+                "noUnusedVariables": "warn",
+                "noUnusedImports": "warn",
+                "noSelfAssign": "warn",
+                "noInnerDeclarations": "off",
+                "noInvalidUseBeforeDeclaration": "off",
+                "noUnusedFunctionParameters": "off",
+                "noVoidTypeReturn": "warn",
+                "noConstructorReturn": "warn",
+                "noSwitchDeclarations": "warn"
+            },
+            "style": {
+                "useConst": "off",
+                "noUselessElse": "off",
+                "useDefaultParameterLast": "off",
+                "noParameterAssign": "off",
+                "noNonNullAssertion": "off",
+                "useTemplate": "off",
+                "useExponentiationOperator": "off"
+            },
+            "complexity": {
+                "noUselessConstructor": "off",
+                "noForEach": "off",
+                "noUselessSwitchCase": "off",
+                "useArrowFunction": "off",
+                "useLiteralKeys": "off",
+                "noUselessThisAlias": "off",
+                "noBannedTypes": "off",
+                "useDateNow": "off"
+            }
+        }
+    },
+    "overrides": [
+        {
+            "includes": ["test/**"],
+            "linter": {
+                "rules": {
+                    "correctness": {
+                        "noUnusedVariables": "off"
+                    }
+                }
+            }
+        }
+    ]
+}

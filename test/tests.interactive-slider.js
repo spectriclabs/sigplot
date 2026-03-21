@@ -25,13 +25,13 @@
  */
 
 /* globals QUnit, sigplot, ColorMap, sigplot.plugins, assert, assert.strictEqual, QUnit.asyncTest, assert.notEqual, alert, BlueFileReader, start, ok, throws, interactiveBeforeEach, interactiveAfterEach, interactiveTest, fixture, ifixture */
-QUnit.module('sigplot-interactive-slider', {
+QUnit.module("sigplot-interactive-slider", {
     beforeEach: interactiveBeforeEach,
     afterEach: interactiveAfterEach
 });
 
-interactiveTest('slider', 'Do you see a sliders?', function(assert) {
-    var container = document.getElementById('plot');
+interactiveTest("slider", "Do you see a sliders?", function (assert) {
+    var container = document.getElementById("plot");
     var plot = new sigplot.Plot(container, {});
     assert.notEqual(plot, null);
     var slider1 = new sigplot.plugins.SliderPlugin({
@@ -48,8 +48,8 @@ interactiveTest('slider', 'Do you see a sliders?', function(assert) {
     slider2.set_position(-0.5);
     // slidertag events happen whenever a slider is moved
     // programatically or by the user
-    plot.addListener("slidertag", function(evt) {});
+    plot.addListener("slidertag", function (evt) {});
     // sliderdrag events happen only when a slider is moved by
     // the user
-    plot.addListener("sliderdrag", function(evt) {});
+    plot.addListener("sliderdrag", function (evt) {});
 });

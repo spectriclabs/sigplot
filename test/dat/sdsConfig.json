@@ -2,16 +2,17 @@
     "port": 5055,
     "cacheLocation": "/tmp/sdscache/",
     "cacheMaxBytes": 100000000,
-    "checkCacheEvery":60,
+    "checkCacheEvery": 60,
     "maxBytesZminZmax": 1000000,
-    "locationDetails": [{
-                            "locationName":     "TestDat",
-                            "locationType":     "localFile",
-	                        "path":             "/dat",
-	                        "minioBucket":      "",
-	                        "location":         "",
-	                        "minioAccessKey":   "",
-	                        "minioSecretKey":   ""
-                        }
+    "locationDetails": [
+        {
+            "locationName": "TestDat",
+            "locationType": "localFile",
+            "path": "/dat",
+            "minioBucket": "",
+            "location": "",
+            "minioAccessKey": "",
+            "minioSecretKey": ""
+        }
     ]
 }
