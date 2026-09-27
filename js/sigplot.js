@@ -2363,6 +2363,11 @@
          * @param {Number}
          *            layerOptions.framesize the framsize of the plot
          *
+         * @param {Boolean}
+         *            layerOptions.decimate for 1D line layers, draw only the first, min,
+         *            max and last point in each pixel column. Much faster for large
+         *            data, but dense 1px traces render slightly dimmer. Defaults to false.
+         *
          * @param {Varies}
          *            layerOptions.etc all of the parameters for the change_settings
          *            function except for lg_colorbar and p_cuts
@@ -2400,6 +2405,11 @@
          *
          * @param {Number}
          *            layerOptions.framesize the framsize of the plot
+         *
+         * @param {Boolean}
+         *            layerOptions.decimate for 1D line layers, draw only the first, min,
+         *            max and last point in each pixel column. Much faster for large
+         *            data, but dense 1px traces render slightly dimmer. Defaults to false.
          *
          * @param {Varies}
          *            layerOptions.etc all of the parameters for the change_settings
@@ -2444,6 +2454,11 @@
          *
          * @param {Number}
          *            layerOptions.framesize the framsize of the plot
+         *
+         * @param {Boolean}
+         *            layerOptions.decimate for 1D line layers, draw only the first, min,
+         *            max and last point in each pixel column. Much faster for large
+         *            data, but dense 1px traces render slightly dimmer. Defaults to false.
          *
          * @param {Varies}
          *            layerOptions.etc all of the parameters for the change_settings
@@ -2521,6 +2536,11 @@
          *
          * @param {Number}
          *            layerOptions.framesize the framsize of the plot
+         *
+         * @param {Boolean}
+         *            layerOptions.decimate for 1D line layers, draw only the first, min,
+         *            max and last point in each pixel column. Much faster for large
+         *            data, but dense 1px traces render slightly dimmer. Defaults to false.
          *
          * @param {Varies}
          *            layerOptions.etc all of the parameters for the change_settings
@@ -2661,6 +2681,11 @@
          * @param {Number}
          *            layerOptions.framesize the framesize of the plot
          *
+         * @param {Boolean}
+         *            layerOptions.decimate for 1D line layers, draw only the first, min,
+         *            max and last point in each pixel column. Much faster for large
+         *            data, but dense 1px traces render slightly dimmer. Defaults to false.
+         *
          * @param {Varies}
          *            layerOptions.etc all of the parameters for the change_settings
          *            function except for lg_colorbar and p_cuts
@@ -2706,6 +2731,11 @@
          *
          * @param {Number}
          *            layerOptions.framesize the framesize of the plot
+         *
+         * @param {Boolean}
+         *            layerOptions.decimate for 1D line layers, draw only the first, min,
+         *            max and last point in each pixel column. Much faster for large
+         *            data, but dense 1px traces render slightly dimmer. Defaults to false.
          *
          * @param {Varies}
          *            layerOptions.etc all of the parameters for the change_settings
@@ -7545,19 +7575,12 @@
         var defLabelWidth = 98; // a magic number - default width of pixels
         var maxLabelWidth = 0;
         var labelOffset = 0;
-        // Cache label widths — invalidated when layer count changes or names change
-        var cacheKey = Gx.lyr.length + ":" + Gx.lyr.map(function(l) { return l.name; }).join(",");
-        if (Gx._legendCacheKey === cacheKey && Gx._legendMaxLabelWidth !== undefined) {
-            maxLabelWidth = Gx._legendMaxLabelWidth;
-        } else {
-            for (n = 0; n < Gx.lyr.length; n++) {
-                var labelLength = ctx.measureText(Gx.lyr[n].name).width;
-                if (labelLength > maxLabelWidth) {
-                    maxLabelWidth = labelLength;
-                }
+        for (n = 0; n < Gx.lyr.length; n++) { // figure out maximum label
+            // length
+            var labelLength = ctx.measureText(Gx.lyr[n].name).width;
+            if (labelLength > maxLabelWidth) {
+                maxLabelWidth = labelLength;
             }
-            Gx._legendCacheKey = cacheKey;
-            Gx._legendMaxLabelWidth = maxLabelWidth;
         }
         if (maxLabelWidth > defLabelWidth) {
             labelOffset = (maxLabelWidth - defLabelWidth);
@@ -7825,22 +7848,14 @@
             set_panbounds(plot, lyr_bnds);
         }
 
-        // Use lightweight CustomEvent instead of deprecated createEvent/initEvent
-        if (!Gx.suppress_lyrdraw) {
-            var evt = new CustomEvent('lyrdraw', {
-                bubbles: true,
-                cancelable: true,
-                detail: {
-                    index: layer.index,
-                    name: layer.name,
-                    layer: layer
-                }
-            });
-            evt.index = layer.index;
-            evt.name = layer.name;
-            evt.layer = layer;
-            mx.dispatchEvent(Mx, evt);
-        }
+        // TODO consider if this is a source of performance
+        // issues on streaming plots
+        var evt = document.createEvent('Event');
+        evt.initEvent('lyrdraw', true, true);
+        evt.index = layer.index;
+        evt.name = layer.name; // the name of the layer
+        evt.layer = layer;
+        mx.dispatchEvent(Mx, evt);
     }
 
     /**

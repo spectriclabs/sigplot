@@ -31,73 +31,107 @@
     var m = require("./m");
     var mx = require("./mx");
 
-    /**
-     * Min-max decimation for level-of-detail rendering.
-     * When data points greatly outnumber screen pixels, this reduces
-     * the point count to at most 2*screenWidth while preserving visual
-     * peaks and valleys.
-     *
-     * @param {TypedArray} xpoint - source x coordinates
-     * @param {TypedArray} ypoint - source y coordinates
-     * @param {number} npts - number of points to process
-     * @param {number} start - start index into xpoint/ypoint
-     * @param {number} screenWidth - available pixel width
-     * @param {TypedArray} dxpoint - destination x array (pre-allocated)
-     * @param {TypedArray} dypoint - destination y array (pre-allocated)
-     * @returns {number} number of decimated points written
-     */
-    function decimateMinMax(xpoint, ypoint, npts, start, screenWidth, dxpoint, dypoint) {
-        var bucketSize = npts / screenWidth;
-        var outIdx = 0;
+    function emitM4Column(xpoint, ypoint, first, minIdx, maxIdx, last, dxpoint, dypoint, out) {
+        var a = Math.min(minIdx, maxIdx);
+        var b = Math.max(minIdx, maxIdx);
+        dxpoint[out] = xpoint[first];
+        dypoint[out] = ypoint[first];
+        out++;
+        var prev = first;
+        if (a > prev) {
+            dxpoint[out] = xpoint[a];
+            dypoint[out] = ypoint[a];
+            out++;
+            prev = a;
+        }
+        if (b > prev) {
+            dxpoint[out] = xpoint[b];
+            dypoint[out] = ypoint[b];
+            out++;
+            prev = b;
+        }
+        if (last > prev) {
+            dxpoint[out] = xpoint[last];
+            dypoint[out] = ypoint[last];
+            out++;
+        }
+        return out;
+    }
 
-        for (var b = 0; b < screenWidth; b++) {
-            var bucketStart = start + Math.floor(b * bucketSize);
-            var bucketEnd = start + Math.floor((b + 1) * bucketSize);
-            if (bucketEnd > start + npts) {
-                bucketEnd = start + npts;
+    /**
+     * M4 decimation (Jugel et al., "M4: A Visualization-Oriented Time Series
+     * Data Aggregation", VLDB 2014).  For every pixel column the first, min,
+     * max and last samples are kept in sample order, so a connected line
+     * through the output spans the same vertical extent in every column as
+     * one through every sample.  Anti-aliased 1px strokes can still render
+     * dimmer, because overlapping segments no longer accumulate coverage.
+     *
+     * Columns are computed exactly as mx.trace computes pixel x-positions,
+     * which requires x to be monotonic.
+     *
+     * @returns {number} the number of points written to dxpoint/dypoint, or -1
+     *          if the data can't be decimated safely (non-finite values,
+     *          non-monotonic x, or insufficient output capacity), in which case
+     *          the caller must draw the original points.
+     * @private
+     */
+    function decimateM4(xpoint, ypoint, npts, xorigin, xscale, dxpoint, dypoint) {
+        var cap = dxpoint.length;
+        var out = 0;
+        var dir = 0;
+        var x = xpoint[0];
+        var y = ypoint[0];
+        // (v - v) is NaN for NaN and +/-Infinity
+        if ((x - x !== 0) || (y - y !== 0)) {
+            return -1;
+        }
+        var col = Math.round((x - xorigin) * xscale);
+        var first = 0;
+        var last = 0;
+        var minIdx = 0;
+        var maxIdx = 0;
+        var ymin = y;
+        var ymax = y;
+
+        for (var i = 1; i < npts; i++) {
+            x = xpoint[i];
+            y = ypoint[i];
+            if ((x - x !== 0) || (y - y !== 0)) {
+                return -1;
             }
-            if (bucketStart >= bucketEnd) {
+            var c = Math.round((x - xorigin) * xscale);
+            if (c === col) {
+                last = i;
+                if (y < ymin) {
+                    ymin = y;
+                    minIdx = i;
+                } else if (y > ymax) {
+                    ymax = y;
+                    maxIdx = i;
+                }
                 continue;
             }
 
-            var minIdx = bucketStart;
-            var maxIdx = bucketStart;
-            var minVal = ypoint[bucketStart];
-            var maxVal = ypoint[bucketStart];
-
-            for (var i = bucketStart + 1; i < bucketEnd; i++) {
-                var val = ypoint[i];
-                if (val < minVal) {
-                    minVal = val;
-                    minIdx = i;
-                }
-                if (val > maxVal) {
-                    maxVal = val;
-                    maxIdx = i;
-                }
+            var d = (c > col) ? 1 : -1;
+            if (dir === 0) {
+                dir = d;
+            } else if (d !== dir) {
+                return -1;
             }
-
-            // Output min and max in x-order to preserve line continuity
-            if (minIdx <= maxIdx) {
-                dxpoint[outIdx] = xpoint[minIdx];
-                dypoint[outIdx] = minVal;
-                outIdx++;
-                if (minIdx !== maxIdx) {
-                    dxpoint[outIdx] = xpoint[maxIdx];
-                    dypoint[outIdx] = maxVal;
-                    outIdx++;
-                }
-            } else {
-                dxpoint[outIdx] = xpoint[maxIdx];
-                dypoint[outIdx] = maxVal;
-                outIdx++;
-                dxpoint[outIdx] = xpoint[minIdx];
-                dypoint[outIdx] = minVal;
-                outIdx++;
+            if (out + 4 > cap) {
+                return -1;
             }
+            out = emitM4Column(xpoint, ypoint, first, minIdx, maxIdx, last, dxpoint, dypoint, out);
+
+            col = c;
+            first = last = minIdx = maxIdx = i;
+            ymin = ymax = y;
         }
 
-        return outIdx;
+        if (out + 4 > cap) {
+            return -1;
+        }
+        return emitM4Column(xpoint, ypoint, first, minIdx, maxIdx, last, dxpoint, dypoint, out);
     }
 
     /**
@@ -150,10 +184,9 @@
         this.mhpoint = null; // PointArray backed by memory in mhptr
         this.firstpush = false;
         this.options = {};
-        this.decimate = true; // enable min-max decimation for large datasets
+        this.decimate = false; // opt-in: draw <= 4 points per pixel column for dense line traces
         this._decXpoint = null;
         this._decYpoint = null;
-        this._decBufSize = 0;
     };
 
     Layer1D.prototype = {
@@ -745,13 +778,6 @@
          *   - a specific view to calculate the bounds against
          */
         get_pan_bounds: function(view) {
-            // If bounds were cached by a recent draw() call, use them to avoid redundant prep()
-            if (!view && this._cachedBounds) {
-                var bounds = this._cachedBounds;
-                this._cachedBounds = null;
-                return bounds;
-            }
-
             var Mx = this.plot._Mx;
             var Gx = this.plot._Gx;
 
@@ -831,6 +857,29 @@
             };
         },
 
+        /**
+         * Decimate the prepared trace into this._decXpoint/_decYpoint.
+         *
+         * @returns {number} the number of decimated points, or -1 if the
+         *          original points must be drawn instead.
+         * @private
+         */
+        _decimate: function(xpoint, ypoint, npts, screenWidth) {
+            var Mx = this.plot._Mx;
+            var stk4 = mx.origin(Mx.origin, 4, Mx.stk[Mx.level]);
+            if (stk4.xscl === 0.0) {
+                return -1;
+            }
+            // four points per column, plus slack for the few off-screen
+            // points prep() includes on either side of the view
+            var cap = 4 * (screenWidth + 8);
+            if (!this._decXpoint || this._decXpoint.length < cap) {
+                this._decXpoint = new m.PointArray(cap);
+                this._decYpoint = new m.PointArray(cap);
+            }
+            return decimateM4(xpoint, ypoint, npts, stk4.xmin, 1.0 / stk4.xscl, this._decXpoint, this._decYpoint);
+        },
+
         draw: function() {
             var Mx = this.plot._Mx;
             var Gx = this.plot._Gx;
@@ -898,6 +947,14 @@
                 };
             }
 
+            // Decimation is only lossless for plain connected lines whose x values
+            // are generated from xstart/xdelta (and are therefore monotonic)
+            var screenWidth = Math.round(Math.abs(Mx.r - Mx.l));
+            var canDecimate = this.decimate && (screenWidth > 0) &&
+                (line > 0) && (symbol === 0) &&
+                !traceoptions.dashed && !traceoptions.vertsym && !traceoptions.horzsym &&
+                !this.xdata && (this.mode !== "XY") && (Gx.cmode !== 5) && (this.xsub <= 0);
+
             let panymin;
             let panymax;
             let num = 0;
@@ -920,24 +977,16 @@
                     if (segment) {
                         // TODO
                     } else {
-                        // Apply min-max decimation for large datasets when drawing lines
-                        var traceX = this.xpoint;
-                        var traceY = this.ypoint;
+                        var traceX = new m.PointArray(this.xptr);
+                        var traceY = new m.PointArray(this.yptr);
                         var traceNum = pts.num;
-                        var traceStart = pts.start;
-                        var screenWidth = Math.abs(Mx.r - Mx.l);
-
-                        if (this.decimate && line > 0 && symbol === 0 && pts.num > 2 * screenWidth && screenWidth > 0) {
-                            var decBufNeeded = 2 * screenWidth;
-                            if (this._decBufSize < decBufNeeded) {
-                                this._decBufSize = decBufNeeded;
-                                this._decXpoint = new m.PointArray(decBufNeeded);
-                                this._decYpoint = new m.PointArray(decBufNeeded);
+                        if (canDecimate && (pts.num > 4 * screenWidth)) {
+                            var ndec = this._decimate(traceX, traceY, pts.num, screenWidth);
+                            if (ndec > 0) {
+                                traceX = this._decXpoint;
+                                traceY = this._decYpoint;
+                                traceNum = ndec;
                             }
-                            traceNum = decimateMinMax(this.xpoint, this.ypoint, pts.num, pts.start, screenWidth, this._decXpoint, this._decYpoint);
-                            traceX = this._decXpoint;
-                            traceY = this._decYpoint;
-                            traceStart = 0;
                         }
 
                         mx.trace(Mx,
@@ -945,7 +994,7 @@
                             traceX,
                             traceY,
                             traceNum,
-                            traceStart,
+                            pts.start,
                             1,
                             line,
                             symbol,
@@ -955,7 +1004,7 @@
                         if (this.maxhold) {
                             mx.trace(Mx,
                                 this.maxhold.color,
-                                this.xpoint,
+                                new m.PointArray(this.xptr),
                                 this.mhpoint.subarray(pts.start, pts.end),
                                 pts.num,
                                 pts.start,
@@ -993,16 +1042,13 @@
             this.ymin = panymin;
             this.ymax = panymax;
 
-            // Cache bounds for get_pan_bounds() to avoid redundant prep() calls
-            this._cachedBounds = {
+            return {
                 num: num,
                 xmin: this.xmin,
                 xmax: this.xmax,
                 ymin: this.ymin,
                 ymax: this.ymax
             };
-
-            return this._cachedBounds;
         },
 
         /**
