@@ -289,10 +289,13 @@
             var Mx = this.plot._Mx;
 
             var numPixels = this.server_data.length/2;
-            this.xptr = new ArrayBuffer(numPixels*2);
-            this.yptr = new ArrayBuffer(numPixels*2);
-            this.xpoint = new Int16Array(this.xptr);
-            this.ypoint = new Int16Array(this.yptr);
+            var requiredSize = numPixels * 2;
+            if (!this.xptr || this.xptr.byteLength !== requiredSize) {
+                this.xptr = new ArrayBuffer(requiredSize);
+                this.yptr = new ArrayBuffer(requiredSize);
+                this.xpoint = new Int16Array(this.xptr);
+                this.ypoint = new Int16Array(this.yptr);
+            }
 
 
             // lds service returns int16 pixels with a list of all x values followed by all y values. 

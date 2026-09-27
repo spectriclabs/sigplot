@@ -371,26 +371,18 @@
 
                     }
                     if (this.drawmode === "falling") {
-                        //shift and fill in the next row of data.
-                        var cut_off = (this.lps - 1) * this.hcb.subsize;
-                        var tmp = this.zbuf.slice(0, cut_off);
-                        this.zbuf = [];
-                        for (var i = 0; i < this.hcb.subsize; i++) {
-                            this.zbuf.push(zpoint[i]);
-                        }
-                        this.zbuf.push.apply(this.zbuf, tmp);
-                        tmp = [];
+                        //shift down one row and insert the next row of data at the top
+                        var subsize = this.hcb.subsize;
+                        this._fit_zbuf(false);
+                        this.zbuf.copyWithin(subsize, 0, (this.lps - 1) * subsize);
+                        this.zbuf.set(zpoint, 0);
                     }
                     if (this.drawmode === "rising") {
-                        //shift and fill in the next row of data.
-                        var cut_off = this.lps * this.hcb.subsize;
-                        var tmp = this.zbuf.slice(this.hcb.subsize, cut_off);
-                        this.zbuf = [];
-                        this.zbuf.push.apply(this.zbuf, tmp);
-                        for (var i = 0; i < this.hcb.subsize; i++) {
-                            this.zbuf.push(zpoint[i]);
-                        }
-                        tmp = [];
+                        //shift up one row and insert the next row of data at the bottom
+                        var subsize = this.hcb.subsize;
+                        this._fit_zbuf(true);
+                        this.zbuf.copyWithin(0, subsize, this.lps * subsize);
+                        this.zbuf.set(zpoint, (this.lps - 1) * subsize);
                     }
                 }
 
@@ -413,6 +405,30 @@
                     Mx.stk[0].ymax = this.ymax;
                 }
             }
+        },
+
+        /**
+         * Resize zbuf to exactly lps rows (lps can change on resize or
+         * hdrmod), keeping the newest rows.
+         *
+         * @param newestAtEnd
+         *   true if the newest row is the last row (rising), false if it is
+         *   the first row (falling)
+         * @private
+         */
+        _fit_zbuf: function(newestAtEnd) {
+            var n = this.lps * this.hcb.subsize;
+            if (this.zbuf.length === n) {
+                return;
+            }
+            var zbuf = new m.PointArray(n);
+            var keep = Math.min(n, this.zbuf.length);
+            if (newestAtEnd) {
+                zbuf.set(this.zbuf.subarray(this.zbuf.length - keep), n - keep);
+            } else {
+                zbuf.set(this.zbuf.subarray(0, keep), 0);
+            }
+            this.zbuf = zbuf;
         },
 
         get_data: function() {

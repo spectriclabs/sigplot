@@ -617,6 +617,152 @@ QUnit.test('sigplot change raster LPS', function(assert) {
     plot._refresh();
     assert.strictEqual(plot.get_layer(0).lps, 200);
 });
+QUnit.test('sigplot layer1d reload autoscales to new data', function(assert) {
+    var container = document.getElementById('plot');
+    var plot = new sigplot.Plot(container, {});
+    var small = [];
+    var large = [];
+    for (var i = 0; i < 1000; i += 1) {
+        small.push(Math.sin(i / 50));
+        large.push(100 * Math.sin(i / 50));
+    }
+    var lyr_uuid = plot.overlay_array(small);
+    plot._refresh();
+    plot.reload(lyr_uuid, large, null, true);
+    assert.ok(plot._Mx.stk[0].ymin <= -100);
+    assert.ok(plot._Mx.stk[0].ymax >= 100);
+});
+QUnit.test('sigplot layer1d autol while zoomed keeps full y range', function(assert) {
+    var container = document.getElementById('plot');
+    var plot = new sigplot.Plot(container, {
+        autol: 2
+    });
+    var data = [];
+    for (var i = 0; i < 1000; i += 1) {
+        data.push(i < 500 ? Math.sin(i / 20) : 50 * Math.sin(i / 20));
+    }
+    plot.overlay_array(data);
+    plot._refresh();
+    plot.zoom({
+        x: 10,
+        y: 1.5
+    }, {
+        x: 400,
+        y: -1.5
+    });
+    for (var k = 0; k < 10; k += 1) {
+        plot._refresh();
+    }
+    assert.ok(plot._Mx.stk[0].ymax > 40);
+});
+QUnit.test('sigplot layer1d decimation', function(assert) {
+    var container = document.getElementById('plot');
+    var plot = new sigplot.Plot(container, {
+        all: true,
+        bufmax: 100000
+    });
+    var data = new Float64Array(100000);
+    for (var i = 0; i < data.length; i += 1) {
+        data[i] = Math.sin(i / 300) + ((i * 7919) % 101) / 300;
+    }
+    plot.overlay_array(data, null, {
+        decimate: true
+    });
+    plot.overlay_array(data, null, {});
+    var lyr = plot.get_layer(0);
+    assert.strictEqual(lyr.decimate, true);
+    assert.strictEqual(plot.get_layer(1).decimate, false, "decimation is opt-in");
+
+    // every pixel column must keep the same vertical extent
+    var Mx = plot._Mx;
+    var checked = 0;
+    var decimate = lyr._decimate;
+    lyr._decimate = function(xpoint, ypoint, npts, width) {
+        var n = decimate.call(lyr, xpoint, ypoint, npts, width);
+        var stk4 = sigplot.mx.origin(Mx.origin, 4, Mx.stk[Mx.level]);
+        var extents = function(x, y, count) {
+            var cols = {};
+            for (var j = 0; j < count; j += 1) {
+                var c = Math.round((x[j] - stk4.xmin) / stk4.xscl);
+                var py = Math.round((y[j] - stk4.ymin) / stk4.yscl);
+                cols[c] = cols[c] ? [Math.min(cols[c][0], py), Math.max(cols[c][1], py)] : [py, py];
+            }
+            return cols;
+        };
+        assert.ok(n > 0 && n <= 4 * (width + 8));
+        assert.deepEqual(extents(lyr._decXpoint, lyr._decYpoint, n), extents(xpoint, ypoint, npts));
+        checked += 1;
+        return n;
+    };
+    plot._refresh();
+    plot.zoom({
+        x: 30000,
+        y: 2
+    }, {
+        x: 55000,
+        y: -2
+    });
+    plot._refresh();
+    assert.equal(checked, 2);
+
+    // non-finite values and non-monotonic x fall back to drawing every point
+    lyr._decimate = decimate;
+    plot.unzoom();
+    plot._refresh();
+    var width = Math.round(Mx.r - Mx.l);
+    var xs = new Float64Array(data.length);
+    for (var j = 0; j < xs.length; j += 1) {
+        xs[j] = j;
+    }
+    assert.ok(lyr._decimate(xs, data, xs.length, width) > 0);
+    var ys = data.slice();
+    ys[5000] = NaN;
+    assert.equal(lyr._decimate(xs, ys, xs.length, width), -1, "NaN");
+    var xback = xs.slice();
+    xback[60000] = 10;
+    assert.equal(lyr._decimate(xback, data, xs.length, width), -1, "non-monotonic x");
+});
+QUnit.test('sigplot raster p_cuts rising/falling survive lps change', function(assert) {
+    ["falling", "rising"].forEach(function(drawmode) {
+        var container = document.getElementById('plot');
+        container.innerHTML = '';
+        container.style.height = "400px";
+        var plot = new sigplot.Plot(container);
+        var lyr_uuid = plot.overlay_pipe({
+            type: 2000,
+            subsize: 8
+        }, {
+            drawmode: drawmode
+        });
+        plot.change_settings({
+            p_cuts: true
+        });
+        var row = function(v) {
+            var r = [];
+            for (var i = 0; i < 8; i += 1) {
+                r.push(v);
+            }
+            return r;
+        };
+        plot.push(lyr_uuid, row(1), null, true);
+        plot.push(lyr_uuid, row(2), null, true);
+        plot.push(lyr_uuid, row(3), null, true);
+        plot._refresh();
+        var lyr = plot.get_layer(0);
+        var orig_lps = lyr.lps;
+        container.style.height = "600px";
+        plot.checkresize();
+        plot._refresh();
+        assert.ok(lyr.lps > orig_lps, drawmode);
+        plot.push(lyr_uuid, row(4), null, true);
+        var n = lyr.lps;
+        assert.strictEqual(lyr.zbuf.length, n * 8, drawmode);
+        var rows = [0, 1, 2, 3].map(function(k) {
+            return (drawmode === "falling") ? lyr.zbuf[k * 8] : lyr.zbuf[(n - 1 - k) * 8];
+        });
+        assert.deepEqual(rows, [4, 3, 2, 1], drawmode + " keeps newest rows");
+    });
+});
 QUnit.test('Add and remove plugins', function(assert) {
     var container = document.getElementById('plot');
     var plot = new sigplot.Plot(container, {});

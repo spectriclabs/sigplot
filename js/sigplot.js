@@ -2363,6 +2363,11 @@
          * @param {Number}
          *            layerOptions.framesize the framsize of the plot
          *
+         * @param {Boolean}
+         *            layerOptions.decimate for 1D line layers, draw only the first, min,
+         *            max and last point in each pixel column. Much faster for large
+         *            data, but dense 1px traces render slightly dimmer. Defaults to false.
+         *
          * @param {Varies}
          *            layerOptions.etc all of the parameters for the change_settings
          *            function except for lg_colorbar and p_cuts
@@ -2400,6 +2405,11 @@
          *
          * @param {Number}
          *            layerOptions.framesize the framsize of the plot
+         *
+         * @param {Boolean}
+         *            layerOptions.decimate for 1D line layers, draw only the first, min,
+         *            max and last point in each pixel column. Much faster for large
+         *            data, but dense 1px traces render slightly dimmer. Defaults to false.
          *
          * @param {Varies}
          *            layerOptions.etc all of the parameters for the change_settings
@@ -2444,6 +2454,11 @@
          *
          * @param {Number}
          *            layerOptions.framesize the framsize of the plot
+         *
+         * @param {Boolean}
+         *            layerOptions.decimate for 1D line layers, draw only the first, min,
+         *            max and last point in each pixel column. Much faster for large
+         *            data, but dense 1px traces render slightly dimmer. Defaults to false.
          *
          * @param {Varies}
          *            layerOptions.etc all of the parameters for the change_settings
@@ -2521,6 +2536,11 @@
          *
          * @param {Number}
          *            layerOptions.framesize the framsize of the plot
+         *
+         * @param {Boolean}
+         *            layerOptions.decimate for 1D line layers, draw only the first, min,
+         *            max and last point in each pixel column. Much faster for large
+         *            data, but dense 1px traces render slightly dimmer. Defaults to false.
          *
          * @param {Varies}
          *            layerOptions.etc all of the parameters for the change_settings
@@ -2661,6 +2681,11 @@
          * @param {Number}
          *            layerOptions.framesize the framesize of the plot
          *
+         * @param {Boolean}
+         *            layerOptions.decimate for 1D line layers, draw only the first, min,
+         *            max and last point in each pixel column. Much faster for large
+         *            data, but dense 1px traces render slightly dimmer. Defaults to false.
+         *
          * @param {Varies}
          *            layerOptions.etc all of the parameters for the change_settings
          *            function except for lg_colorbar and p_cuts
@@ -2706,6 +2731,11 @@
          *
          * @param {Number}
          *            layerOptions.framesize the framesize of the plot
+         *
+         * @param {Boolean}
+         *            layerOptions.decimate for 1D line layers, draw only the first, min,
+         *            max and last point in each pixel column. Much faster for large
+         *            data, but dense 1px traces render slightly dimmer. Defaults to false.
          *
          * @param {Varies}
          *            layerOptions.etc all of the parameters for the change_settings

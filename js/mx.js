@@ -48,6 +48,12 @@
     var CanvasInput = require("./CanvasInput");
     var m = require("./m");
 
+    var DASHED_STYLE = {
+        mode: "dashed",
+        on: 4,
+        off: 4
+    };
+
     function mx() {}
 
     mx.DomMenu = require("./mx.dommenu");
@@ -1464,11 +1470,7 @@
 
         var style;
         if (options.dashed) {
-            style = {
-                mode: "dashed",
-                on: 4,
-                off: 4
-            };
+            style = DASHED_STYLE;
         }
 
         var stk4 = mx.origin(Mx.origin, 4, Mx.stk[Mx.level]);
@@ -1520,9 +1522,14 @@
         // These buffers need to be able to hold 2 times the number of points.
         // if all points are on screen, then we will will need 'n' points
         // if all points are off the screen, then we will need (2*n)-2
-        var bufsize = 4 * Math.ceil(2 * xpoint.length);
-        var pixx = new Int32Array(new ArrayBuffer(bufsize));
-        var pixy = new Int32Array(new ArrayBuffer(bufsize));
+        // They are reused across calls to avoid per-frame allocations.
+        var bufsize = 2 * npts;
+        if (!Mx._tracePixx || Mx._tracePixx.length < bufsize) {
+            Mx._tracePixx = new Int32Array(bufsize);
+            Mx._tracePixy = new Int32Array(bufsize);
+        }
+        var pixx = Mx._tracePixx;
+        var pixy = Mx._tracePixy;
 
         var ib = 0;
         if ((line === 0) && (symb !== 0)) {
@@ -1666,6 +1673,7 @@
 
             var ie = 0;
             var visible = false;
+            var o = {tL: 1.0, tE: 0.0};
             for (var n = skip; n <= (skip * (npts - 1)); n += skip) {
 
                 var lx = x;
@@ -1688,10 +1696,8 @@
                     dx = lx - x;
                     dy = ly - y;
                     if ((dx !== 0.0) || (dy !== 0.0)) {
-                        var o = {
-                            tL: 1.0,
-                            tE: 0.0
-                        };
+                        o.tL = 1.0;
+                        o.tE = 0.0;
                         // Between the last point and the current point,
                         // determine the ratio of the x and y porionts
                         // that intersects the border.  If clipt returns
@@ -1775,9 +1781,6 @@
                     var x_start = highlight.xstart;
                     var x_end = highlight.xend;
 
-                    console.log("x start ", x_start);
-                    console.log("x end ", x_end);
-
                     if (x_start >= Mx.stk[Mx.level].xmax) {
                         continue;
                     }
@@ -1793,24 +1796,27 @@
                         var pi_start = xstart_pixel_value.x;
                         var pi_end = xend_pixel_value.x;
                         //console.log('start: ', pi_start, 'end: ', pi_end);
-                        var pixx_new = [];
-                        var pixy_new = [];
+                        var fillCount = 0;
+                        if (!Mx._highlightPixx || Mx._highlightPixx.length < ib) {
+                            Mx._highlightPixx = new Int32Array(ib);
+                            Mx._highlightPixy = new Int32Array(ib);
+                        }
+                        var pixx_new = Mx._highlightPixx;
+                        var pixy_new = Mx._highlightPixy;
                         for (var q = 0; q < ib; q++) {
                             var this_point = pixx[q];
                             var this_point_y = pixy[q];
-                            //console.log(this_point);
                             if (in_fill_range(this_point, pi_start, pi_end) === true) {
-                                //console.log('in range: ', this_point);
-                                pixx_new.push(this_point);
-                                pixy_new.push(this_point_y);
-
+                                pixx_new[fillCount] = this_point;
+                                pixy_new[fillCount] = this_point_y;
+                                fillCount++;
                             }
                         }
 
-                        if ((pixx_new.length > 0) || (wn !== 0)) {
+                        if ((fillCount > 0) || (wn !== 0)) {
                             pi_start = Math.max(pi_start, pixx_new[0]);
-                            pi_end = Math.min(pi_end, pixx_new[pixx_new.length - 1]);
-                            mx.fill_trace(Mx, highlight.fill, pixx_new, pixy_new, pixx_new.length, pi_start, pi_end);
+                            pi_end = Math.min(pi_end, pixx_new[fillCount - 1]);
+                            mx.fill_trace(Mx, highlight.fill, pixx_new, pixy_new, fillCount, pi_start, pi_end);
                         }
                     }
 
@@ -5204,7 +5210,14 @@
         Mx._renderCanvas.height = buf.height;
 
         var imgctx = Mx._renderCanvas.getContext("2d");
-        var imgd = imgctx.createImageData(Mx._renderCanvas.width, Mx._renderCanvas.height);
+        var rw = Mx._renderCanvas.width;
+        var rh = Mx._renderCanvas.height;
+        if (!Mx._renderImgd || Mx._renderImgdW !== rw || Mx._renderImgdH !== rh) {
+            Mx._renderImgd = imgctx.createImageData(rw, rh);
+            Mx._renderImgdW = rw;
+            Mx._renderImgdH = rh;
+        }
+        var imgd = Mx._renderImgd;
         var src = new Uint32Array(buf);
         for (var ii = 0; ii < src.length; ++ii) {
             var index = ii * 4;
@@ -5283,7 +5296,14 @@
             Mx._renderCanvas.height = buf.height;
 
             var imgctx = Mx._renderCanvas.getContext("2d");
-            var imgd = imgctx.createImageData(Mx._renderCanvas.width, Mx._renderCanvas.height);
+            var rw = Mx._renderCanvas.width;
+            var rh = Mx._renderCanvas.height;
+            if (!Mx._renderImgd || Mx._renderImgdW !== rw || Mx._renderImgdH !== rh) {
+                Mx._renderImgd = imgctx.createImageData(rw, rh);
+                Mx._renderImgdW = rw;
+                Mx._renderImgdH = rh;
+            }
+            var imgd = Mx._renderImgd;
 
             // TODO - This may not be portable to all browsers, if not
             // we need to choose between this approach and the traditional
@@ -5406,45 +5426,52 @@
         // has shown this approach to be almost twice as fast for the condition
         // where downscaling isn't used
         if (!downscaling || buf.contents === "rgba") {
-            for (var ii = 0; ii < dest.length; ii++) {
-                xx = Math.floor(ii % w * width_scaling) + sx;
-                yy = Math.floor(ii / w * height_scaling) + sy;
-                jj = Math.floor((yy * buf.width) + xx);
-
-                value = src[jj];
-                if (buf.contents !== "rgba") {
-                    dest[ii] = colorMap.getColorByIndex(value).color;
-                } else {
-                    dest[ii] = src[jj];
+            var isRgba = (buf.contents === "rgba");
+            for (var iy = 0; iy < h; iy++) {
+                yy = Math.floor(iy * height_scaling) + sy;
+                var rowBase = iy * w;
+                var srcRow = yy * buf.width;
+                for (var ix = 0; ix < w; ix++) {
+                    xx = Math.floor(ix * width_scaling) + sx;
+                    jj = srcRow + xx;
+                    if (isRgba) {
+                        dest[rowBase + ix] = src[jj];
+                    } else {
+                        dest[rowBase + ix] = colorMap.getColorByIndex(src[jj]).color;
+                    }
                 }
             }
         } else {
-            for (var ii = 0; ii < dest.length; ii++) {
-                xx = Math.floor(ii % w * width_scaling) + sx;
-                yy = Math.floor(ii / w * height_scaling) + sy;
-                jj = Math.floor((yy * buf.width) + xx);
+            for (var iy = 0; iy < h; iy++) {
+                yy = Math.floor(iy * height_scaling) + sy;
+                var rowBase = iy * w;
+                var srcRow = yy * buf.width;
+                for (var ix = 0; ix < w; ix++) {
+                    xx = Math.floor(ix * width_scaling) + sx;
+                    jj = srcRow + xx;
 
-                value = src[jj];
-                if (downscaling === "avg") { // average
-                    for (var j = 1; j < width_scaling; j++) {
-                        value += src[jj + j];
+                    value = src[jj];
+                    if (downscaling === "avg") { // average
+                        for (var j = 1; j < width_scaling; j++) {
+                            value += src[jj + j];
+                        }
+                        value = Math.round(value / width_scaling);
+                    } else if (downscaling === "min") { // min
+                        for (var j = 1; j < width_scaling; j++) {
+                            value = Math.min(value, src[jj + j]);
+                        }
+                    } else if (downscaling === "max") { // max
+                        for (var j = 1; j < width_scaling; j++) {
+                            value = Math.max(value, src[jj + j]);
+                        }
+                    } else if (downscaling === "minmax") { // min/max
+                        for (var j = 1; j < width_scaling; j++) {
+                            value = (Math.abs(value - colorOffset) > Math.abs(src[jj + j] - colorOffset)) ? value : src[jj + j];
+                        }
                     }
-                    value = Math.round(value / width_scaling);
-                } else if (downscaling === "min") { // min
-                    for (var j = 1; j < width_scaling; j++) {
-                        value = Math.min(value, src[jj + j]);
-                    }
-                } else if (downscaling === "max") { // max
-                    for (var j = 1; j < width_scaling; j++) {
-                        value = Math.max(value, src[jj + j]);
-                    }
-                } else if (downscaling === "minmax") { // min/max
-                    for (var j = 1; j < width_scaling; j++) {
-                        value = (Math.abs(value - colorOffset) > Math.abs(src[jj + j] - colorOffset)) ? value : src[jj + j];
-                    }
+
+                    dest[rowBase + ix] = colorMap.getColorByIndex(value).color;
                 }
-
-                dest[ii] = colorMap.getColorByIndex(value).color;
             }
         }
 
@@ -5615,56 +5642,48 @@
         // imgd is a flat buffer where index 0 maps to the upper-left corner
         var imgd = new Uint32Array(buf);
         if (data) {
-            for (var i = 0; i < imgd.length; i++) {
-                var ix;
-                var iy;
-                var didx;
+            // Hoist origin and direction checks outside the pixel loop
+            var flipX = !((Mx.origin === 1) || (Mx.origin === 4));
+            var flipY = !((Mx.origin === 3) || (Mx.origin === 4));
+            var isHorizontal = (drawdirection === "horizontal");
 
-                // Figure out what pixel we are at (upper left is 0,0)
-                if ((Mx.origin === 1) || (Mx.origin === 4)) {
-                    ix = Math.floor(i % w);
-                } else {
-                    ix = w - Math.floor(i % w) - 1;
-                }
-                if ((Mx.origin === 3) || (Mx.origin === 4)) {
-                    iy = Math.floor(i / w);
-                } else {
-                    iy = h - Math.floor(i / w) - 1;
-                }
-
-                // Map that pixel to it's nearest data
-                if (drawdirection !== "horizontal") {
-                    didx = (iy * subsize) + Math.floor(ix * nxc);
-                } else {
-                    didx = (ix * subsize) + Math.floor(iy * nxc);
-                }
-                var value = data[didx];
-                if (nxc > 1) {
-                    if (xcompression === 1) { // average
-                        for (var j = 1; j < nxc; j++) {
-                            value += data[didx + j];
-                        }
-                        value = value / nxc;
-                    } else if (xcompression === 2) { // min
-                        for (var j = 1; j < nxc; j++) {
-                            value = Math.min(value, data[didx + j]);
-                        }
-                    } else if (xcompression === 3) { // max
-                        for (var j = 1; j < nxc; j++) {
-                            value = Math.max(value, data[didx + j]);
-                        }
-                    } else if (xcompression === 4) { // first
-                        value = data[didx];
-                    } else if (xcompression === 5) { // max abs
-                        for (var j = 1; j < nxc; j++) {
-                            value = Math.max(Math.abs(value), Math.abs(data[didx + j]));
+            for (var py = 0; py < h; py++) {
+                var iy = flipY ? (h - py - 1) : py;
+                var rowBase = py * w;
+                for (var px = 0; px < w; px++) {
+                    var ix = flipX ? (w - px - 1) : px;
+                    var didx;
+                    if (!isHorizontal) {
+                        didx = (iy * subsize) + Math.floor(ix * nxc);
+                    } else {
+                        didx = (ix * subsize) + Math.floor(iy * nxc);
+                    }
+                    var value = data[didx];
+                    if (nxc > 1) {
+                        if (xcompression === 1) { // average
+                            for (var j = 1; j < nxc; j++) {
+                                value += data[didx + j];
+                            }
+                            value = value / nxc;
+                        } else if (xcompression === 2) { // min
+                            for (var j = 1; j < nxc; j++) {
+                                value = Math.min(value, data[didx + j]);
+                            }
+                        } else if (xcompression === 3) { // max
+                            for (var j = 1; j < nxc; j++) {
+                                value = Math.max(value, data[didx + j]);
+                            }
+                        } else if (xcompression === 4) { // first
+                            value = data[didx];
+                        } else if (xcompression === 5) { // max abs
+                            for (var j = 1; j < nxc; j++) {
+                                value = Math.max(Math.abs(value), Math.abs(data[didx + j]));
+                            }
                         }
                     }
+
+                    imgd[rowBase + px] = Mx.pixel.getColorIndex(value);
                 }
-
-
-                var colorIdx = Mx.pixel.getColorIndex(value);
-                imgd[i] = colorIdx;
             }
         }
 

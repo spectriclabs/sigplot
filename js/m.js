@@ -1120,6 +1120,7 @@
         count = Math.min(src.length, count);
 
         let adjust = 0;
+        var decayFactor = 1 - Math.exp(-decay);
         for (var i = 0; i < count; i++) {
             var s = i * sstride + sstart;
             var d = i * dstride + dstart;
@@ -1129,7 +1130,7 @@
             if (d >= dest.length) {
                 break;
             }
-            adjust = (src[s] - dest[d]) * (1 - Math.exp(-decay));
+            adjust = (src[s] - dest[d]) * decayFactor;
             dest[d] = Number.isNaN(dest[d] + adjust) ? src[s] : dest[d] + adjust;
             dest[d] = Math.max(dest[d], src[s]);
         }
